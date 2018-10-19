@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -25,10 +26,13 @@ public class Main extends ApplicationAdapter {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
+    private BitmapFont bitmapFont;
     private Texture goalImage;
     private Sprite goal;
 
     //myClass
+    private boolean PLAY = false;
+    private float step = 0;
     private ArrayList<Agent> agents = new ArrayList<>();
 
     //tmp
@@ -40,6 +44,10 @@ public class Main extends ApplicationAdapter {
         camera.setToOrtho(false, Parameter.SCALE.x, Parameter.SCALE.y);
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
+
+        bitmapFont = new BitmapFont();
+        bitmapFont.setColor(Color.BLACK);
+        bitmapFont.getData().setScale(2);
 
         goalImage = new Texture("exit.png");
         goal = new Sprite(goalImage);
@@ -58,7 +66,10 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
-        update();
+        if(PLAY){
+            update();
+            step++;
+        }
         Gdx.gl.glClearColor(255, 255, 255, 255);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
@@ -66,6 +77,8 @@ public class Main extends ApplicationAdapter {
 
         //描画
         batch.begin();
+        bitmapFont.draw(batch, "time " + String.format("%.2f", step / 60), Parameter.SCALE.x - 200, Parameter.SCALE.y - 10);
+        bitmapFont.draw(batch, "pedestrian = " + String.format(String.valueOf(agents.size())), Parameter.SCALE.x - 450, Parameter.SCALE.y - 10);
         goal.draw(batch);
         batch.end();
 
@@ -105,9 +118,18 @@ public class Main extends ApplicationAdapter {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
             System.out.println("touchPos = " + touchPos);
-            if (Gdx.input.isKeyPressed(Input.Keys.F)) spawnAgent2(new Vector2(touchPos.x, touchPos.y));
-            else spawnAgent1(new Vector2(touchPos.x, touchPos.y));
+            if (Gdx.input.isKeyPressed(Input.Keys.F)) spawnAgent1(new Vector2(touchPos.x, touchPos.y));
+            else spawnAgent2(new Vector2(touchPos.x, touchPos.y));
         }
+
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+            agents.clear();
+            step = 0;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) { PLAY = PLAY ? false : true; }
+
+
     }
 
     public void update() {
