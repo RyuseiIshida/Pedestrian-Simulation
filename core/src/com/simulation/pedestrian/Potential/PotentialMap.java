@@ -75,4 +75,8 @@ public class PotentialMap {
     public Tuple getIndex(PotentialCell targetCell){
         return getIndex(targetCell.getCenterPoint());
     }
+
+    public float getCellInterval() {
+        return cellInterval;
+    }
 }

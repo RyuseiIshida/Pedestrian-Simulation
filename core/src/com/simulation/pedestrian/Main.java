@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.simulation.pedestrian.Agent.Agent;
+import com.simulation.pedestrian.Obstacle.Obstacle;
 import com.simulation.pedestrian.Potential.PotentialCell;
 import com.simulation.pedestrian.Potential.PotentialManager;
 import com.simulation.pedestrian.Potential.PotentialMap;
@@ -20,13 +21,14 @@ import com.simulation.pedestrian.Potential.PotentialMap;
 import java.util.ArrayList;
 
 public class Main extends ApplicationAdapter {
+    //libGdx
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
-
     private Texture goalImage;
     private Sprite goal;
 
+    //myClass
     private ArrayList<Agent> agents = new ArrayList<>();
 
     //tmp
@@ -42,6 +44,8 @@ public class Main extends ApplicationAdapter {
         goalImage = new Texture("exit.png");
         goal = new Sprite(goalImage);
         goal.setPosition(Parameter.GOAL.x, Parameter.GOAL.y);
+
+        new PotentialManager();
     }
 
     public void spawnAgent1(Vector2 pos) {
@@ -65,11 +69,24 @@ public class Main extends ApplicationAdapter {
         goal.draw(batch);
         batch.end();
 
+
+        //塗りつぶし
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.GRAY);
+
+        //Agent
         for (Agent agent : agents) {
+            shapeRenderer.setColor(Color.GRAY);
             shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius);
+        }
+
+        //Obstacle
+        for (Obstacle obstacle : PotentialManager.getObstacles()) {
+            for (PotentialCell obstacleCell : obstacle.getObstacleCells()) {
+                shapeRenderer.setColor(Color.FIREBRICK);
+                shapeRenderer.rect(obstacleCell.getLeftButtomPoint().x, obstacleCell.getLeftButtomPoint().y,obstacleCell.getCellInterval(), obstacleCell.getCellInterval());
+                shapeRenderer.rect(obstacleCell.getLeftButtomPoint().x, obstacleCell.getLeftButtomPoint().y,obstacleCell.getCellInterval(), obstacleCell.getCellInterval());
+            }
         }
         shapeRenderer.end();
 
