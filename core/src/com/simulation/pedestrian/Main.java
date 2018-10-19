@@ -13,6 +13,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.simulation.pedestrian.Agent.Agent;
+import com.simulation.pedestrian.Potential.PotentialCell;
+import com.simulation.pedestrian.Potential.PotentialManager;
+import com.simulation.pedestrian.Potential.PotentialMap;
 
 import java.util.ArrayList;
 
@@ -25,6 +28,9 @@ public class Main extends ApplicationAdapter {
     private Sprite goal;
 
     private ArrayList<Agent> agents = new ArrayList<>();
+
+    //tmp
+    PotentialMap potentialMap = new PotentialMap(Parameter.SCALE, Parameter.CELLINTERVAL, 10);
 
     @Override
     public void create() {
@@ -67,6 +73,15 @@ public class Main extends ApplicationAdapter {
         }
         shapeRenderer.end();
 
+
+        //セルの描画
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.BLACK);
+        for (PotentialCell cell : potentialMap.getPotentialCells()) {
+            shapeRenderer.line(cell.getRightButtomPoint(), cell.getRightTopPoint());
+            shapeRenderer.line(cell.getLeftTopPoint(), cell.getRightTopPoint());
+        }
+        shapeRenderer.end();
 
         if (Gdx.input.justTouched()) {
             Vector3 touchPos = new Vector3();
