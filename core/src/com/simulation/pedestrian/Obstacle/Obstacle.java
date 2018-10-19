@@ -33,13 +33,12 @@ public class Obstacle {
         Tuple endIndex = potentialMap.getIndex(endCell);
         List<List<PotentialCell>> matrixCell = potentialMap.getMatrixPotentialCells();
 
-        for (int i = startIndex.t1; i < endIndex.t1; i++) {
-            for (int j = startIndex.t2; j < endIndex.t2; j++) {
+        for (int i = startIndex.t1; i <= endIndex.t1; i++) {
+            for (int j = startIndex.t2; j <= endIndex.t2; j++) {
                 matrixCell.get(i).get(j).setObstaclePotential(potential);
                 obstacleCells.add(matrixCell.get(i).get(j));
             }
         }
-
     }
 
     public void setShapeObstacle(float x, float y, float w, float h) {

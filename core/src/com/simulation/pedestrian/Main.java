@@ -14,10 +14,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.simulation.pedestrian.Agent.Agent;
-import com.simulation.pedestrian.Obstacle.Obstacle;
 import com.simulation.pedestrian.Potential.PotentialCell;
 import com.simulation.pedestrian.Potential.PotentialManager;
 import com.simulation.pedestrian.Potential.PotentialMap;
+import com.simulation.pedestrian.Util.Vector;
 
 import java.util.ArrayList;
 
@@ -47,7 +47,7 @@ public class Main extends ApplicationAdapter {
 
         bitmapFont = new BitmapFont();
         bitmapFont.setColor(Color.BLACK);
-        bitmapFont.getData().setScale(2);
+        bitmapFont.getData().setScale(1);
 
         goalImage = new Texture("exit.png");
         goal = new Sprite(goalImage);
@@ -66,7 +66,7 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
-        if(PLAY){
+        if (PLAY) {
             update();
             step++;
         }
@@ -75,10 +75,19 @@ public class Main extends ApplicationAdapter {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
-        //描画
+        //Sprite・文字の描画
         batch.begin();
         bitmapFont.draw(batch, "time " + String.format("%.2f", step / 60), Parameter.SCALE.x - 200, Parameter.SCALE.y - 10);
         bitmapFont.draw(batch, "pedestrian = " + String.format(String.valueOf(agents.size())), Parameter.SCALE.x - 450, Parameter.SCALE.y - 10);
+        //障害物
+        for (PotentialCell potentialCell : PotentialManager.getEnvPotentialMap().getPotentialCells()) {
+            shapeRenderer.setColor(Color.FIREBRICK);
+            float potential = potentialCell.getPotential();
+            if (potential != 0) {
+                bitmapFont.draw(batch, String.format("%.1f", potential), potentialCell.getCenterPoint().x, potentialCell.getCenterPoint().y);
+            }
+        }
+
         goal.draw(batch);
         batch.end();
 
@@ -86,23 +95,20 @@ public class Main extends ApplicationAdapter {
         //塗りつぶし
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        //Agent
-        for (Agent agent : agents) {
+        for (Agent agent : agents) {//Agent
             shapeRenderer.setColor(Color.GRAY);
             shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius);
         }
 
-        //Obstacle
-        for (Obstacle obstacle : PotentialManager.getObstacles()) {
-            for (PotentialCell obstacleCell : obstacle.getObstacleCells()) {
-                shapeRenderer.setColor(Color.FIREBRICK);
-                shapeRenderer.rect(obstacleCell.getLeftButtomPoint().x, obstacleCell.getLeftButtomPoint().y,obstacleCell.getCellInterval(), obstacleCell.getCellInterval());
-                shapeRenderer.rect(obstacleCell.getLeftButtomPoint().x, obstacleCell.getLeftButtomPoint().y,obstacleCell.getCellInterval(), obstacleCell.getCellInterval());
-            }
-        }
+//        //障害物
+//        for (PotentialCell PotentialCell : PotentialManager.getEnvPotentialMap().getPotentialCells()) {
+//            shapeRenderer.setColor(Color.FIREBRICK);
+//            if (PotentialCell.getObstaclePotential() != 0) {
+//                shapeRenderer.rect(PotentialCell.getLeftButtomPoint().x, PotentialCell.getLeftButtomPoint().y, PotentialCell.getCellInterval(), PotentialCell.getCellInterval());
+//                shapeRenderer.rect(PotentialCell.getLeftButtomPoint().x, PotentialCell.getLeftButtomPoint().y, PotentialCell.getCellInterval(), PotentialCell.getCellInterval());
+//            }
+//        }
         shapeRenderer.end();
-
 
         //セルの描画
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -110,6 +116,19 @@ public class Main extends ApplicationAdapter {
         for (PotentialCell cell : potentialMap.getPotentialCells()) {
             shapeRenderer.line(cell.getRightButtomPoint(), cell.getRightTopPoint());
             shapeRenderer.line(cell.getLeftTopPoint(), cell.getRightTopPoint());
+        }
+
+
+        //ポテンシャルの描画
+        for (Agent agent : agents) {
+            for (PotentialCell potentialCell : PotentialManager.getEnvPotentialMap().getPotentialCells()) {
+                if (potentialCell.getObstaclePotential() != 0){
+                    Vector2 direction = Vector.direction( potentialCell.getCenterPoint(), agent.getPosition());
+                    direction.scl(30);
+                    shapeRenderer.line(potentialCell.getCenterPoint().x, potentialCell.getCenterPoint().y,
+                            potentialCell.getCenterPoint().x + direction.x , potentialCell.getCenterPoint().y + direction.y);
+                }
+            }
         }
         shapeRenderer.end();
 
@@ -123,11 +142,14 @@ public class Main extends ApplicationAdapter {
         }
 
 
+        //Input処理
         if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
             agents.clear();
             step = 0;
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) { PLAY = PLAY ? false : true; }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            PLAY = PLAY ? false : true;
+        }
 
 
     }

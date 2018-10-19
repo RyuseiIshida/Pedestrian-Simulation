@@ -10,10 +10,7 @@ import java.util.List;
 
 public class PotentialManager {
     private static PotentialMap envPotentialMap;
-    private static PotentialMap obstaclesPotentialMap;
-    private static List<Obstacle> obstacles = new ArrayList<>();
     private static float obstaclePotential = Parameter.OBSTACLEPOTENTIAL;
-    private static PotentialMap agentsPotentialMap;
     private static Vector2 scale = Parameter.SCALE;
     private static float cellInterval = Parameter.CELLINTERVAL;
     private static float maxPotential = Parameter.MAXPOTENTIAL;
@@ -21,20 +18,11 @@ public class PotentialManager {
 
     public PotentialManager() {
         envPotentialMap = new PotentialMap(scale, cellInterval, maxPotential);
-        setObstacle(150, 150, 300, 100);
+        new Obstacle(150, 150, 300, 100, envPotentialMap, obstaclePotential);
     }
 
-    public static void setObstacle(int x, int y, int width, int height){
-        obstaclesPotentialMap = new PotentialMap(scale, cellInterval, maxPotential);
-        Obstacle obstacle = new Obstacle(x, y, width, height, obstaclesPotentialMap, obstaclePotential );
-        for (PotentialCell cell : obstacle.getObstacleCells()) {
-            Tuple index = obstaclesPotentialMap.getIndex(cell);
-            obstaclesPotentialMap.getMatrixPotentialCell(index.t1, index.t2).setObstaclePotential(obstaclePotential);
-        }
-        obstacles.add(obstacle);
+    public static PotentialMap getEnvPotentialMap() {
+        return envPotentialMap;
     }
 
-    public static List<Obstacle> getObstacles() {
-        return obstacles;
-    }
 }

@@ -25,6 +25,10 @@ public class PotentialCell extends Cell {
         this.obstaclePotential = obstaclePotential;
     }
 
+    public float getObstaclePotential() {
+        return obstaclePotential;
+    }
+
     public float getPotential(){
         return agentPotential + obstaclePotential;
     }
