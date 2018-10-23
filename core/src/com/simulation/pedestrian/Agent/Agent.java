@@ -1,5 +1,6 @@
 package com.simulation.pedestrian.Agent;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.simulation.pedestrian.Environment;
 import com.simulation.pedestrian.Parameter;
@@ -21,13 +22,13 @@ public class Agent {
     private Vector2 velocity;
 
 
-    public Agent(Environment env ,Vector2 position) {
+    public Agent(Environment env, Vector2 position) {
         this.env = env;
         this.position = position;
         this.movePos = position;
     }
 
-    public Agent(Environment env,Vector2 position, Vector2 goal) {
+    public Agent(Environment env, Vector2 position, Vector2 goal) {
         this.env = env;
         this.stateTag = StateTag.moveGoal;
         this.position = position;
@@ -37,10 +38,19 @@ public class Agent {
 
 
     public void action() throws Exception {
-        move();
+        decisionMaking();
     }
 
-    public void move() {
+    //意思決定
+    public void decisionMaking() {
+        if(goal==null && env.getStep() % Parameter.stepInterval == 0){
+            isGoal();
+            randomWalk();
+        }
+        move(movePos);
+    }
+
+    public void move(Vector2 movePos) {
         Vector2 direction = Vector.direction(position, movePos);
         setPotentialVector(direction);
         //TODO 掛け算じゃなくて足し算でスピードを変化できるようにする
@@ -71,12 +81,21 @@ public class Agent {
         }
     }
 
+    public void isGoal() {//視野内にゴールが入った場合
+
+    }
+
+    public void randomWalk() {
+        float posX = MathUtils.random(Parameter.SCALE.x);
+        float posY = MathUtils.random(Parameter.SCALE.y);
+        movePos = new Vector2(posX, posY);
+    }
 
     public Vector2 getPosition() {
         return position;
     }
 
-    public Vector2 getVelocity(){
+    public Vector2 getVelocity() {
         return velocity;
     }
 }
