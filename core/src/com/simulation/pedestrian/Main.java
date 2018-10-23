@@ -6,16 +6,13 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.simulation.pedestrian.Agent.Agent;
 import com.simulation.pedestrian.Potential.PotentialCell;
-import com.simulation.pedestrian.Potential.PotentialMap;
 
 public class Main extends ApplicationAdapter {
     //libGdx
@@ -23,8 +20,6 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private BitmapFont bitmapFont;
-    private Texture goalImage;
-    private Sprite goal;
 
     //myClass
     private boolean PLAY = false;
@@ -40,11 +35,6 @@ public class Main extends ApplicationAdapter {
         bitmapFont = new BitmapFont();
         bitmapFont.setColor(Color.BLACK);
         bitmapFont.getData().setScale(1);
-
-        goalImage = new Texture("exit.png");
-        goal = new Sprite(goalImage);
-        goal.setPosition(Parameter.GOAL.x, Parameter.GOAL.y);
-
         environment = new Environment();
     }
 
@@ -71,7 +61,6 @@ public class Main extends ApplicationAdapter {
 //            }
 //        }
 
-        goal.draw(batch);
         batch.end();
 
         //塗りつぶし
@@ -82,9 +71,15 @@ public class Main extends ApplicationAdapter {
             shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius);
         }
 
+        //出口
+        for (Goal goal : Parameter.GOALS) {
+            shapeRenderer.setColor(Color.RED);
+            shapeRenderer.rect(goal.getPositionX(), goal.getPositionY(), goal.getWidth(), goal.getHeight());
+        }
+
         //障害物
         for (PotentialCell PotentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
-            shapeRenderer.setColor(Color.FIREBRICK);
+            shapeRenderer.setColor(Color.DARK_GRAY);
             if (PotentialCell.getObstaclePotential() != 0) {
                 shapeRenderer.rect(PotentialCell.getLeftButtomPoint().x, PotentialCell.getLeftButtomPoint().y, PotentialCell.getCellInterval(), PotentialCell.getCellInterval());
                 shapeRenderer.rect(PotentialCell.getLeftButtomPoint().x, PotentialCell.getLeftButtomPoint().y, PotentialCell.getCellInterval(), PotentialCell.getCellInterval());
@@ -123,6 +118,5 @@ public class Main extends ApplicationAdapter {
     @Override
     public void dispose() {
         batch.dispose();
-        goalImage.dispose();
     }
 }

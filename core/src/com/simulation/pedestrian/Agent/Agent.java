@@ -3,6 +3,7 @@ package com.simulation.pedestrian.Agent;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.simulation.pedestrian.Environment;
+import com.simulation.pedestrian.Goal;
 import com.simulation.pedestrian.Parameter;
 import com.simulation.pedestrian.Potential.PotentialCell;
 import com.simulation.pedestrian.Util.Tuple;
@@ -28,12 +29,12 @@ public class Agent {
         this.movePos = position;
     }
 
-    public Agent(Environment env, Vector2 position, Vector2 goal) {
+    public Agent(Environment env, Vector2 position, Goal goal) {
         this.env = env;
         this.stateTag = StateTag.moveGoal;
         this.position = position;
-        this.goal = goal;
-        this.movePos = goal;
+        this.goal = goal.getPosition();
+        this.movePos = goal.getPosition();
     }
 
 

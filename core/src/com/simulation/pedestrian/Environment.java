@@ -6,6 +6,7 @@ import com.simulation.pedestrian.Obstacle.Obstacle;
 import com.simulation.pedestrian.Potential.PotentialMap;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Environment {
@@ -33,6 +34,7 @@ public class Environment {
                     } catch (final Exception l_exception) {
                     }
                 });
+        isGoal();
         step++;
     }
 
@@ -42,6 +44,23 @@ public class Environment {
 
     public float getStep() {
         return step;
+    }
+
+    public void isGoal(){
+        Iterator<Agent> iterator = agents.iterator();
+        while (iterator.hasNext()) {
+            Agent agent = iterator.next();
+            for (Goal goal : Parameter.GOALS) {
+                float aPosX = agent.getPosition().x;
+                float aPosY = agent.getPosition().y;
+                if(aPosX > goal.getPositionX()
+                        && aPosY > goal.getPositionY()
+                        && aPosX < goal.getRightTop().x
+                        && aPosY < goal.getRightTop().y) {
+                    iterator.remove();
+                }
+            }
+        }
     }
 
     //Potential
@@ -57,7 +76,7 @@ public class Environment {
     }
 
     public void spawnAgent2(Vector2 pos){
-        agents.add(new Agent(this, pos, Parameter.GOAL));
+        agents.add(new Agent(this, pos, Parameter.GOAL1));
     }
 
     public List<Agent> getAgents() {
