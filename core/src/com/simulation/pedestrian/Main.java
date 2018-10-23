@@ -11,16 +11,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.simulation.pedestrian.Agent.Agent;
 import com.simulation.pedestrian.Potential.PotentialCell;
-import com.simulation.pedestrian.Potential.PotentialManager;
 import com.simulation.pedestrian.Potential.PotentialMap;
-import com.simulation.pedestrian.Util.Vector;
-
-import java.util.ArrayList;
 
 public class Main extends ApplicationAdapter {
     //libGdx
@@ -33,11 +28,7 @@ public class Main extends ApplicationAdapter {
 
     //myClass
     private boolean PLAY = false;
-    private float step = 0;
-    private ArrayList<Agent> agents = new ArrayList<>();
-
-    //tmp
-    PotentialMap potentialMap = new PotentialMap(Parameter.SCALE, Parameter.CELLINTERVAL, 10);
+    private Environment environment;
 
     @Override
     public void create() {
@@ -54,22 +45,13 @@ public class Main extends ApplicationAdapter {
         goal = new Sprite(goalImage);
         goal.setPosition(Parameter.GOAL.x, Parameter.GOAL.y);
 
-        new PotentialManager();
-    }
-
-    public void spawnAgent1(Vector2 pos) {
-        agents.add(new Agent(pos));
-    }
-
-    public void spawnAgent2(Vector2 pos) {
-        agents.add(new Agent(pos, Parameter.GOAL));
+        environment = new Environment();
     }
 
     @Override
     public void render() {
         if (PLAY) {
-            update();
-            step++;
+            environment.update();
         }
         Gdx.gl.glClearColor(255, 255, 255, 255);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -78,9 +60,9 @@ public class Main extends ApplicationAdapter {
 
         //Sprite・文字の描画
         batch.begin();
-        bitmapFont.draw(batch, "time " + String.format("%.2f", step / 60), Parameter.SCALE.x - 200, Parameter.SCALE.y - 10);
-        bitmapFont.draw(batch, "pedestrian = " + String.format(String.valueOf(agents.size())), Parameter.SCALE.x - 450, Parameter.SCALE.y - 10);
-        //障害物
+        bitmapFont.draw(batch, "time " + String.format("%.2f", environment.getStep() / 60), Parameter.SCALE.x - 200, Parameter.SCALE.y - 10);
+        bitmapFont.draw(batch, "pedestrian = " + String.format(String.valueOf(environment.getAgents().size())), Parameter.SCALE.x - 450, Parameter.SCALE.y - 10);
+//        //障害物
 //        for (PotentialCell potentialCell : PotentialManager.getEnvPotentialMap().getPotentialCells()) {
 //            shapeRenderer.setColor(Color.FIREBRICK);
 //            float potential = potentialCell.getPotential();
@@ -92,17 +74,16 @@ public class Main extends ApplicationAdapter {
         goal.draw(batch);
         batch.end();
 
-
         //塗りつぶし
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (Agent agent : agents) {//Agent
+        for (Agent agent : environment.getAgents()) {//Agent
             shapeRenderer.setColor(Color.GRAY);
             shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius);
         }
 
         //障害物
-        for (PotentialCell PotentialCell : PotentialManager.getEnvPotentialMap().getPotentialCells()) {
+        for (PotentialCell PotentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
             shapeRenderer.setColor(Color.FIREBRICK);
             if (PotentialCell.getObstaclePotential() != 0) {
                 shapeRenderer.rect(PotentialCell.getLeftButtomPoint().x, PotentialCell.getLeftButtomPoint().y, PotentialCell.getCellInterval(), PotentialCell.getCellInterval());
@@ -114,23 +95,10 @@ public class Main extends ApplicationAdapter {
         //セルの描画
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.BLACK);
-        for (PotentialCell cell : potentialMap.getPotentialCells()) {
+        for (PotentialCell cell : environment.getEnvPotentialMap().getPotentialCells()) {
             shapeRenderer.line(cell.getRightButtomPoint(), cell.getRightTopPoint());
             shapeRenderer.line(cell.getLeftTopPoint(), cell.getRightTopPoint());
         }
-
-
-        //ポテンシャルの描画
-//        for (Agent agent : agents) {
-//            for (PotentialCell potentialCell : PotentialManager.getEnvPotentialMap().getPotentialCells()) {
-//                if (potentialCell.getObstaclePotential() != 0){
-//                    Vector2 direction = Vector.direction( potentialCell.getCenterPoint(), agent.getPosition());
-//                    direction.scl(30);
-//                    shapeRenderer.line(potentialCell.getCenterPoint().x, potentialCell.getCenterPoint().y,
-//                            potentialCell.getCenterPoint().x + direction.x , potentialCell.getCenterPoint().y + direction.y);
-//                }
-//            }
-//        }
         shapeRenderer.end();
 
         if (Gdx.input.justTouched()) {
@@ -138,34 +106,19 @@ public class Main extends ApplicationAdapter {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
             System.out.println("touchPos = " + touchPos);
-            if (Gdx.input.isKeyPressed(Input.Keys.F)) spawnAgent1(new Vector2(touchPos.x, touchPos.y));
-            else spawnAgent2(new Vector2(touchPos.x, touchPos.y));
+            if (Gdx.input.isKeyPressed(Input.Keys.F)) environment.spawnAgent1(new Vector2(touchPos.x, touchPos.y));
+            else environment.spawnAgent2(new Vector2(touchPos.x, touchPos.y));
         }
-
 
         //Input処理
         if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-            agents.clear();
-            step = 0;
+            environment.getAgents().clear();
+            environment.setStep(0);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             PLAY = PLAY ? false : true;
         }
-
-
     }
-
-    public void update() {
-        agents.stream()
-                .parallel()
-                .forEach(agent -> {
-                    try {
-                        agent.action();
-                    } catch (final Exception l_exception) {
-                    }
-                });
-    }
-
 
     @Override
     public void dispose() {

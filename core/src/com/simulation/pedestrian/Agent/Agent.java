@@ -1,9 +1,9 @@
 package com.simulation.pedestrian.Agent;
 
 import com.badlogic.gdx.math.Vector2;
+import com.simulation.pedestrian.Environment;
 import com.simulation.pedestrian.Parameter;
 import com.simulation.pedestrian.Potential.PotentialCell;
-import com.simulation.pedestrian.Potential.PotentialManager;
 import com.simulation.pedestrian.Util.Tuple;
 import com.simulation.pedestrian.Util.Vector;
 
@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Agent {
+    private Environment env;
     private static final float radius = Parameter.agentRadius;
     private float speed = Parameter.agentSpeed;
     private String stateTag;
@@ -20,12 +21,14 @@ public class Agent {
     private Vector2 velocity;
 
 
-    public Agent(Vector2 position) {
+    public Agent(Environment env ,Vector2 position) {
+        this.env = env;
         this.position = position;
         this.movePos = position;
     }
 
-    public Agent(Vector2 position, Vector2 goal) {
+    public Agent(Environment env,Vector2 position, Vector2 goal) {
+        this.env = env;
         this.stateTag = StateTag.moveGoal;
         this.position = position;
         this.goal = goal;
@@ -49,12 +52,12 @@ public class Agent {
 
     public void setPotentialVector(Vector2 direction) {
         List<PotentialCell> nearCell = new ArrayList<>();
-        Tuple index = PotentialManager.getEnvPotentialMap().getIndex(position);
+        Tuple index = env.getEnvPotentialMap().getIndex(position);
         int range = 1;
         //TODO BAG:範囲外のインデックス参照
         for (int i = index.t1 - range; i <= index.t1 + range; i++) {
             for (int j = index.t2 - range; j <= index.t2 + range; j++) {
-                nearCell.add(PotentialManager.getEnvPotentialMap().getMatrixPotentialCell(i, j));
+                nearCell.add(env.getEnvPotentialMap().getMatrixPotentialCell(i, j));
             }
         }
         for (PotentialCell potentialCell : nearCell) {
