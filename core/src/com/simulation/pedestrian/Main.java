@@ -72,7 +72,7 @@ public class Main extends ApplicationAdapter {
         }
 
         //出口
-        for (Goal goal : Parameter.GOALS) {
+        for (Goal goal : environment.getGoals()) {
             shapeRenderer.setColor(Color.RED);
             shapeRenderer.rect(goal.getPositionX(), goal.getPositionY(), goal.getWidth(), goal.getHeight());
         }
