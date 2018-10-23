@@ -1,6 +1,7 @@
 package com.simulation.pedestrian.Potential;
 
 import com.badlogic.gdx.math.Vector2;
+import com.simulation.pedestrian.Agent.Agent;
 import com.simulation.pedestrian.Obstacle.Obstacle;
 import com.simulation.pedestrian.Parameter;
 import com.simulation.pedestrian.Util.Tuple;
@@ -23,6 +24,11 @@ public class PotentialManager {
 
     public static PotentialMap getEnvPotentialMap() {
         return envPotentialMap;
+    }
+
+    public static void setAgentPotential(Agent agent){
+       Vector2 position = agent.getPosition();
+       envPotentialMap.getPotentialCell(position).setAgentPotential(1);
     }
 
 }

@@ -43,6 +43,8 @@ public class Agent {
         //TODO 掛け算じゃなくて足し算でスピードを変化できるようにする
         velocity = direction.scl(speed);
         position.add(velocity);
+        //TODO PotentialManagerに実装する
+//        PotentialManager.setAgentPotential(this);
     }
 
     public void setPotentialVector(Vector2 direction) {
