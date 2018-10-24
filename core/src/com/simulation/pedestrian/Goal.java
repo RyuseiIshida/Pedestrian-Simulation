@@ -33,6 +33,10 @@ public class Goal {
         return height;
     }
 
+    public Vector2 getCenter(){
+        return new Vector2(position).add(width/2, height/2);
+    }
+
     public Vector2 getLeftButtom() {
         return position;
     }

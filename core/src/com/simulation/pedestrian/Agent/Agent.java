@@ -37,7 +37,7 @@ public class Agent {
         this.stateTag = StateTag.moveGoal;
         this.position = position;
         this.goal = goal.getPosition();
-        this.movePos = goal.getPosition();
+        this.movePos = goal.getCenter();
         this.velocity = new Vector2(0,0);
     }
 
