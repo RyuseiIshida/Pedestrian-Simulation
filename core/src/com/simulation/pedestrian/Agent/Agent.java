@@ -87,21 +87,16 @@ public class Agent {
     }
 
     public float getDirectionDegree(){
-        System.out.println("velocity = " + velocity);
-        float moveRadian = (float) Math.atan2(velocity.x, velocity.y);
-        System.out.println("kita");
-        float moveDegree = (float) (moveRadian * 180d / Math.PI);
-        return moveDegree;
+        float radian = (float) Math.atan2(velocity.y, velocity.x);
+        float degree = (float) Math.toDegrees(radian);
+        return degree;
     }
 
     public boolean isView(Vector2 targetPos) {
         float targetDistance = position.dst(targetPos);
-        float moveRadian = (float) Math.atan2(movePos.x - position.x, movePos.y - position.y);
-        float moveDegree = (float) (moveRadian * 180d / Math.PI);
         float targetRadian = (float) Math.atan2(targetPos.x - position.x, targetPos.y - position.y);
-        float targetDegree = (float) (targetRadian * 180d / Math.PI);
-        float result = Math.abs(moveDegree - targetDegree);
-        if (targetDistance < viewRadius && result < viewDegree) {
+        float targetDegree = (float) Math.toDegrees(targetRadian);
+        if (targetDistance < viewRadius && getDirectionDegree() - targetDegree < viewDegree) {
             return true;
         } else {
             return false;

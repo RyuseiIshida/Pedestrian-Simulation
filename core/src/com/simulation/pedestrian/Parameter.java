@@ -10,7 +10,7 @@ import java.util.List;
 public final class Parameter {
     //Environment
     public static final Vector2 SCALE = new Vector2(800*1.5f, 480*1.5f);
-    public static final Goal INITGOAL = new Goal(10,10,30,50);
+    public static final Goal INITGOAL = new Goal(800,480,30,50);
     public static final float CELLINTERVAL = 5;
 
     //Potential
