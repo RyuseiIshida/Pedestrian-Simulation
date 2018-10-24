@@ -29,6 +29,7 @@ public class Agent {
         this.env = env;
         this.position = position;
         this.movePos = position;
+        this.velocity = new Vector2(0,0);
     }
 
     public Agent(Environment env, Vector2 position, Goal goal) {
@@ -37,6 +38,7 @@ public class Agent {
         this.position = position;
         this.goal = goal.getPosition();
         this.movePos = goal.getPosition();
+        this.velocity = new Vector2(0,0);
     }
 
 
@@ -82,6 +84,14 @@ public class Agent {
                 direction.add(px, py).nor();
             }
         }
+    }
+
+    public float getDirectionDegree(){
+        System.out.println("velocity = " + velocity);
+        float moveRadian = (float) Math.atan2(velocity.x, velocity.y);
+        System.out.println("kita");
+        float moveDegree = (float) (moveRadian * 180d / Math.PI);
+        return moveDegree;
     }
 
     public boolean isView(Vector2 targetPos) {

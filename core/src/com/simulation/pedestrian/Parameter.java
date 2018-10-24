@@ -22,7 +22,7 @@ public final class Parameter {
     public static final int goalAgentNum = 0;
     public static final float agentSpeed = 1;
     public static final float agentRadius = 10;
-    public static final float viewRadius = 0;
-    public static final float viewDegree = 0;
+    public static final float viewRadius = 100;
+    public static final float viewDegree = 60;
     public static final float stepInterval = 120;
 }

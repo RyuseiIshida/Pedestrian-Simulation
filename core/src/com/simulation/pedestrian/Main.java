@@ -96,6 +96,20 @@ public class Main extends ApplicationAdapter {
         }
         shapeRenderer.end();
 
+        //薄い色
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(new Color(0, 1, 0, 0.1f));
+        for (Agent agent : environment.getAgents()) {
+            float moveDegree = agent.getDirectionDegree();
+            moveDegree -= Parameter.viewDegree / 2;
+            shapeRenderer.setColor(new Color(0, 1, 0, 0.1f));
+            shapeRenderer.arc((float) agent.getPosition().x, (float) agent.getPosition().y, Parameter.viewRadius, moveDegree, Parameter.viewDegree);
+        }
+        shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+
         if (Gdx.input.justTouched()) {
             Vector3 touchPos = new Vector3();
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
