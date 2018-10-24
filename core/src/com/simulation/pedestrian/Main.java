@@ -90,10 +90,10 @@ public class Main extends ApplicationAdapter {
         //セルの描画
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.BLACK);
-        for (PotentialCell cell : environment.getEnvPotentialMap().getPotentialCells()) {
-            shapeRenderer.line(cell.getRightButtomPoint(), cell.getRightTopPoint());
-            shapeRenderer.line(cell.getLeftTopPoint(), cell.getRightTopPoint());
-        }
+//        for (PotentialCell cell : environment.getEnvPotentialMap().getPotentialCells()) {
+//            shapeRenderer.line(cell.getRightButtomPoint(), cell.getRightTopPoint());
+//            shapeRenderer.line(cell.getLeftTopPoint(), cell.getRightTopPoint());
+//        }
         shapeRenderer.end();
 
         //薄い色

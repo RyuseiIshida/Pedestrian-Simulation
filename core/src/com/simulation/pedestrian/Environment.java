@@ -1,5 +1,6 @@
 package com.simulation.pedestrian;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.simulation.pedestrian.Agent.Agent;
 import com.simulation.pedestrian.Obstacle.Obstacle;
@@ -24,6 +25,7 @@ public class Environment {
         step = 0;
         goals = new ArrayList<>(Arrays.asList(Parameter.INITGOAL));
         agents = new ArrayList<>();
+        spawnInitAgents();
         envPotentialMap = new PotentialMap(scale, cellInterval, maxPotential);
         new Obstacle(150, 150, 300, 100, envPotentialMap, obstaclePotential);
     }
@@ -37,7 +39,7 @@ public class Environment {
                     } catch (final Exception l_exception) {
                     }
                 });
-        isGoal();
+        ifAgentInGoal();
         step++;
     }
 
@@ -53,7 +55,7 @@ public class Environment {
         return goals;
     }
 
-    public void isGoal(){
+    public void ifAgentInGoal(){
         Iterator<Agent> iterator = agents.iterator();
         while (iterator.hasNext()) {
             Agent agent = iterator.next();
@@ -77,6 +79,20 @@ public class Environment {
     }
 
     //Agent
+
+    public void spawnInitAgents(){
+        for (int i = 0; i < Parameter.initAgentNum; i++) {
+            float x = MathUtils.random(0, scale.x);
+            float y = MathUtils.random(0, scale.y);
+            Vector2 position = new Vector2(x, y);
+            if(i < Parameter.goalAgentNum){
+                agents.add(new Agent(this, position, Parameter.INITGOAL));
+            }
+            else {
+                agents.add(new Agent(this, position));
+            }
+        }
+    }
 
     public void spawnAgent1(Vector2 pos){
         agents.add(new Agent(this, pos));
