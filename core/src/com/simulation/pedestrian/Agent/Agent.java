@@ -49,8 +49,8 @@ public class Agent {
     //意思決定
     public void decisionMaking() {
         if (goal == null && env.getStep() % Parameter.stepInterval == 0) {
-            isGoal();
             randomWalk();
+            ifGoalInView();
         }
         move(movePos);
     }
@@ -92,19 +92,30 @@ public class Agent {
         return degree;
     }
 
-    public boolean isView(Vector2 targetPos) {
+    public boolean isInView(Vector2 targetPos) {
         float targetDistance = position.dst(targetPos);
         float targetRadian = (float) Math.atan2(targetPos.x - position.x, targetPos.y - position.y);
         float targetDegree = (float) Math.toDegrees(targetRadian);
         if (targetDistance < viewRadius && getDirectionDegree() - targetDegree < viewDegree) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
-    public void isGoal() {//視野内にゴールが入った場合
-
+    public void ifGoalInView() {//視野内にゴールが入った場合
+        for (Goal goal : env.getGoals()) {
+            if(
+                    isInView(goal.getCenter()) ||
+                            isInView(goal.getLeftButtom()) ||
+                            isInView(goal.getLeftTop()) ||
+                            isInView(goal.getRightButtom()) ||
+                            isInView(goal.getRightTop())
+            ){
+                this.goal = goal.getCenter();
+                this.movePos = this.goal;
+                break;
+            }
+        }
     }
 
     public void randomWalk() {
