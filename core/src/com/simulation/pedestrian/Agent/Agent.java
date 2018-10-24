@@ -15,6 +15,8 @@ import java.util.List;
 public class Agent {
     private Environment env;
     private static final float radius = Parameter.agentRadius;
+    private float viewRadius = Parameter.viewRadius;
+    private float viewDegree = Parameter.viewDegree;
     private float speed = Parameter.agentSpeed;
     private String stateTag;
     private Vector2 position;
@@ -44,7 +46,7 @@ public class Agent {
 
     //意思決定
     public void decisionMaking() {
-        if(goal==null && env.getStep() % Parameter.stepInterval == 0){
+        if (goal == null && env.getStep() % Parameter.stepInterval == 0) {
             isGoal();
             randomWalk();
         }
@@ -82,6 +84,20 @@ public class Agent {
         }
     }
 
+    public boolean isView(Vector2 targetPos) {
+        float targetDistance = position.dst(targetPos);
+        float moveRadian = (float) Math.atan2(movePos.x - position.x, movePos.y - position.y);
+        float moveDegree = (float) (moveRadian * 180d / Math.PI);
+        float targetRadian = (float) Math.atan2(targetPos.x - position.x, targetPos.y - position.y);
+        float targetDegree = (float) (targetRadian * 180d / Math.PI);
+        float result = Math.abs(moveDegree - targetDegree);
+        if (targetDistance < viewRadius && result < viewDegree) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public void isGoal() {//視野内にゴールが入った場合
 
     }
@@ -99,4 +115,5 @@ public class Agent {
     public Vector2 getVelocity() {
         return velocity;
     }
+
 }
