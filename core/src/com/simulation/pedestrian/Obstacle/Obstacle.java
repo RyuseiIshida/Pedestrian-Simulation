@@ -9,16 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Obstacle {
-    PotentialMap potentialMap;
-    List<PotentialCell> obstacleCells;
-    float potential;
-    float cellInterval;
+    private PotentialMap potentialMap;
+    private List<PotentialCell> obstacleCells;
+    private float potential;
+    private Tuple startIndex;
+    private Tuple endIndex;
 
     public Obstacle(float x, float y, float w, float h, PotentialMap potentialMap, float potential) {
         this.potentialMap = potentialMap;
         this.obstacleCells = new ArrayList<>();
         this.potential = potential;
-        this.cellInterval = potentialMap.getCellInterval();
         setShapeObstacle(x, y, w, h);
     }
 
@@ -29,13 +29,12 @@ public class Obstacle {
     public void setShapeObstacle(Vector2 position, float w, float h) {
         PotentialCell startCell = potentialMap.getPotentialCell(position);
         PotentialCell endCell = potentialMap.getPotentialCell(new Vector2(position.x + w, position.y + h));
-        Tuple startIndex = potentialMap.getIndex(startCell);
-        Tuple endIndex = potentialMap.getIndex(endCell);
+        startIndex = potentialMap.getIndex(startCell);
+        endIndex = potentialMap.getIndex(endCell);
         List<List<PotentialCell>> matrixCell = potentialMap.getMatrixPotentialCells();
-
         for (int i = startIndex.t1; i <= endIndex.t1; i++) {
             for (int j = startIndex.t2; j <= endIndex.t2; j++) {
-                matrixCell.get(i).get(j).setObstaclePotential(potential);
+                //matrixCell.get(i).get(j).setObstaclePotential(potential);
                 obstacleCells.add(matrixCell.get(i).get(j));
             }
         }
@@ -47,5 +46,13 @@ public class Obstacle {
 
     public List<PotentialCell> getObstacleCells() {
         return obstacleCells;
+    }
+
+    public Tuple getStartIndex() {
+        return startIndex;
+    }
+
+    public Tuple getEndIndex() {
+        return endIndex;
     }
 }

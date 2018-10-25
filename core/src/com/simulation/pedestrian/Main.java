@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.simulation.pedestrian.Agent.Agent;
+import com.simulation.pedestrian.Obstacle.Obstacle;
 import com.simulation.pedestrian.Potential.PotentialCell;
 
 public class Main extends ApplicationAdapter {
@@ -34,7 +35,7 @@ public class Main extends ApplicationAdapter {
 
         bitmapFont = new BitmapFont();
         bitmapFont.setColor(Color.BLACK);
-        bitmapFont.getData().setScale(1);
+        bitmapFont.getData().setScale(2);
         environment = new Environment();
     }
 
@@ -52,15 +53,6 @@ public class Main extends ApplicationAdapter {
         batch.begin();
         bitmapFont.draw(batch, "time " + String.format("%.2f", environment.getStep() / 60), Parameter.SCALE.x - 200, Parameter.SCALE.y - 10);
         bitmapFont.draw(batch, "pedestrian = " + String.format(String.valueOf(environment.getAgents().size())), Parameter.SCALE.x - 450, Parameter.SCALE.y - 10);
-//        //障害物
-//        for (PotentialCell potentialCell : PotentialManager.getEnvPotentialMap().getPotentialCells()) {
-//            shapeRenderer.setColor(Color.FIREBRICK);
-//            float potential = potentialCell.getPotential();
-//            if (potential != 0) {
-//                bitmapFont.draw(batch, String.format("%.1f", potential), potentialCell.getCenterPoint().x, potentialCell.getCenterPoint().y);
-//            }
-//        }
-
         batch.end();
 
         //塗りつぶし
@@ -79,12 +71,21 @@ public class Main extends ApplicationAdapter {
 
         //障害物
         for (PotentialCell PotentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
-            shapeRenderer.setColor(Color.DARK_GRAY);
+            shapeRenderer.setColor(Color.FIREBRICK);
             if (PotentialCell.getObstaclePotential() != 0) {
                 shapeRenderer.rect(PotentialCell.getLeftButtomPoint().x, PotentialCell.getLeftButtomPoint().y, PotentialCell.getCellInterval(), PotentialCell.getCellInterval());
                 shapeRenderer.rect(PotentialCell.getLeftButtomPoint().x, PotentialCell.getLeftButtomPoint().y, PotentialCell.getCellInterval(), PotentialCell.getCellInterval());
             }
         }
+
+        for (Obstacle obstacle : environment.getObstacles()) {
+            for (PotentialCell obstacleCell : obstacle.getObstacleCells()) {
+                shapeRenderer.setColor(Color.DARK_GRAY);
+                shapeRenderer.rect(obstacleCell.getLeftButtomPoint().x, obstacleCell.getLeftButtomPoint().y, obstacleCell.getCellInterval(), obstacleCell.getCellInterval());
+                shapeRenderer.rect(obstacleCell.getLeftButtomPoint().x, obstacleCell.getLeftButtomPoint().y, obstacleCell.getCellInterval(), obstacleCell.getCellInterval());
+            }
+        }
+
         shapeRenderer.end();
 
         //セルの描画
