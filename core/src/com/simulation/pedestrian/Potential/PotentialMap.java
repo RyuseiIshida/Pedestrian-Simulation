@@ -57,17 +57,17 @@ public class PotentialMap {
         //線形探索
         int x = 0;
         for (int i = 0; i < matrixPotentialCells.size(); i++) {
-            x++;
             if (targetPosition.x < matrixPotentialCells.get(i).get(0).getRightButtomPoint().x) {
                 break;
             }
+            x++;
         }
         int y = 0;
         for (int i = 0; i < matrixPotentialCells.get(0).size(); i++) {
-            y++;
             if (targetPosition.y < matrixPotentialCells.get(0).get(i).getRightTopPoint().y) {
                 break;
             }
+            y++;
         }
         return new Tuple(x, y);
     }
