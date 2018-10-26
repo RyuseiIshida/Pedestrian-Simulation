@@ -11,10 +11,11 @@ public final class Parameter {
     //Environment
     public static final Vector2 SCALE = new Vector2(800*1.5f, 480*1.5f);
     public static final Goal INITGOAL = new Goal(0,0,30,50);
-    public static final float CELLINTERVAL = 5;
+    public static final float CELLINTERVAL = 50;
 
     //Potential
     public static final float MAXPOTENTIAL = 0;
+    public static final float AGENTPOTENTIAL = 1;
     public static final float OBSTACLEPOTENTIAL = 5;
 
     //Agent

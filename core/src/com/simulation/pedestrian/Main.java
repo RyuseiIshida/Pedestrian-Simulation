@@ -58,9 +58,19 @@ public class Main extends ApplicationAdapter {
         //塗りつぶし
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (Agent agent : environment.getAgents()) {//Agent
+        //Agent
+        for (Agent agent : environment.getAgents()) {
             shapeRenderer.setColor(Color.GRAY);
             shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius);
+        }
+
+        //AgentPotentialCell
+        for (PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
+            shapeRenderer.setColor(Color.BLUE);
+            if(potentialCell.getAgentPotential() != 0){
+                shapeRenderer.rect(potentialCell.getLeftButtomPoint().x, potentialCell.getLeftButtomPoint().y, potentialCell.getCellInterval(), potentialCell.getCellInterval());
+                shapeRenderer.rect(potentialCell.getLeftButtomPoint().x, potentialCell.getLeftButtomPoint().y, potentialCell.getCellInterval(), potentialCell.getCellInterval());
+            }
         }
 
         //出口
@@ -70,11 +80,11 @@ public class Main extends ApplicationAdapter {
         }
 
         //障害物
-        for (PotentialCell PotentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
+        for (PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
             shapeRenderer.setColor(Color.FIREBRICK);
-            if (PotentialCell.getObstaclePotential() != 0) {
-                shapeRenderer.rect(PotentialCell.getLeftButtomPoint().x, PotentialCell.getLeftButtomPoint().y, PotentialCell.getCellInterval(), PotentialCell.getCellInterval());
-                shapeRenderer.rect(PotentialCell.getLeftButtomPoint().x, PotentialCell.getLeftButtomPoint().y, PotentialCell.getCellInterval(), PotentialCell.getCellInterval());
+            if (potentialCell.getObstaclePotential() != 0) {
+                shapeRenderer.rect(potentialCell.getLeftButtomPoint().x, potentialCell.getLeftButtomPoint().y, potentialCell.getCellInterval(), potentialCell.getCellInterval());
+                shapeRenderer.rect(potentialCell.getLeftButtomPoint().x, potentialCell.getLeftButtomPoint().y, potentialCell.getCellInterval(), potentialCell.getCellInterval());
             }
         }
 
@@ -86,15 +96,19 @@ public class Main extends ApplicationAdapter {
             }
         }
 
+        for (PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
+
+        }
+
         shapeRenderer.end();
 
         //セルの描画
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.BLACK);
-//        for (PotentialCell cell : environment.getEnvPotentialMap().getPotentialCells()) {
-//            shapeRenderer.line(cell.getRightButtomPoint(), cell.getRightTopPoint());
-//            shapeRenderer.line(cell.getLeftTopPoint(), cell.getRightTopPoint());
-//        }
+        for (PotentialCell cell : environment.getEnvPotentialMap().getPotentialCells()) {
+            shapeRenderer.line(cell.getRightButtomPoint(), cell.getRightTopPoint());
+            shapeRenderer.line(cell.getLeftTopPoint(), cell.getRightTopPoint());
+        }
         shapeRenderer.end();
 
         //薄い色

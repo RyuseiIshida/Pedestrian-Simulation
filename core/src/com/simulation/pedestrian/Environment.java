@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.simulation.pedestrian.Agent.Agent;
 import com.simulation.pedestrian.Obstacle.Obstacle;
+import com.simulation.pedestrian.Potential.PotentialCell;
 import com.simulation.pedestrian.Potential.PotentialMap;
 import com.simulation.pedestrian.Util.Tuple;
 
@@ -30,7 +31,7 @@ public class Environment {
         spawnInitAgents();
         envPotentialMap = new PotentialMap(scale, cellInterval, maxPotential);
         obstacles = new ArrayList<>();
-        obstacles.add(new Obstacle(150, 150, 300, 100, envPotentialMap, obstaclePotential));
+        //obstacles.add(new Obstacle(150, 150, 300, 100, envPotentialMap, obstaclePotential));
         setObstaclePotential();
     }
 
@@ -43,6 +44,7 @@ public class Environment {
                     } catch (final Exception l_exception) {
                     }
                 });
+        setAgentPotential();
         ifAgentInGoal();
         step++;
     }
@@ -80,6 +82,16 @@ public class Environment {
 
     public PotentialMap getEnvPotentialMap() {
         return envPotentialMap;
+    }
+
+    public void setAgentPotential() {
+        for (PotentialCell potentialCell : envPotentialMap.getPotentialCells()) {
+            potentialCell.setAgentPotential(0);
+        }
+        for (Agent agent : agents) {
+            PotentialCell targetCell = envPotentialMap.getPotentialCell(agent.getPosition());
+            targetCell.setAgentPotential(Parameter.AGENTPOTENTIAL);
+        }
     }
 
     public void setObstaclePotential() {
