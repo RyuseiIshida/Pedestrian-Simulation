@@ -23,13 +23,13 @@ public class Agent {
     private Vector2 goal;
     private Vector2 movePos;
     private Vector2 velocity;
-
+    private Agent followAgent;
 
     public Agent(Environment env, Vector2 position) {
         this.env = env;
         this.position = position;
         this.movePos = position;
-        this.velocity = new Vector2(0,0);
+        this.velocity = new Vector2(0, 0);
     }
 
     public Agent(Environment env, Vector2 position, Goal goal) {
@@ -38,21 +38,27 @@ public class Agent {
         this.position = position;
         this.goal = goal.getPosition();
         this.movePos = goal.getCenter();
-        this.velocity = new Vector2(0,0);
+        this.velocity = new Vector2(0, 0);
     }
 
 
     public void action() throws Exception {
         decisionMaking();
+        move(movePos);
     }
 
     //意思決定
     public void decisionMaking() {
-        if (goal == null && env.getStep() % Parameter.stepInterval == 0) {
-            randomWalk();
-            ifGoalInView();
+        ifGoalInView();
+        if(stateTag == StateTag.follow) {
+            followAgent();
         }
-        move(movePos);
+        if (env.getStep() % Parameter.stepInterval == 0
+                && !(stateTag == StateTag.moveGoal)
+                && !(stateTag == StateTag.follow)) {
+            randomWalk();
+            judgeCrowd();
+        }
     }
 
     public void move(Vector2 movePos) {
@@ -86,7 +92,7 @@ public class Agent {
         }
     }
 
-    public float getDirectionDegree(){
+    public float getDirectionDegree() {
         float radian = (float) Math.atan2(velocity.y, velocity.x);
         float degree = (float) Math.toDegrees(radian);
         return degree;
@@ -104,13 +110,14 @@ public class Agent {
 
     public void ifGoalInView() {//視野内にゴールが入った場合
         for (Goal goal : env.getGoals()) {
-            if(
+            if (
                     isInView(goal.getCenter()) ||
                             isInView(goal.getLeftButtom()) ||
                             isInView(goal.getLeftTop()) ||
                             isInView(goal.getRightButtom()) ||
                             isInView(goal.getRightTop())
-            ){
+            ) {
+                this.stateTag = StateTag.moveGoal;
                 this.goal = goal.getCenter();
                 this.movePos = this.goal;
                 break;
@@ -122,6 +129,29 @@ public class Agent {
         float posX = MathUtils.random(Parameter.SCALE.x);
         float posY = MathUtils.random(Parameter.SCALE.y);
         movePos = new Vector2(posX, posY);
+    }
+
+    public void judgeCrowd() {
+        ArrayList<Agent> followAgents = new ArrayList<>();
+        for (Agent agent : env.getAgents()) {
+            if (!(this.equals(agent)) && isInView(agent.getPosition())) {
+                followAgents.add(agent);
+            }
+            if (followAgents.size() >= Parameter.followNum
+                    && !(agent.getStateTag() == StateTag.follow)
+                    && !(stateTag == StateTag.follow)) {
+                stateTag = StateTag.follow;
+                followAgent = agent;
+            }
+        }
+    }
+    
+    public void followAgent(){
+        movePos = followAgent.getPosition();
+    }
+
+    public String getStateTag() {
+        return stateTag;
     }
 
     public Vector2 getPosition() {

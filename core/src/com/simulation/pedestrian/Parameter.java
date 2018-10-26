@@ -20,6 +20,7 @@ public final class Parameter {
     //Agent
     public static final int initAgentNum = 10;
     public static final int goalAgentNum = 3;
+    public static final int followNum = 2;
     public static final float agentSpeed = 1;
     public static final float agentRadius = 10;
     public static final float viewRadius = 100;
