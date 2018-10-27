@@ -27,6 +27,7 @@ public class Agent {
 
     public Agent(Environment env, Vector2 position) {
         this.env = env;
+        this.stateTag = "";
         this.position = position;
         this.movePos = position;
         this.velocity = new Vector2(0, 0);

@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.simulation.pedestrian.Agent.Agent;
+import com.simulation.pedestrian.Agent.StateTag;
 import com.simulation.pedestrian.Obstacle.Obstacle;
 import com.simulation.pedestrian.Potential.PotentialCell;
 
@@ -62,7 +63,29 @@ public class Main extends ApplicationAdapter {
         for (Agent agent : environment.getAgents()) {
             shapeRenderer.setColor(Color.GRAY);
             shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius);
+            //state
+            if(agent.getStateTag() == StateTag.randomWalk) {
+                shapeRenderer.setColor(Color.NAVY);
+                shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius);
+            }
+
+            float range = 0.7f;
+            switch (agent.getStateTag()){
+                case StateTag.moveGoal :
+                    shapeRenderer.setColor(Color.RED);
+                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
+                    break;
+                case StateTag.follow:
+                    shapeRenderer.setColor(Color.GREEN);
+                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
+                    break;
+                case StateTag.randomWalk :
+                    shapeRenderer.setColor(Color.BLACK);
+                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
+                    break;
+            }
         }
+
 
         //AgentPotentialCell
 //        for (PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
@@ -116,11 +139,11 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(new Color(0, 1, 0, 0.5f));
-        for (Agent agent : environment.getAgents()) {
-            float moveDegree = agent.getDirectionDegree();
-            moveDegree -= Parameter.viewDegree / 2;
-            shapeRenderer.arc(agent.getPosition().x , agent.getPosition().y, Parameter.viewRadius, moveDegree, Parameter.viewDegree);
-        }
+//        for (Agent agent : environment.getAgents()) {
+//            float moveDegree = agent.getDirectionDegree();
+//            moveDegree -= Parameter.viewDegree / 2;
+//            shapeRenderer.arc(agent.getPosition().x , agent.getPosition().y, Parameter.viewRadius, moveDegree, Parameter.viewDegree);
+//        }
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
