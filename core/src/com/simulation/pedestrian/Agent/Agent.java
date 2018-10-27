@@ -78,16 +78,15 @@ public class Agent {
         //TODO BAG:範囲外のインデックス参照
         for (int i = index.t1 - range; i <= index.t1 + range; i++) {
             for (int j = index.t2 - range; j <= index.t2 + range; j++) {
-                nearCell.add(env.getEnvPotentialMap().getMatrixPotentialCell(i, j));
+                if(!(index.t1 == i && index.t2 == j)) {
+                    nearCell.add(env.getEnvPotentialMap().getMatrixPotentialCell(i, j));
+                }
             }
         }
         for (PotentialCell potentialCell : nearCell) {
             if (potentialCell.getPotential() != 0) {
                 Vector2 pVec = Vector.direction(potentialCell.getCenterPoint(), position);
-                float px = 0, py = 0;
-                px = pVec.x;
-                py = pVec.y;
-                direction.add(px, py).nor();
+                direction.add(pVec.x, pVec.y).nor();
             }
         }
     }
@@ -145,7 +144,7 @@ public class Agent {
             }
         }
     }
-    
+
     public void followAgent(){
         movePos = followAgent.getPosition();
     }

@@ -65,13 +65,13 @@ public class Main extends ApplicationAdapter {
         }
 
         //AgentPotentialCell
-        for (PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
-            shapeRenderer.setColor(Color.BLUE);
-            if(potentialCell.getAgentPotential() != 0){
-                shapeRenderer.rect(potentialCell.getLeftButtomPoint().x, potentialCell.getLeftButtomPoint().y, potentialCell.getCellInterval(), potentialCell.getCellInterval());
-                shapeRenderer.rect(potentialCell.getLeftButtomPoint().x, potentialCell.getLeftButtomPoint().y, potentialCell.getCellInterval(), potentialCell.getCellInterval());
-            }
-        }
+//        for (PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
+//            shapeRenderer.setColor(Color.BLUE);
+//            if(potentialCell.getAgentPotential() != 0){
+//                shapeRenderer.rect(potentialCell.getLeftButtomPoint().x, potentialCell.getLeftButtomPoint().y, potentialCell.getCellInterval(), potentialCell.getCellInterval());
+//                shapeRenderer.rect(potentialCell.getLeftButtomPoint().x, potentialCell.getLeftButtomPoint().y, potentialCell.getCellInterval(), potentialCell.getCellInterval());
+//            }
+//        }
 
         //出口
         for (Goal goal : environment.getGoals()) {
@@ -105,10 +105,10 @@ public class Main extends ApplicationAdapter {
         //セルの描画
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.BLACK);
-        for (PotentialCell cell : environment.getEnvPotentialMap().getPotentialCells()) {
-            shapeRenderer.line(cell.getRightButtomPoint(), cell.getRightTopPoint());
-            shapeRenderer.line(cell.getLeftTopPoint(), cell.getRightTopPoint());
-        }
+//        for (PotentialCell cell : environment.getEnvPotentialMap().getPotentialCells()) {
+//            shapeRenderer.line(cell.getRightButtomPoint(), cell.getRightTopPoint());
+//            shapeRenderer.line(cell.getLeftTopPoint(), cell.getRightTopPoint());
+//        }
         shapeRenderer.end();
 
         //薄い色
@@ -116,11 +116,11 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(new Color(0, 1, 0, 0.5f));
-        for (Agent agent : environment.getAgents()) {
-            float moveDegree = agent.getDirectionDegree();
-            moveDegree -= Parameter.viewDegree / 2;
-            shapeRenderer.arc(agent.getPosition().x , agent.getPosition().y, Parameter.viewRadius, moveDegree, Parameter.viewDegree);
-        }
+//        for (Agent agent : environment.getAgents()) {
+//            float moveDegree = agent.getDirectionDegree();
+//            moveDegree -= Parameter.viewDegree / 2;
+//            shapeRenderer.arc(agent.getPosition().x , agent.getPosition().y, Parameter.viewRadius, moveDegree, Parameter.viewDegree);
+//        }
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
