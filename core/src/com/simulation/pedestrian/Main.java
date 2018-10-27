@@ -116,11 +116,11 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(new Color(0, 1, 0, 0.5f));
-//        for (Agent agent : environment.getAgents()) {
-//            float moveDegree = agent.getDirectionDegree();
-//            moveDegree -= Parameter.viewDegree / 2;
-//            shapeRenderer.arc(agent.getPosition().x , agent.getPosition().y, Parameter.viewRadius, moveDegree, Parameter.viewDegree);
-//        }
+        for (Agent agent : environment.getAgents()) {
+            float moveDegree = agent.getDirectionDegree();
+            moveDegree -= Parameter.viewDegree / 2;
+            shapeRenderer.arc(agent.getPosition().x , agent.getPosition().y, Parameter.viewRadius, moveDegree, Parameter.viewDegree);
+        }
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
 

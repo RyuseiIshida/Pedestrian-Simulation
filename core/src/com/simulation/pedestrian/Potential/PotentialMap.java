@@ -22,7 +22,7 @@ public class PotentialMap {
         initCell();
     }
 
-    public void initCell() {
+    private void initCell() {
         for (int i = 0; i <= scale.x; i += cellInterval) {
             ArrayList<PotentialCell> array = new ArrayList<>();
             for (int j = 0; j <= scale.y; j += cellInterval) {

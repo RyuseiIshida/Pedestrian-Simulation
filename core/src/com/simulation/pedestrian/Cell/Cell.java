@@ -45,12 +45,4 @@ public class Cell {
         return centerPoint;
     }
 
-    public ArrayList getCellPoints() {
-        ArrayList<Vector2> cellPoints = new ArrayList<>();
-        cellPoints.add(getLeftButtomPoint());
-        cellPoints.add(getLeftTopPoint());
-        cellPoints.add(getRightButtomPoint());
-        cellPoints.add(getRightTopPoint());
-        return cellPoints;
-    }
 }

@@ -48,7 +48,7 @@ public class Agent {
     }
 
     //意思決定
-    public void decisionMaking() {
+    private void decisionMaking() {
         ifGoalInView();
         if(stateTag == StateTag.follow) {
             followAgent();
@@ -61,17 +61,15 @@ public class Agent {
         }
     }
 
-    public void move(Vector2 movePos) {
+    private void move(Vector2 movePos) {
         Vector2 direction = Vector.direction(position, movePos);
         setPotentialVector(direction);
         //TODO 掛け算じゃなくて足し算でスピードを変化できるようにする
         velocity = direction.scl(speed);
         position.add(velocity);
-        //TODO PotentialManagerに実装する
-//        PotentialManager.setAgentPotential(this);
     }
 
-    public void setPotentialVector(Vector2 direction) {
+    private void setPotentialVector(Vector2 direction) {
         List<PotentialCell> nearCell = new ArrayList<>();
         Tuple index = env.getEnvPotentialMap().getIndex(position);
         int range = 1;
@@ -107,7 +105,7 @@ public class Agent {
         return false;
     }
 
-    public void ifGoalInView() {//視野内にゴールが入った場合
+    private void ifGoalInView() {//視野内にゴールが入った場合
         for (Goal goal : env.getGoals()) {
             if (
                     isInView(goal.getCenter()) ||
@@ -124,13 +122,14 @@ public class Agent {
         }
     }
 
-    public void randomWalk() {
+    private void randomWalk() {
+        stateTag = StateTag.randomWalk;
         float posX = MathUtils.random(Parameter.SCALE.x);
         float posY = MathUtils.random(Parameter.SCALE.y);
         movePos = new Vector2(posX, posY);
     }
 
-    public void judgeCrowd() {
+    private void judgeCrowd() {
         ArrayList<Agent> followAgents = new ArrayList<>();
         for (Agent agent : env.getAgents()) {
             if (!(this.equals(agent)) && isInView(agent.getPosition())) {
@@ -145,7 +144,7 @@ public class Agent {
         }
     }
 
-    public void followAgent(){
+    private void followAgent(){
         movePos = followAgent.getPosition();
     }
 
@@ -155,10 +154,6 @@ public class Agent {
 
     public Vector2 getPosition() {
         return position;
-    }
-
-    public Vector2 getVelocity() {
-        return velocity;
     }
 
 }

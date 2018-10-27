@@ -61,7 +61,7 @@ public class Environment {
         return goals;
     }
 
-    public void ifAgentInGoal() {
+    private void ifAgentInGoal() {
         Iterator<Agent> iterator = agents.iterator();
         while (iterator.hasNext()) {
             Agent agent = iterator.next();
@@ -84,7 +84,7 @@ public class Environment {
         return envPotentialMap;
     }
 
-    public void setAgentPotential() {
+    private void setAgentPotential() {
         for (PotentialCell potentialCell : envPotentialMap.getPotentialCells()) {
             potentialCell.setAgentPotential(0);
         }
@@ -94,7 +94,7 @@ public class Environment {
         }
     }
 
-    public void setObstaclePotential() {
+    private void setObstaclePotential() {
         for (Obstacle obstacle : obstacles) {
             Tuple startIndex = obstacle.getStartIndex();
             Tuple endIndex = obstacle.getEndIndex();
@@ -116,7 +116,7 @@ public class Environment {
         return obstacles;
     }
 
-    public int manhattanDistance(Tuple startIndex, Tuple endIndex, Tuple targetIndex) {
+    private int manhattanDistance(Tuple startIndex, Tuple endIndex, Tuple targetIndex) {
         int minDistance = 0;
         for (Obstacle obstacle : obstacles) {
             for (int i = startIndex.t1; i <= endIndex.t2; i++) {
@@ -134,7 +134,7 @@ public class Environment {
 
     //Agent
 
-    public void spawnInitAgents() {
+    private void spawnInitAgents() {
         for (int i = 0; i < Parameter.initAgentNum; i++) {
             float x = MathUtils.random(0, scale.x);
             float y = MathUtils.random(0, scale.y);
