@@ -150,22 +150,24 @@ public class Main extends ApplicationAdapter {
 
         //Input処理
         if(Gdx.input.isTouched()){
-            if (Gdx.input.justTouched()) {
-                Vector3 touchPos = new Vector3();
+            Vector3 touchPos = new Vector3();
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touchPos);
+            if(Gdx.input.isKeyPressed(Input.Keys.O)) environment.spawnObstacle(new Vector2(touchPos.x, touchPos.y));
+            else if(Gdx.input.justTouched()) {
                 touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
                 camera.unproject(touchPos);
                 System.out.println("touchPos = " + touchPos);
                 if (Gdx.input.isKeyPressed(Input.Keys.F)) environment.spawnAgent1(new Vector2(touchPos.x, touchPos.y));
-                else if(Gdx.input.isKeyPressed(Input.Keys.O)) environment.spawnObstacle(new Vector2(touchPos.x, touchPos.y));
+                //if(Gdx.input.isKeyPressed(Input.Keys.O)) environment.spawnObstacle(new Vector2(touchPos.x, touchPos.y));
                 else environment.spawnAgent2(new Vector2(touchPos.x, touchPos.y));
             }
         }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
             environment.getAgents().clear();
             environment.setStep(0);
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             PLAY = PLAY ? false : true;
         }
     }

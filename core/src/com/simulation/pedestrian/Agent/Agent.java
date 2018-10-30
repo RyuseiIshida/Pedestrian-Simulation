@@ -80,7 +80,8 @@ public class Agent {
                         && i >= 0
                         && j >= 0
                         && i <= env.getEnvPotentialMap().getLastIndex().t1
-                        && j <= env.getEnvPotentialMap().getLastIndex().t2) {
+                        && j <= env.getEnvPotentialMap().getLastIndex().t2
+                ) {
                     nearCell.add(env.getEnvPotentialMap().getMatrixPotentialCell(i, j));
                 }
             }
@@ -111,12 +112,11 @@ public class Agent {
 
     private void ifGoalInView() {//視野内にゴールが入った場合
         for (Goal goal : env.getGoals()) {
-            if (
-                    isInView(goal.getCenter()) ||
-                            isInView(goal.getLeftButtom()) ||
-                            isInView(goal.getLeftTop()) ||
-                            isInView(goal.getRightButtom()) ||
-                            isInView(goal.getRightTop())
+            if (isInView(goal.getCenter())
+                            || isInView(goal.getLeftButtom())
+                            || isInView(goal.getLeftTop())
+                            || isInView(goal.getRightButtom())
+                            || isInView(goal.getRightTop())
             ) {
                 this.stateTag = StateTag.moveGoal;
                 this.goal = goal.getCenter();
