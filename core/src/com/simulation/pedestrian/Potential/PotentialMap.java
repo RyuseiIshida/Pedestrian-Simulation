@@ -76,6 +76,27 @@ public class PotentialMap {
         return getIndex(targetCell.getCenterPoint());
     }
 
+    public Tuple getLeftButtomIndex() {
+        return new Tuple(0,0);
+    }
+
+    public Tuple getLeftTopIndex() {
+        return new Tuple(0, matrixPotentialCells.get(0).size()-1);
+    }
+
+    public Tuple getRightButtomIndex() {
+        return new Tuple(matrixPotentialCells.size()-1, 0);
+    }
+
+    public Tuple getRightTopIndex() {
+        return new Tuple(matrixPotentialCells.size()-1, matrixPotentialCells.get(0).size()-1);
+    }
+
+    public Tuple getLastIndex() {
+        return getRightTopIndex();
+    }
+
+
     public float getCellInterval() {
         return cellInterval;
     }
