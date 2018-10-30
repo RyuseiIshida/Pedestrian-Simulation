@@ -168,4 +168,7 @@ public class Agent {
         return position;
     }
 
+    public Agent getFollowAgent() {
+        return followAgent;
+    }
 }
