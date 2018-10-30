@@ -24,6 +24,7 @@ public class Agent {
     private Vector2 movePos;
     private Vector2 velocity;
     private Agent followAgent;
+    private Agent follower;
 
     public Agent(Environment env, Vector2 position) {
         this.env = env;
@@ -58,7 +59,7 @@ public class Agent {
                 && !(stateTag == StateTag.moveGoal)
                 && !(stateTag == StateTag.follow)
         ) {
-            int random = MathUtils.random(0,2);
+            int random = MathUtils.random(0,1);
             switch (random){
                 case 0:
                     randomWalk();
@@ -144,15 +145,26 @@ public class Agent {
     private void judgeCrowd() {
         ArrayList<Agent> followAgents = new ArrayList<>();
         for (Agent agent : env.getAgents()) {
-            if (!(this.equals(agent)) && isInView(agent.getPosition())) {
+            if (isInView(agent.getPosition())
+                    && !(agent.equals(this))
+                    && agent.getStateTag() != StateTag.follow
+                    && stateTag != StateTag.follow
+            ) {
                 followAgents.add(agent);
             }
-            if (followAgents.size() >= Parameter.followNum
-                    && !(agent.getStateTag() == StateTag.follow)
-                    && !(stateTag == StateTag.follow)) {
+            if (followAgents.size() >= Parameter.followNum) {
                 stateTag = StateTag.follow;
                 followAgent = agent;
+                agent.setFollower(this);
             }
+        }
+    }
+
+    public void setFollower(Agent follower){
+        this.follower = follower;
+        if(follower != null){
+            stateTag = "";
+            followAgent = null;
         }
     }
 
