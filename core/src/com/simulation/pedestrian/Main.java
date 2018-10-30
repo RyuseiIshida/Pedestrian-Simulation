@@ -27,6 +27,10 @@ public class Main extends ApplicationAdapter {
     private boolean PLAY = false;
     private Environment environment;
 
+    //drawFlag
+    private boolean drawCell = false;
+    private boolean drawView = false;
+
     @Override
     public void create() {
         camera = new OrthographicCamera();
@@ -128,24 +132,34 @@ public class Main extends ApplicationAdapter {
         //セルの描画
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.BLACK);
-//        for (PotentialCell cell : environment.getEnvPotentialMap().getPotentialCells()) {
-//            shapeRenderer.line(cell.getRightButtomPoint(), cell.getRightTopPoint());
-//            shapeRenderer.line(cell.getLeftTopPoint(), cell.getRightTopPoint());
-//        }
+        if(drawCell) {
+            for (PotentialCell cell : environment.getEnvPotentialMap().getPotentialCells()) {
+                shapeRenderer.line(cell.getRightButtomPoint(), cell.getRightTopPoint());
+                shapeRenderer.line(cell.getLeftTopPoint(), cell.getRightTopPoint());
+            }
+        }
+        for (Agent agent : environment.getAgents()) {
+            shapeRenderer.setColor(Color.BLACK);
+            if(agent.getFollowAgent() != null) {
+                shapeRenderer.line(agent.getPosition(), agent.getFollowAgent().getPosition());
+            }
+        }
         shapeRenderer.end();
 
         //薄い色
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(new Color(0, 1, 0, 0.5f));
-//        for (Agent agent : environment.getAgents()) {
-//            float moveDegree = agent.getDirectionDegree();
-//            moveDegree -= Parameter.viewDegree / 2;
-//            shapeRenderer.arc(agent.getPosition().x , agent.getPosition().y, Parameter.viewRadius, moveDegree, Parameter.viewDegree);
-//        }
-        shapeRenderer.end();
-        Gdx.gl.glDisable(GL20.GL_BLEND);
+        if(drawView) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(new Color(0, 1, 0, 0.5f));
+            for (Agent agent : environment.getAgents()) {
+                float moveDegree = agent.getDirectionDegree();
+                moveDegree -= Parameter.viewDegree / 2;
+                shapeRenderer.arc(agent.getPosition().x, agent.getPosition().y, Parameter.viewRadius, moveDegree, Parameter.viewDegree);
+            }
+            shapeRenderer.end();
+            Gdx.gl.glDisable(GL20.GL_BLEND);
+        }
 
 
         //Input処理
@@ -169,6 +183,12 @@ public class Main extends ApplicationAdapter {
         }
         else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             PLAY = PLAY ? false : true;
+        }
+        else if(Gdx.input.isKeyJustPressed(Input.Keys.C)){
+            drawCell = drawCell ? false : true;
+        }
+        else if(Gdx.input.isKeyJustPressed(Input.Keys.V)){
+            drawView = drawView ? false : true;
         }
     }
 
