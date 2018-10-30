@@ -73,11 +73,14 @@ public class Agent {
     private void setPotentialVector(Vector2 direction) {
         List<PotentialCell> nearCell = new ArrayList<>();
         Tuple index = env.getEnvPotentialMap().getIndex(position);
-        int range = 1;
-        //TODO BAG:範囲外のインデックス参照
+        int range = 2;
         for (int i = index.t1 - range; i <= index.t1 + range; i++) {
             for (int j = index.t2 - range; j <= index.t2 + range; j++) {
-                if(!(index.t1 == i && index.t2 == j)) {
+                if(!(index.t1 == i && index.t2 == j)
+                        && i >= 0
+                        && j >= 0
+                        && i <= env.getEnvPotentialMap().getLastIndex().t1
+                        && j <= env.getEnvPotentialMap().getLastIndex().t2) {
                     nearCell.add(env.getEnvPotentialMap().getMatrixPotentialCell(i, j));
                 }
             }
