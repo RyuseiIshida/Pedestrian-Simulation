@@ -82,7 +82,7 @@ public class Agent {
     private void setPotentialVector(Vector2 direction) {
         List<PotentialCell> nearCell = new ArrayList<>();
         Tuple index = env.getEnvPotentialMap().getIndex(position);
-        int range = 2;
+        int range = 10;
         for (int i = index.t1 - range; i <= index.t1 + range; i++) {
             for (int j = index.t2 - range; j <= index.t2 + range; j++) {
                 if(!(index.t1 == i && index.t2 == j)
@@ -142,34 +142,73 @@ public class Agent {
         movePos = new Vector2(posX, posY);
     }
 
+//    private void judgeCrowd() {
+//        ArrayList<Agent> followAgents = new ArrayList<>();
+//        for (Agent agent : env.getAgents()) {
+//            if (isInView(agent.getPosition())
+//                    && !(agent.equals(this))
+//                    && agent.getStateTag() != StateTag.follow
+//                    && stateTag != StateTag.follow
+//            ) {
+//                followAgents.add(agent);
+//            }
+//            if (followAgents.size() >= Parameter.followNum) {
+//                stateTag = StateTag.follow;
+//                followAgent = agent;
+//                agent.setFollower(this);
+//            }
+//        }
+//    }
+//    private void judgeCrowd() {
+//        for (Agent agent : env.getAgents()) {
+//            if (isInView(agent.getPosition())
+//                    && !(agent.equals(this))
+//                    && stateTag != StateTag.follow
+//                    && agent.getStateTag() != StateTag.follow
+//            ) {
+//                stateTag = StateTag.follow;
+//                followAgent = agent;
+//                Crowd.add(this, agent);
+//                agent.setFollower(this);
+//            }
+//        }
+//    }
     private void judgeCrowd() {
-        ArrayList<Agent> followAgents = new ArrayList<>();
+        List<Agent> list = new ArrayList<>();
         for (Agent agent : env.getAgents()) {
             if (isInView(agent.getPosition())
                     && !(agent.equals(this))
-                    && agent.getStateTag() != StateTag.follow
                     && stateTag != StateTag.follow
+                    && agent.getStateTag() != StateTag.follow
             ) {
-                followAgents.add(agent);
+                list.add(agent);
             }
-            if (followAgents.size() >= Parameter.followNum) {
+            if(list.size() >= 2){
                 stateTag = StateTag.follow;
                 followAgent = agent;
+                Crowd.add(this, agent);
                 agent.setFollower(this);
+            } else {
+                randomWalk();
             }
         }
     }
 
     public void setFollower(Agent follower){
         this.follower = follower;
-        if(follower != null){
-            stateTag = "";
-            followAgent = null;
-        }
+//        if(follower != null){
+//            stateTag = "";
+//            followAgent = null;
+//        }
     }
 
     private void followAgent(){
         movePos = followAgent.getPosition();
+        float distance =  position.dst(followAgent.getPosition());
+        if(distance > 200){
+            stateTag = "";
+            followAgent = null;
+        }
     }
 
     public String getStateTag() {
