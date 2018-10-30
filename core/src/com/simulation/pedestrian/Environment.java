@@ -159,7 +159,7 @@ public class Environment {
 
     //Agent
 
-    private void spawnInitAgents() {
+    public void spawnInitAgents() {
         for (int i = 0; i < Parameter.initAgentNum; i++) {
             float x = MathUtils.random(0, scale.x);
             float y = MathUtils.random(0, scale.y);

@@ -181,6 +181,9 @@ public class Main extends ApplicationAdapter {
             environment.getAgents().clear();
             environment.setStep(0);
         }
+        else if(Gdx.input.isKeyJustPressed((Input.Keys.P))) {
+            environment.spawnInitAgents();
+        }
         else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             PLAY = PLAY ? false : true;
         }
