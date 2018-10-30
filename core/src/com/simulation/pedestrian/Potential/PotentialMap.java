@@ -23,9 +23,9 @@ public class PotentialMap {
     }
 
     private void initCell() {
-        for (int i = 0; i <= scale.x; i += cellInterval) {
+        for (int i = 0 - (int)cellInterval; i <= scale.x; i += cellInterval) {
             ArrayList<PotentialCell> array = new ArrayList<>();
-            for (int j = 0; j <= scale.y; j += cellInterval) {
+            for (int j = 0 - (int)cellInterval; j <= scale.y; j += cellInterval) {
                 PotentialCell cell = new PotentialCell(new Vector2(i, j), cellInterval, maxPotential);
                 potentialCells.add(cell);
                 array.add(cell);
@@ -76,7 +76,7 @@ public class PotentialMap {
         return getIndex(targetCell.getCenterPoint());
     }
 
-    public Tuple getLeftButtomIndex() {
+    public Tuple getLeftBottomIndex() {
         return new Tuple(0,0);
     }
 

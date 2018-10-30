@@ -56,9 +56,17 @@ public class Agent {
         }
         if (env.getStep() % Parameter.stepInterval == 0
                 && !(stateTag == StateTag.moveGoal)
-                && !(stateTag == StateTag.follow)) {
-            randomWalk();
-            judgeCrowd();
+                && !(stateTag == StateTag.follow)
+        ) {
+            int random = MathUtils.random(0,2);
+            switch (random){
+                case 0:
+                    randomWalk();
+                    break;
+                case 1:
+                    judgeCrowd();
+                    break;
+            }
         }
     }
 
