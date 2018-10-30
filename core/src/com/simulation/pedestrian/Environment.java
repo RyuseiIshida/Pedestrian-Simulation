@@ -31,7 +31,8 @@ public class Environment {
         spawnInitAgents();
         envPotentialMap = new PotentialMap(scale, cellInterval, maxPotential);
         obstacles = new ArrayList<>();
-        obstacles.add(new Obstacle(150, 150, 300, 100, envPotentialMap, obstaclePotential));
+        //obstacles.add(new Obstacle(150, 150, 300, 100, envPotentialMap, obstaclePotential));
+        setEdgePotential();
         setObstaclePotential();
     }
 
@@ -82,6 +83,25 @@ public class Environment {
 
     public PotentialMap getEnvPotentialMap() {
         return envPotentialMap;
+    }
+
+    private void setEdgePotential() {
+        //Bottom
+        for (int i = 0; i < envPotentialMap.getLastIndex().t1; i++) {
+            envPotentialMap.getMatrixPotentialCell(i, 0).setObstaclePotential(obstaclePotential);
+        }
+        //Top
+        for (int i = 0; i < envPotentialMap.getLastIndex().t1; i++) {
+            envPotentialMap.getMatrixPotentialCell(i , envPotentialMap.getLastIndex().t2).setObstaclePotential(obstaclePotential);
+        }
+        //Left
+        for (int j = 0; j < envPotentialMap.getLastIndex().t2; j++) {
+            envPotentialMap.getMatrixPotentialCell(0, j).setObstaclePotential(obstaclePotential);
+        }
+        //Right
+        for (int j = 0; j < envPotentialMap.getLastIndex().t2; j++) {
+            envPotentialMap.getMatrixPotentialCell(envPotentialMap.getLastIndex().t1, j).setObstaclePotential(obstaclePotential);
+        }
     }
 
     private void setAgentPotential() {
