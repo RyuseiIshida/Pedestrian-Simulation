@@ -31,7 +31,7 @@ public class Environment {
         spawnInitAgents();
         envPotentialMap = new PotentialMap(scale, cellInterval, maxPotential);
         obstacles = new ArrayList<>();
-        //obstacles.add(new Obstacle(150, 150, 300, 100, envPotentialMap, obstaclePotential));
+        obstacles.add(new Obstacle(150, 150, 300, 100, envPotentialMap, obstaclePotential));
         setObstaclePotential();
     }
 
@@ -98,7 +98,7 @@ public class Environment {
         for (Obstacle obstacle : obstacles) {
             Tuple startIndex = obstacle.getStartIndex();
             Tuple endIndex = obstacle.getEndIndex();
-            int range = 10;
+            int range = 0;
             for (int i = startIndex.t1 - range; i <= endIndex.t1 + range; i++) {
                 for (int j = startIndex.t2 - range; j <= endIndex.t2 + range; j++) {
                     if (startIndex.t1 > i || startIndex.t2 > j || endIndex.t1 < i || endIndex.t2 < j) {
@@ -110,6 +110,11 @@ public class Environment {
                 }
             }
         }
+    }
+
+    public void spawnObstacle (Vector2 pos){
+        obstacles.add(new Obstacle(pos.x, pos.y, Parameter.CELLINTERVAL, Parameter.CELLINTERVAL, envPotentialMap, obstaclePotential));
+        setObstaclePotential();
     }
 
     public List<Obstacle> getObstacles() {
