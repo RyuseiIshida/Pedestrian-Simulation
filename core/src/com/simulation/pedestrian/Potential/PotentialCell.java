@@ -9,7 +9,7 @@ public class PotentialCell extends Cell {
     float obstaclePotential;
     float interval;
 
-    public PotentialCell(Vector2 position, float interval, float maxPotential){
+    public PotentialCell(Vector2 position, float interval, float maxPotential) {
         super(position, interval);
         this.maxPotential = maxPotential;
         this.interval = interval;
@@ -33,7 +33,7 @@ public class PotentialCell extends Cell {
         return obstaclePotential;
     }
 
-    public float getPotential(){
+    public float getPotential() {
         return agentPotential + obstaclePotential;
     }
 }

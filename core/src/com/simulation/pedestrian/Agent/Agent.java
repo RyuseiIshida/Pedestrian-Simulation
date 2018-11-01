@@ -52,15 +52,15 @@ public class Agent {
     //意思決定
     private void decisionMaking() {
         ifGoalInView();
-        if(stateTag == StateTag.follow) {
+        if (stateTag == StateTag.follow) {
             followAgent();
         }
         if (env.getStep() % Parameter.stepInterval == 0
                 && !(stateTag == StateTag.moveGoal)
                 && !(stateTag == StateTag.follow)
         ) {
-            int random = MathUtils.random(0,1);
-            switch (random){
+            int random = MathUtils.random(0, 1);
+            switch (random) {
                 case 0:
                     randomWalk();
                     break;
@@ -85,7 +85,7 @@ public class Agent {
         int range = 10;
         for (int i = index.t1 - range; i <= index.t1 + range; i++) {
             for (int j = index.t2 - range; j <= index.t2 + range; j++) {
-                if(!(index.t1 == i && index.t2 == j)
+                if (!(index.t1 == i && index.t2 == j)
                         && i >= 0
                         && j >= 0
                         && i <= env.getEnvPotentialMap().getLastIndex().t1
@@ -122,10 +122,10 @@ public class Agent {
     private void ifGoalInView() {//視野内にゴールが入った場合
         for (Goal goal : env.getGoals()) {
             if (isInView(goal.getCenter())
-                            || isInView(goal.getLeftButtom())
-                            || isInView(goal.getLeftTop())
-                            || isInView(goal.getRightButtom())
-                            || isInView(goal.getRightTop())
+                    || isInView(goal.getLeftButtom())
+                    || isInView(goal.getLeftTop())
+                    || isInView(goal.getRightButtom())
+                    || isInView(goal.getRightTop())
             ) {
                 this.stateTag = StateTag.moveGoal;
                 this.goal = goal.getCenter();
@@ -142,7 +142,7 @@ public class Agent {
         movePos = new Vector2(posX, posY);
     }
 
-//    private void judgeCrowd() {
+    //    private void judgeCrowd() {
 //        ArrayList<Agent> followAgents = new ArrayList<>();
 //        for (Agent agent : env.getAgents()) {
 //            if (isInView(agent.getPosition())
@@ -183,7 +183,7 @@ public class Agent {
             ) {
                 list.add(agent);
             }
-            if(list.size() >= 2){
+            if (list.size() >= 2) {
                 stateTag = StateTag.follow;
                 followAgent = agent;
                 Crowd.add(this, agent);
@@ -194,7 +194,7 @@ public class Agent {
         }
     }
 
-    public void setFollower(Agent follower){
+    public void setFollower(Agent follower) {
         this.follower = follower;
 //        if(follower != null){
 //            stateTag = "";
@@ -202,10 +202,10 @@ public class Agent {
 //        }
     }
 
-    private void followAgent(){
+    private void followAgent() {
         movePos = followAgent.getPosition();
-        float distance =  position.dst(followAgent.getPosition());
-        if(distance > 200){
+        float distance = position.dst(followAgent.getPosition());
+        if (distance > 200) {
             stateTag = "";
             followAgent = null;
         }

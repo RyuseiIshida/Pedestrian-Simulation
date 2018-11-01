@@ -23,9 +23,9 @@ public class PotentialMap {
     }
 
     private void initCell() {
-        for (int i = 0 - (int)cellInterval; i <= scale.x; i += cellInterval) {
+        for (int i = 0 - (int) cellInterval; i <= scale.x; i += cellInterval) {
             ArrayList<PotentialCell> array = new ArrayList<>();
-            for (int j = 0 - (int)cellInterval; j <= scale.y; j += cellInterval) {
+            for (int j = 0 - (int) cellInterval; j <= scale.y; j += cellInterval) {
                 PotentialCell cell = new PotentialCell(new Vector2(i, j), cellInterval, maxPotential);
                 potentialCells.add(cell);
                 array.add(cell);
@@ -72,24 +72,24 @@ public class PotentialMap {
         return new Tuple(x, y);
     }
 
-    public Tuple getIndex(PotentialCell targetCell){
+    public Tuple getIndex(PotentialCell targetCell) {
         return getIndex(targetCell.getCenterPoint());
     }
 
     public Tuple getLeftBottomIndex() {
-        return new Tuple(0,0);
+        return new Tuple(0, 0);
     }
 
     public Tuple getLeftTopIndex() {
-        return new Tuple(0, matrixPotentialCells.get(0).size()-1);
+        return new Tuple(0, matrixPotentialCells.get(0).size() - 1);
     }
 
     public Tuple getRightButtomIndex() {
-        return new Tuple(matrixPotentialCells.size()-1, 0);
+        return new Tuple(matrixPotentialCells.size() - 1, 0);
     }
 
     public Tuple getRightTopIndex() {
-        return new Tuple(matrixPotentialCells.size()-1, matrixPotentialCells.get(0).size()-1);
+        return new Tuple(matrixPotentialCells.size() - 1, matrixPotentialCells.get(0).size() - 1);
     }
 
     public Tuple getLastIndex() {

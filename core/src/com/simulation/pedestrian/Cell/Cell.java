@@ -21,7 +21,7 @@ public class Cell {
         centerPoint = new Vector2(position.x + interval / 2, position.y + interval / 2);
     }
 
-    public float getCellInterval(){
+    public float getCellInterval() {
         return cellInterval;
     }
 

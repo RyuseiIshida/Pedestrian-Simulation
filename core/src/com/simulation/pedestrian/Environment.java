@@ -92,7 +92,7 @@ public class Environment {
         }
         //Top
         for (int i = 0; i < envPotentialMap.getLastIndex().t1; i++) {
-            envPotentialMap.getMatrixPotentialCell(i , envPotentialMap.getLastIndex().t2).setObstaclePotential(obstaclePotential);
+            envPotentialMap.getMatrixPotentialCell(i, envPotentialMap.getLastIndex().t2).setObstaclePotential(obstaclePotential);
         }
         //Left
         for (int j = 0; j < envPotentialMap.getLastIndex().t2; j++) {
@@ -132,7 +132,7 @@ public class Environment {
         }
     }
 
-    public void spawnObstacle (Vector2 pos){
+    public void spawnObstacle(Vector2 pos) {
         obstacles.add(new Obstacle(pos.x, pos.y, Parameter.CELLINTERVAL, Parameter.CELLINTERVAL, envPotentialMap, obstaclePotential));
         setObstaclePotential();
     }
