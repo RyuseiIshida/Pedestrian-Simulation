@@ -23,11 +23,13 @@ public class Environment {
     private List<Goal> goals;
     private List<Obstacle> obstacles;
     private List<Agent> agents;
+    private int agentCounter;
 
     public Environment() {
         step = 0;
         goals = new ArrayList<>(Arrays.asList(Parameter.INITGOAL));
         agents = new ArrayList<>();
+        agentCounter = 0;
         spawnInitAgents();
         envPotentialMap = new PotentialMap(scale, cellInterval, maxPotential);
         obstacles = new ArrayList<>();
@@ -165,19 +167,19 @@ public class Environment {
             float y = MathUtils.random(0, scale.y);
             Vector2 position = new Vector2(x, y);
             if (i < Parameter.goalAgentNum) {
-                agents.add(new Agent(this, position, Parameter.INITGOAL));
+                agents.add(new Agent(String.valueOf(++agentCounter),this, position, Parameter.INITGOAL));
             } else {
-                agents.add(new Agent(this, position));
+                agents.add(new Agent(String.valueOf(++agentCounter),this, position));
             }
         }
     }
 
     public void spawnAgent1(Vector2 pos) {
-        agents.add(new Agent(this, pos));
+        agents.add(new Agent(String.valueOf(++agentCounter), this, pos));
     }
 
     public void spawnAgent2(Vector2 pos) {
-        agents.add(new Agent(this, pos, Parameter.INITGOAL));
+        agents.add(new Agent(String.valueOf(++agentCounter), this, pos, Parameter.INITGOAL));
     }
 
     public List<Agent> getAgents() {

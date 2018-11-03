@@ -18,6 +18,7 @@ public class Agent {
     private float viewRadius = Parameter.viewRadius;
     private float viewDegree = Parameter.viewDegree;
     private float speed = Parameter.agentSpeed;
+    private String ID;
     private String stateTag;
     private Vector2 position;
     private Vector2 goal;
@@ -26,7 +27,8 @@ public class Agent {
     private Agent followAgent;
     private Agent follower;
 
-    public Agent(Environment env, Vector2 position) {
+    public Agent(String id, Environment env, Vector2 position) {
+        this.ID = id;
         this.env = env;
         this.stateTag = "";
         this.position = position;
@@ -34,7 +36,8 @@ public class Agent {
         this.velocity = new Vector2(0, 0);
     }
 
-    public Agent(Environment env, Vector2 position, Goal goal) {
+    public Agent(String id, Environment env, Vector2 position, Goal goal) {
+        this.ID = id;
         this.env = env;
         this.stateTag = StateTag.moveGoal;
         this.position = position;
@@ -196,10 +199,6 @@ public class Agent {
 
     public void setFollower(Agent follower) {
         this.follower = follower;
-//        if(follower != null){
-//            stateTag = "";
-//            followAgent = null;
-//        }
     }
 
     private void followAgent() {
@@ -209,6 +208,10 @@ public class Agent {
             stateTag = "";
             followAgent = null;
         }
+    }
+
+    public String getID() {
+        return ID;
     }
 
     public String getStateTag() {
