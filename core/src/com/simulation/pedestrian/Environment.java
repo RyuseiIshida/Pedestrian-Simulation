@@ -47,6 +47,7 @@ public class Environment {
                     } catch (final Exception l_exception) {
                     }
                 });
+        //TODO ポテンシャル関数導入
         setAgentPotential();
         ifAgentInGoal();
         step++;

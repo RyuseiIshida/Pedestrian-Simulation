@@ -77,7 +77,6 @@ public class Agent {
     private void move(Vector2 movePos) {
         Vector2 direction = Vector.direction(position, movePos);
         setPotentialVector(direction);
-        //TODO 掛け算じゃなくて足し算でスピードを変化できるようにする
         velocity = direction.scl(speed);
         position.add(velocity);
     }
@@ -85,6 +84,7 @@ public class Agent {
     private void setPotentialVector(Vector2 direction) {
         List<PotentialCell> nearCell = new ArrayList<>();
         Tuple index = env.getEnvPotentialMap().getIndex(position);
+        //TODO 後でrange変更
         int range = 10;
         for (int i = index.t1 - range; i <= index.t1 + range; i++) {
             for (int j = index.t2 - range; j <= index.t2 + range; j++) {
