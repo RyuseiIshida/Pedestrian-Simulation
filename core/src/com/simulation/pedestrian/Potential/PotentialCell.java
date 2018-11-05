@@ -29,6 +29,13 @@ public class PotentialCell extends Cell {
         this.obstaclePotential = obstaclePotential;
     }
 
+    public void addObstaclePotential(float potential) {
+        obstaclePotential += potential;
+        if(obstaclePotential > maxPotential){
+            obstaclePotential = maxPotential;
+        }
+    }
+
     public float getObstaclePotential() {
         return obstaclePotential;
     }

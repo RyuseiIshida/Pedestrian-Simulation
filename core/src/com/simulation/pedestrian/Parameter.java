@@ -14,9 +14,10 @@ public final class Parameter {
     public static final float CELLINTERVAL = 2;
 
     //Potential
-    public static final float MAXPOTENTIAL = 0;
+    public static final float MAXPOTENTIAL = 5;
     public static final float AGENTPOTENTIAL = 1;
-    public static final float OBSTACLEPOTENTIAL = 5;
+    public static final float OBSTACLEPOTENTIAL = MAXPOTENTIAL;
+    public static final int OBSTACLEPOTENTIALRANGE = 1;
 
     //Agent
     public static final int initAgentNum = 30;

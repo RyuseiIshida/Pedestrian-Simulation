@@ -20,6 +20,7 @@ public class Environment {
     private float cellInterval = Parameter.CELLINTERVAL;
     private float maxPotential = Parameter.MAXPOTENTIAL;
     private float obstaclePotential = Parameter.OBSTACLEPOTENTIAL;
+    private int obstaclePotentialRange = Parameter.OBSTACLEPOTENTIALRANGE;
     private List<Goal> goals;
     private List<Obstacle> obstacles;
     private List<Agent> agents;
@@ -34,7 +35,7 @@ public class Environment {
         envPotentialMap = new PotentialMap(scale, cellInterval, maxPotential);
         obstacles = new ArrayList<>();
         //obstacles.add(new Obstacle(150, 150, 300, 100, envPotentialMap, obstaclePotential));
-        setEdgePotential();
+        //setEdgePotential();
         setObstaclePotential();
     }
 
@@ -132,6 +133,41 @@ public class Environment {
                     }
                 }
             }
+            setInterpolationPotential();
+        }
+        getObstaclePotentialInfo();
+    }
+
+    private void setInterpolationPotential() {
+        for (Obstacle obstacle : obstacles) {
+            int range = obstaclePotentialRange;
+            for (int i = obstacle.getStartIndex().t1 - range; i <= obstacle.getEndIndex().t1 + range; i++) {
+                for (int j = obstacle.getStartIndex().t2 - range; j <= obstacle.getEndIndex().t2 + range; j++) {
+                    if (
+                            i >= 0
+                            && j >= 0
+                            && i <= envPotentialMap.getLastIndex().t1
+                            && j <= envPotentialMap.getLastIndex().t2
+                    ) {
+                        float u = meguroFunc(obstacle.getStartIndex().t1, obstacle.getStartIndex().t2, i, j);
+                        envPotentialMap.getMatrixPotentialCell(i, j).addObstaclePotential(u);
+                    }
+                }
+            }
+        }
+    }
+
+    private float meguroFunc(int x, int y, int xi, int yi) {
+        double sigma = 1; //パラメータ
+        double distance = Math.sqrt(Math.pow(x - xi, 2) + Math.pow(y - yi, 2));
+        return (float) Math.exp(-1 * Math.pow(distance / sigma, 2));
+    }
+
+    private void getObstaclePotentialInfo() {
+        for (PotentialCell potentialCell : envPotentialMap.getPotentialCells()) {
+            if(potentialCell.getObstaclePotential() != 0){
+                System.out.println(envPotentialMap.getIndex(potentialCell) + " = " + potentialCell.getObstaclePotential());
+            }
         }
     }
 
@@ -168,9 +204,9 @@ public class Environment {
             float y = MathUtils.random(0, scale.y);
             Vector2 position = new Vector2(x, y);
             if (i < Parameter.goalAgentNum) {
-                agents.add(new Agent(String.valueOf(++agentCounter),this, position, Parameter.INITGOAL));
+                agents.add(new Agent(String.valueOf(++agentCounter), this, position, Parameter.INITGOAL));
             } else {
-                agents.add(new Agent(String.valueOf(++agentCounter),this, position));
+                agents.add(new Agent(String.valueOf(++agentCounter), this, position));
             }
         }
     }

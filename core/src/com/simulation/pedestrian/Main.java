@@ -66,7 +66,9 @@ public class Main extends ApplicationAdapter {
         //出口
         renderGoal();
         //障害物
-        renderObstacle();
+        //renderObstacle();
+        //ポテンシャル
+        renderPotential();
         //セルの描画
         renderCell();
         //入力処理
@@ -164,6 +166,26 @@ public class Main extends ApplicationAdapter {
                         obstacleCell.getLeftButtomPoint().y,
                         obstacleCell.getCellInterval(),
                         obstacleCell.getCellInterval());
+            }
+        }
+        shapeRenderer.end();
+    }
+
+    private void renderPotential() {
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        for(PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()){
+            if(potentialCell.getPotential() != 0){
+                shapeRenderer.setColor(new Color(1, 0, 0, potentialCell.getPotential() * 0.5f));
+                shapeRenderer.rect(potentialCell.getLeftButtomPoint().x,
+                        potentialCell.getLeftButtomPoint().y,
+                        potentialCell.getCellInterval(),
+                        potentialCell.getCellInterval());
+                shapeRenderer.rect(potentialCell.getLeftButtomPoint().x,
+                        potentialCell.getLeftButtomPoint().y,
+                        potentialCell.getCellInterval(),
+                        potentialCell.getCellInterval());
             }
         }
         shapeRenderer.end();
