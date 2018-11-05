@@ -59,8 +59,8 @@ public class Agent {
             followAgent();
         }
         if (env.getStep() % Parameter.stepInterval == 0
-                && !(stateTag == StateTag.moveGoal)
-                && !(stateTag == StateTag.follow)
+                && stateTag != StateTag.moveGoal
+                && stateTag != StateTag.follow
         ) {
             int random = MathUtils.random(0, 1);
             switch (random) {
@@ -103,6 +103,14 @@ public class Agent {
                 Vector2 pVec = Vector.direction(potentialCell.getCenterPoint(), position);
                 direction.add(pVec.x, pVec.y).nor();
             }
+        }
+    }
+
+    private boolean isMoved() {
+        if (position.dst(movePos) < radius) {
+            return true;
+        } else {
+            return false;
         }
     }
 
