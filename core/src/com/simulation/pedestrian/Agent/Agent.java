@@ -30,7 +30,7 @@ public class Agent {
     public Agent(String id, Environment env, Vector2 position) {
         this.ID = id;
         this.env = env;
-        this.stateTag = "";
+        this.stateTag = StateTag.none;
         this.position = position;
         this.movePos = position;
         this.velocity = new Vector2(0, 0);
@@ -213,7 +213,7 @@ public class Agent {
         movePos = followAgent.getPosition();
         float distance = position.dst(followAgent.getPosition());
         if (distance > 200) {
-            stateTag = "";
+            stateTag = StateTag.none;
             followAgent = null;
         }
     }
