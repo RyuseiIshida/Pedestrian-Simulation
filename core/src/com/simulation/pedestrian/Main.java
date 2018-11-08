@@ -144,12 +144,12 @@ public class Main extends ApplicationAdapter {
         shapeRenderer.setColor(Color.FIREBRICK);
         for (PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
             if (potentialCell.getObstaclePotential() != 0) {
-                shapeRenderer.rect(potentialCell.getLeftButtomPoint().x,
-                        potentialCell.getLeftButtomPoint().y,
+                shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
+                        potentialCell.getLeftBottomPoint().y,
                         potentialCell.getCellInterval(),
                         potentialCell.getCellInterval());
-                shapeRenderer.rect(potentialCell.getLeftButtomPoint().x,
-                        potentialCell.getLeftButtomPoint().y,
+                shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
+                        potentialCell.getLeftBottomPoint().y,
                         potentialCell.getCellInterval(),
                         potentialCell.getCellInterval());
             }
@@ -158,12 +158,12 @@ public class Main extends ApplicationAdapter {
         shapeRenderer.setColor(Color.DARK_GRAY);
         for (Obstacle obstacle : environment.getObstacles()) {
             for (PotentialCell obstacleCell : obstacle.getObstacleCells()) {
-                shapeRenderer.rect(obstacleCell.getLeftButtomPoint().x,
-                        obstacleCell.getLeftButtomPoint().y,
+                shapeRenderer.rect(obstacleCell.getLeftBottomPoint().x,
+                        obstacleCell.getLeftBottomPoint().y,
                         obstacleCell.getCellInterval(),
                         obstacleCell.getCellInterval());
-                shapeRenderer.rect(obstacleCell.getLeftButtomPoint().x,
-                        obstacleCell.getLeftButtomPoint().y,
+                shapeRenderer.rect(obstacleCell.getLeftBottomPoint().x,
+                        obstacleCell.getLeftBottomPoint().y,
                         obstacleCell.getCellInterval(),
                         obstacleCell.getCellInterval());
             }
@@ -178,12 +178,12 @@ public class Main extends ApplicationAdapter {
         for(PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()){
             if(potentialCell.getPotential() != 0){
                 shapeRenderer.setColor(new Color(1, 0, 0, potentialCell.getPotential() * 0.5f));
-                shapeRenderer.rect(potentialCell.getLeftButtomPoint().x,
-                        potentialCell.getLeftButtomPoint().y,
+                shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
+                        potentialCell.getLeftBottomPoint().y,
                         potentialCell.getCellInterval(),
                         potentialCell.getCellInterval());
-                shapeRenderer.rect(potentialCell.getLeftButtomPoint().x,
-                        potentialCell.getLeftButtomPoint().y,
+                shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
+                        potentialCell.getLeftBottomPoint().y,
                         potentialCell.getCellInterval(),
                         potentialCell.getCellInterval());
             }
@@ -196,7 +196,7 @@ public class Main extends ApplicationAdapter {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(Color.BLACK);
             for (PotentialCell cell : environment.getEnvPotentialMap().getPotentialCells()) {
-                shapeRenderer.line(cell.getRightButtomPoint(), cell.getRightTopPoint());
+                shapeRenderer.line(cell.getRightBottomPoint(), cell.getRightTopPoint());
                 shapeRenderer.line(cell.getLeftTopPoint(), cell.getRightTopPoint());
             }
         }

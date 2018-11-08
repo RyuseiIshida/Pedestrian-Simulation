@@ -57,7 +57,7 @@ public class PotentialMap {
         //線形探索
         int x = 0;
         for (int i = 0; i < matrixPotentialCells.size(); i++) {
-            if (targetPosition.x < matrixPotentialCells.get(i).get(0).getRightButtomPoint().x) {
+            if (targetPosition.x < matrixPotentialCells.get(i).get(0).getRightBottomPoint().x) {
                 break;
             }
             x++;
