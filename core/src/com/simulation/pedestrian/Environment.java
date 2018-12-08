@@ -3,6 +3,7 @@ package com.simulation.pedestrian;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.simulation.pedestrian.Agent.Agent;
+import com.simulation.pedestrian.Agent.Crowd;
 import com.simulation.pedestrian.Obstacle.Obstacle;
 import com.simulation.pedestrian.Potential.PotentialCell;
 import com.simulation.pedestrian.Potential.PotentialMap;
@@ -24,6 +25,7 @@ public class Environment {
     private List<Goal> goals;
     private List<Obstacle> obstacles;
     private List<Agent> agents;
+    private Crowd crowd;
     private int agentCounter;
 
     public Environment() {
@@ -145,10 +147,10 @@ public class Environment {
                 for (int j = obstacle.getStartIndex().t2 - range; j <= obstacle.getEndIndex().t2 + range; j++) {
                     if (
                             i >= 0
-                            && j >= 0
-                            && i <= envPotentialMap.getLastIndex().t1
-                            && j <= envPotentialMap.getLastIndex().t2
-                    ) {
+                                    && j >= 0
+                                    && i <= envPotentialMap.getLastIndex().t1
+                                    && j <= envPotentialMap.getLastIndex().t2
+                            ) {
                         float u = meguroFunc(obstacle.getStartIndex().t1, obstacle.getStartIndex().t2, i, j);
                         envPotentialMap.getMatrixPotentialCell(i, j).addObstaclePotential(u);
                     }
@@ -165,7 +167,7 @@ public class Environment {
 
     private void getObstaclePotentialInfo() {
         for (PotentialCell potentialCell : envPotentialMap.getPotentialCells()) {
-            if(potentialCell.getObstaclePotential() != 0){
+            if (potentialCell.getObstaclePotential() != 0) {
                 System.out.println(envPotentialMap.getIndex(potentialCell) + " = " + potentialCell.getObstaclePotential());
             }
         }
@@ -222,4 +224,21 @@ public class Environment {
     public List<Agent> getAgents() {
         return agents;
     }
+
+//    public static void main(String[] args) {
+//        Environment env = new Environment();
+//        ArrayList<Agent> agents = new ArrayList<>();
+//        agents.add(new Agent("0", env, new Vector2()));
+//        agents.add(new Agent("1", env, new Vector2()));
+//        agents.add(new Agent("2", env, new Vector2()));
+//        Crowd.add(agents.get(0),agents.get(1));
+//        int i = 0;
+//        for (List<Agent> list : Crowd.getCrowds()) {
+//            System.out.println("-集団" + ++i + "-");
+//            for (Agent agent : list) {
+//                System.out.println(agent.getID());
+//            }
+//
+//        }
+//    }
 }
