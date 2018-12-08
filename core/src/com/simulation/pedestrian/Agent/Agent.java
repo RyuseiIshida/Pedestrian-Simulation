@@ -188,9 +188,6 @@ public class Agent {
         if (followAgent == this) {
             System.out.println("Error");
         }
-        if( Crowd.isMyGroup(this, followAgent)){
-            System.out.println("Error2");
-        }
         if (distance > 200) {
             stateTag = StateTag.none;
             followAgent = null;
