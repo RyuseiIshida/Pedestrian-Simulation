@@ -16,9 +16,10 @@ public class Crowd {
 
     //私はどのGroupに所属していますか?
     public ArrayList<Agent> getGroup(Agent targetAgent) {
-        for (ArrayList<Agent> agents : getGroups()) {
+        initGroup();
+        for (ArrayList<Agent> agents : groups) {
             for (Agent agent : agents) {
-                if (targetAgent.equals(agent)){
+                if (targetAgent.equals(agent)) {
                     return agents;
                 }
             }
@@ -26,9 +27,12 @@ public class Crowd {
         return null;
     }
 
+    private void initGroup() {
+        setLeaders();
+        setGroups();
+    }
 
-    public void setLeaders() {
-        ArrayList<Agent> leaders = new ArrayList<>();
+    private void setLeaders() {
         for (Agent agent : env.getAgents()) {
             if (!agent.getFollowerAgent().isEmpty() && agent.getFollowAgent() == null) {
                 leaders.add(agent);
@@ -36,51 +40,21 @@ public class Crowd {
         }
     }
 
-    public ArrayList<ArrayList<Agent>> getGroups() {
-        return groups;
-    }
-
-    //FIFO
-    public void setGroups(ArrayList<Agent> leaders) {
+    public void setGroups() {
         for (Agent leader : leaders) {
             ArrayList<Agent> group = new ArrayList<>();
-            LinkedList<Agent> FIFO = new LinkedList<>();
-            FIFO.add(leader);
-            for (int i = 0; i < env.getAgents().size(); i++) {
-                ArrayList<Agent> down = FIFO.getLast().getFollowerAgent();
-                if (down.size() != 0) {
-                    //グループ内にいないやつをadd
-                    for (Agent agent : down) {
-                        if (!group.contains(agent)) {
-                            FIFO.add(down.get(down.size()));
-                            break;
-                        } else {
-                            group.add(FIFO.removeLast());
-                        }
-                    }
+            LinkedList<Agent> stack = new LinkedList<>();
+            stack.add(leader);
+            while (stack.size() != 0) {
+                LinkedList<Agent> down = stack.getLast().getFollowerAgent();
+                if(!down.isEmpty()){
+                    stack.add(down.getLast());
+                    down.removeLast();
                 } else {
-                    group.add(FIFO.removeLast());
+                    group.add(stack.removeLast());
                 }
             }
             groups.add(group);
         }
     }
-
-//    public static Agent getLeader(Agent agent) {
-//        //先頭を取得
-//        Agent follow = agent.getFollowAgent();
-//        if (follow != null) {
-//            getLeader(agent);
-//        }
-//        return agent;
-//    }
-
-//    public static void setGroup(ArrayList<Agent> group, ArrayList<Agent> followers) {
-//        for (Agent follower : followers) {
-//            if (follower != null) {
-//                group.add(follower);
-//                setGroup(group, follower.getFollowerAgent());
-//            }
-//        }
-//    }
 }

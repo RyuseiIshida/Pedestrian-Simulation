@@ -10,6 +10,7 @@ import com.simulation.pedestrian.Util.Tuple;
 import com.simulation.pedestrian.Util.Vector;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Agent {
@@ -26,7 +27,7 @@ public class Agent {
     private Vector2 velocity;
     private Agent followAgent;
     //private Agent follower;
-    private ArrayList<Agent> followers;
+    private LinkedList<Agent> followers;
 
     public Agent(String id, Environment env, Vector2 position) {
         this.ID = id;
@@ -35,7 +36,7 @@ public class Agent {
         this.position = position;
         this.movePos = position;
         this.velocity = new Vector2(0, 0);
-        this.followers = new ArrayList<>();
+        this.followers = new LinkedList<>();
     }
 
     public Agent(String id, Environment env, Vector2 position, Goal goal) {
@@ -46,7 +47,7 @@ public class Agent {
         this.goal = goal.getPosition();
         this.movePos = goal.getCenter();
         this.velocity = new Vector2(0, 0);
-        this.followers = new ArrayList<>();
+        this.followers = new LinkedList<>();
     }
 
 
@@ -210,7 +211,7 @@ public class Agent {
         return followAgent;
     }
 
-    public ArrayList<Agent> getFollowerAgent() {
+    public LinkedList<Agent> getFollowerAgent() {
         return followers;
     }
 
