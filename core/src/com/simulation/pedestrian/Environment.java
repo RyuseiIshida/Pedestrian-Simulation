@@ -33,6 +33,7 @@ public class Environment {
         goals = new ArrayList<>(Arrays.asList(Parameter.INITGOAL));
         agents = new ArrayList<>();
         agentCounter = 0;
+        crowd = new Crowd(this);
         spawnInitAgents();
         envPotentialMap = new PotentialMap(scale, cellInterval, maxPotential);
         obstacles = new ArrayList<>();
@@ -225,7 +226,11 @@ public class Environment {
         return agents;
     }
 
-//    public static void main(String[] args) {
+    public Crowd getCrowd() {
+        return crowd;
+    }
+
+    //    public static void main(String[] args) {
 //        Environment env = new Environment();
 //        ArrayList<Agent> agents = new ArrayList<>();
 //        agents.add(new Agent("0", env, new Vector2()));

@@ -19,16 +19,21 @@ public class Crowd {
         initGroup();
         for (ArrayList<Agent> agents : groups) {
             for (Agent agent : agents) {
-                if (targetAgent.equals(agent)) {
-                    return agents;
-                }
+                return agents;
             }
         }
         return null;
     }
 
+    public int getCrowdNum() {
+        initGroup();
+        return groups.size();
+    }
+
     private void initGroup() {
+        leaders.clear();
         setLeaders();
+        groups.clear();
         setGroups();
     }
 
@@ -47,7 +52,7 @@ public class Crowd {
             stack.add(leader);
             while (stack.size() != 0) {
                 LinkedList<Agent> down = stack.getLast().getFollowerAgent();
-                if(!down.isEmpty()){
+                if (!down.isEmpty()) {
                     stack.add(down.getLast());
                     down.removeLast();
                 } else {

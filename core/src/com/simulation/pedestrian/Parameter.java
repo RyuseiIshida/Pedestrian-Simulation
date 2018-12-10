@@ -20,9 +20,9 @@ public final class Parameter {
     public static final int OBSTACLEPOTENTIALRANGE = 1;
 
     //Agent
-    public static final int initAgentNum = 5;
+    public static final int initAgentNum = 20;
     public static final int goalAgentNum = 0;
-    public static final int followNum = 2;
+    public static final int followNum = 3;
     public static final float agentSpeed = 1;
     public static final float agentRadius = 10;
     public static final float viewRadius = 200;

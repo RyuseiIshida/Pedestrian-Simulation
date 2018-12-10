@@ -9,6 +9,7 @@ import com.simulation.pedestrian.Potential.PotentialCell;
 import com.simulation.pedestrian.Util.Tuple;
 import com.simulation.pedestrian.Util.Vector;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class Agent {
     private float viewRadius = Parameter.viewRadius;
     private float viewDegree = Parameter.viewDegree;
     private float speed = Parameter.agentSpeed;
+    private int followNum = Parameter.followNum;
     private String ID;
     private String stateTag;
     private Vector2 position;
@@ -162,20 +164,24 @@ public class Agent {
         List<Agent> list = new ArrayList<>();
         for (Agent agent : env.getAgents()) {
             if (!agent.equals(this)) {
+                ArrayList<Agent> group = env.getCrowd().getGroup(this);
                 if (isInView(agent.getPosition())
-                    //&& stateTag != StateTag.follow
-                    //&& agent.getStateTag() != StateTag.follow
-                ) {
+                        && stateTag != StateTag.follow
+                        && agent.getStateTag() != StateTag.follow
+                        //&& group == null
+                        ) {
                     list.add(agent);
                 }
-                if (list.size() >= 2) {
-                    stateTag = StateTag.follow;
-                    followAgent = agent;
-                    agent.setFollower(this);
-                } else {
-                    randomWalk();
-                }
+
             }
+        }
+        if (list.size() >= followNum) {
+            stateTag = StateTag.follow;
+            Agent agent = list.get(0);
+            followAgent = agent;
+            agent.setFollower(this);
+        } else {
+            randomWalk();
         }
     }
 
@@ -192,6 +198,7 @@ public class Agent {
         if (distance > 200) {
             stateTag = StateTag.none;
             followAgent = null;
+            followers.remove(this);
         }
     }
 
