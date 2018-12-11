@@ -198,7 +198,7 @@ public class Agent {
         if (distance > 200) {
             stateTag = StateTag.none;
             followAgent = null;
-            //followers.remove(this);
+            followers.remove(this);
         }
     }
 

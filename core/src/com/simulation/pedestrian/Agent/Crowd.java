@@ -12,26 +12,10 @@ public class Crowd {
         this.env = env;
     }
 
-    //私はどのGroupに所属していますか?
-//    public ArrayList<Agent> getGroup(Agent targetAgent) {
-//        initGroup();
-//        for (ArrayList<Agent> agents : groups) {
-//            for (Agent agent : agents) {
-//                return agents;
-//            }
-//        }
-//        return null;
-//    }
-
     public int getCrowdNum() {
+        ArrayList<Agent> leaders = getLeaders();
         return getGroups(getLeaders()).size();
     }
-
-//    private void initGroup() {
-//        getLeaders();
-//        groups.clear(); //bug
-//        getGroups();
-//    }
 
     private ArrayList<Agent> getLeaders() {
         ArrayList<Agent> leaders = new ArrayList<>();
@@ -40,25 +24,25 @@ public class Crowd {
                 leaders.add(agent);
             }
         }
-        if(!leaders.isEmpty()) {
-            System.out.println("leaders.siq = " + leaders.size());
-        }
         return leaders;
     }
 
-    public ArrayList<ArrayList<Agent>> getGroups(ArrayList<Agent> leaders) {
+    public ArrayList<ArrayList<Agent>> getGroups(ArrayList<Agent> list) {
+        ArrayList<Agent> leaders = (ArrayList<Agent>) list.clone();
         ArrayList<ArrayList<Agent>> groups = new ArrayList<>();
         for (Agent leader : leaders) {
             ArrayList<Agent> group = new ArrayList<>();
             LinkedList<Agent> stack = new LinkedList<>();
             stack.add(leader);
-            while (stack.size() != 0) {
+            while (!stack.isEmpty()) {
                 LinkedList<Agent> down = (LinkedList<Agent>) stack.getLast().getFollowers().clone();
-                if (!down.isEmpty()) {
-                    stack.add(down.getLast());
-                    down.removeLast();
-                } else {
+                for (Agent groupAgent : group) {
+                    down.remove(groupAgent);
+                }
+                if(down.isEmpty()){
                     group.add(stack.removeLast());
+                } else {
+                    stack.add(down.getLast());
                 }
             }
             groups.add(group);
