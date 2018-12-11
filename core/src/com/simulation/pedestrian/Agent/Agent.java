@@ -28,8 +28,8 @@ public class Agent {
     private Vector2 movePos;
     private Vector2 velocity;
     private Agent followAgent;
-    //private Agent follower;
     private LinkedList<Agent> followers;
+    private LinkedList<Agent> followers2;
 
     public Agent(String id, Environment env, Vector2 position) {
         this.ID = id;
@@ -39,6 +39,7 @@ public class Agent {
         this.movePos = position;
         this.velocity = new Vector2(0, 0);
         this.followers = new LinkedList<>();
+        this.followers2 = new LinkedList<>();
     }
 
     public Agent(String id, Environment env, Vector2 position, Goal goal) {
@@ -50,6 +51,7 @@ public class Agent {
         this.movePos = goal.getCenter();
         this.velocity = new Vector2(0, 0);
         this.followers = new LinkedList<>();
+        this.followers2 = new LinkedList<>();
     }
 
 
@@ -164,7 +166,7 @@ public class Agent {
         List<Agent> list = new ArrayList<>();
         for (Agent agent : env.getAgents()) {
             if (!agent.equals(this)) {
-                ArrayList<Agent> group = env.getCrowd().getGroup(this);
+                //ArrayList<Agent> group = env.getCrowd().getGroup(this);
                 if (isInView(agent.getPosition())
                         && stateTag != StateTag.follow
                         && agent.getStateTag() != StateTag.follow
@@ -187,18 +189,16 @@ public class Agent {
 
     public void setFollower(Agent follower) {
         followers.add(follower);
+        followers2.add(follower);
     }
 
     private void followAgent() {
         movePos = followAgent.getPosition();
         float distance = position.dst(followAgent.getPosition());
-        if (followAgent == this) {
-            System.out.println("Error");
-        }
         if (distance > 200) {
             stateTag = StateTag.none;
             followAgent = null;
-            followers.remove(this);
+            //followers.remove(this);
         }
     }
 
@@ -218,8 +218,12 @@ public class Agent {
         return followAgent;
     }
 
-    public LinkedList<Agent> getFollowerAgent() {
+    public LinkedList<Agent> getFollowers() {
         return followers;
+    }
+
+    public LinkedList<Agent> getFollowers2() {
+        return followers2;
     }
 
     public Environment getEnv() {

@@ -57,6 +57,7 @@ public class Main extends ApplicationAdapter {
         batch.begin();
         bitmapFont.draw(batch, "time " + String.format("%.2f", environment.getStep() / 60), Parameter.SCALE.x - 200, Parameter.SCALE.y - 10);
         bitmapFont.draw(batch, "pedestrian = " + String.format(String.valueOf(environment.getAgents().size())), Parameter.SCALE.x - 450, Parameter.SCALE.y - 10);
+        bitmapFont.draw(batch, "groupNum = " + String.format(String.valueOf(environment.getCrowd().getCrowdNum())), Parameter.SCALE.x - 800, Parameter.SCALE.y - 10);
         batch.end();
 
         //Agent
@@ -95,6 +96,11 @@ public class Main extends ApplicationAdapter {
                     shapeRenderer.setColor(Color.BLACK);
                     shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
                     break;
+            }
+            if(agent.getFollowers().size() > 0) {
+                System.out.println("kittttttttt");
+                shapeRenderer.setColor(Color.LIME);
+                shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
             }
         }
         shapeRenderer.end();
