@@ -22,7 +22,7 @@ public class Environment {
     private float maxPotential = Parameter.MAXPOTENTIAL;
     private float obstaclePotential = Parameter.OBSTACLEPOTENTIAL;
     private int obstaclePotentialRange = Parameter.OBSTACLEPOTENTIALRANGE;
-    private List<Goal> goals;
+    private List<Goal> goals = new ArrayList<>(Arrays.asList(Parameter.goal1, Parameter.goal2));
     private List<Obstacle> obstacles;
     private List<Agent> agents;
     private Crowd crowd;
@@ -30,7 +30,6 @@ public class Environment {
 
     public Environment() {
         step = 0;
-        goals = new ArrayList<>(Arrays.asList(Parameter.INITGOAL));
         agents = new ArrayList<>();
         agentCounter = 0;
         crowd = new Crowd(this);
@@ -207,7 +206,7 @@ public class Environment {
             float y = MathUtils.random(0, scale.y);
             Vector2 position = new Vector2(x, y);
             if (i < Parameter.goalAgentNum) {
-                agents.add(new Agent(String.valueOf(++agentCounter), this, position, Parameter.INITGOAL));
+                agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
             } else {
                 agents.add(new Agent(String.valueOf(++agentCounter), this, position));
             }
@@ -218,8 +217,8 @@ public class Environment {
         agents.add(new Agent(String.valueOf(++agentCounter), this, pos));
     }
 
-    public void spawnAgent2(Vector2 pos) {
-        agents.add(new Agent(String.valueOf(++agentCounter), this, pos, Parameter.INITGOAL));
+    public void spawnAgent2(Vector2 pos, int goalIndex) {
+        agents.add(new Agent(String.valueOf(++agentCounter), this, pos, goals.get(goalIndex)));
     }
 
     public List<Agent> getAgents() {

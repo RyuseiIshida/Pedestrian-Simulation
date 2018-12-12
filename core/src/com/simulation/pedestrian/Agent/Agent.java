@@ -180,6 +180,13 @@ public class Agent {
         if (list.size() >= followNum) {
             stateTag = StateTag.follow;
             Agent agent = list.get(0);
+            for (Agent follow : list) {
+                if(follow.getStateTag() == StateTag.moveGoal){
+                    agent = follow;
+                    break;
+                }
+                agent = follow;
+            }
             followAgent = agent;
             agent.setFollower(this);
         } else {
@@ -212,6 +219,10 @@ public class Agent {
 
     public Vector2 getPosition() {
         return position;
+    }
+
+    public Vector2 getGoal() {
+        return goal;
     }
 
     public Agent getFollowAgent() {

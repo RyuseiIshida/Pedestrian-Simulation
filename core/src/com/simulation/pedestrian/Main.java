@@ -57,12 +57,13 @@ public class Main extends ApplicationAdapter {
         batch.begin();
         bitmapFont.draw(batch, "time " + String.format("%.2f", environment.getStep() / 60), Parameter.SCALE.x - 200, Parameter.SCALE.y - 10);
         bitmapFont.draw(batch, "pedestrian = " + String.format(String.valueOf(environment.getAgents().size())), Parameter.SCALE.x - 450, Parameter.SCALE.y - 10);
-        bitmapFont.draw(batch, "groupNum = " + String.format(String.valueOf(environment.getCrowd().getCrowdNum())), Parameter.SCALE.x - 800, Parameter.SCALE.y - 10);
+        bitmapFont.draw(batch, "group = " + String.format(String.valueOf(environment.getCrowd().getCrowdNum())), Parameter.SCALE.x - 800, Parameter.SCALE.y - 10);
         batch.end();
 
         //Agent
         renderAgent();
         renderAgentView();
+        renderGoalLine();
         renderAgentFollowLine();
         //出口
         renderGoal();
@@ -97,11 +98,6 @@ public class Main extends ApplicationAdapter {
                     shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
                     break;
             }
-            if(agent.getFollowers().size() > 0) {
-                System.out.println("kittttttttt");
-                shapeRenderer.setColor(Color.LIME);
-                shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
-            }
         }
         shapeRenderer.end();
     }
@@ -122,11 +118,21 @@ public class Main extends ApplicationAdapter {
         }
     }
 
+    private void renderGoalLine() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED);
+        for (Agent agent : environment.getAgents()) {
+            if (agent.getStateTag() == StateTag.moveGoal) {
+                shapeRenderer.line(agent.getPosition(), agent.getGoal());
+            }
+        }
+        shapeRenderer.end();
+    }
+
     private void renderAgentFollowLine() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.BLACK);
         for (Agent agent : environment.getAgents()) {
-            shapeRenderer.setColor(Color.BLACK);
             if (agent.getFollowAgent() != null) {
                 shapeRenderer.line(agent.getPosition(), agent.getFollowAgent().getPosition());
             }
@@ -181,8 +187,8 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for(PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()){
-            if(potentialCell.getPotential() != 0){
+        for (PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
+            if (potentialCell.getPotential() != 0) {
                 shapeRenderer.setColor(new Color(1, 0, 0, potentialCell.getPotential() * 0.5f));
                 shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
                         potentialCell.getLeftBottomPoint().y,
@@ -214,13 +220,25 @@ public class Main extends ApplicationAdapter {
             Vector3 touchPos = new Vector3();
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
-            if (Gdx.input.isKeyPressed(Input.Keys.O)) environment.spawnObstacle(new Vector2(touchPos.x, touchPos.y));
-            else if (Gdx.input.justTouched()) {
+            if (Gdx.input.isKeyPressed(Input.Keys.O)) {
+                environment.spawnObstacle(new Vector2(touchPos.x, touchPos.y));
+            } else if (Gdx.input.justTouched()) {
                 touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
                 camera.unproject(touchPos);
                 System.out.println("touchPos = " + touchPos);
-                if (Gdx.input.isKeyPressed(Input.Keys.F)) environment.spawnAgent1(new Vector2(touchPos.x, touchPos.y));
-                else environment.spawnAgent2(new Vector2(touchPos.x, touchPos.y));
+                if (Gdx.input.isKeyPressed(Input.Keys.F)) {
+                    environment.spawnAgent1(new Vector2(touchPos.x, touchPos.y));
+                } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) {
+                    environment.spawnAgent2(new Vector2(touchPos.x, touchPos.y), 0);
+                } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) {
+                    environment.spawnAgent2(new Vector2(touchPos.x, touchPos.y), 1);
+                } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {
+                    environment.spawnAgent2(new Vector2(touchPos.x, touchPos.y), 2);
+                } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_4)) {
+                    environment.spawnAgent2(new Vector2(touchPos.x, touchPos.y), 3);
+                } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_5)) {
+                    environment.spawnAgent2(new Vector2(touchPos.x, touchPos.y), 4);
+                }
             }
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
             environment.getAgents().clear();
