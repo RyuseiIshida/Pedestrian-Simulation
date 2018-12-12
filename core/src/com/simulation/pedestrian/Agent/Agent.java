@@ -20,7 +20,6 @@ public class Agent {
     private float viewRadius = Parameter.viewRadius;
     private float viewDegree = Parameter.viewDegree;
     private float speed = Parameter.agentSpeed;
-    private int followNum = Parameter.followNum;
     private String ID;
     private String stateTag;
     private Vector2 position;
@@ -69,15 +68,17 @@ public class Agent {
         if (env.getStep() % Parameter.stepInterval == 0
                 && stateTag != StateTag.moveGoal
                 && stateTag != StateTag.follow
-                )
-        {
-            int random = MathUtils.random(0, 1);
+                ) {
+            int random = MathUtils.random(0, 2);
             switch (random) {
                 case 0:
                     randomWalk();
                     break;
                 case 1:
                     judgeCrowd();
+                    break;
+                case 2:
+                    moveGroupPosition();
                     break;
             }
         }
@@ -166,22 +167,22 @@ public class Agent {
         List<Agent> list = new ArrayList<>();
         for (Agent agent : env.getAgents()) {
             if (!agent.equals(this)) {
-                //ArrayList<Agent> group = env.getCrowd().getGroup(this);
+                ArrayList<Agent> group = env.getCrowd().getMyGroup(this);
                 if (isInView(agent.getPosition())
-                        && stateTag != StateTag.follow
-                        && agent.getStateTag() != StateTag.follow
-                        //&& group == null
+                        //&& stateTag != StateTag.follow
+                        //&& agent.getStateTag() != StateTag.follow
+                        && group == null
                         ) {
                     list.add(agent);
                 }
 
             }
         }
-        if (list.size() >= followNum) {
+        if (list.size() >= Parameter.followNum) {
             stateTag = StateTag.follow;
             Agent agent = list.get(0);
             for (Agent follow : list) {
-                if(follow.getStateTag() == StateTag.moveGoal){
+                if (follow.getStateTag() == StateTag.moveGoal) {
                     agent = follow;
                     break;
                 }
@@ -189,6 +190,24 @@ public class Agent {
             }
             followAgent = agent;
             agent.setFollower(this);
+        } else {
+            randomWalk();
+        }
+    }
+
+    private void moveGroupPosition() {
+        List<Agent> list = new ArrayList<>();
+        ArrayList<Agent> group = env.getCrowd().getMyGroup(this);
+        for (Agent agent : env.getAgents()) {
+            if (!agent.equals(this)
+                    && isInView(agent.getPosition())
+                    && group == null) {
+                list.add(agent);
+            }
+        }
+        if (list.size() >= Parameter.moveGroupNum) {
+            movePos = list.get(0).getPosition();
+            stateTag = StateTag.moveGroupPosition;
         } else {
             randomWalk();
         }

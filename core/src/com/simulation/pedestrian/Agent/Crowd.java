@@ -13,8 +13,19 @@ public class Crowd {
     }
 
     public int getCrowdNum() {
-        ArrayList<Agent> leaders = getLeaders();
         return getGroups(getLeaders()).size();
+    }
+
+    public ArrayList<Agent> getMyGroup(Agent agent) {
+        ArrayList<ArrayList<Agent>> groups = getGroups(getLeaders());
+        for (ArrayList<Agent> group : groups) {
+            for (Agent groupAgent : group) {
+                if (groupAgent.equals(agent)) {
+                    return group;
+                }
+            }
+        }
+        return null;
     }
 
     private ArrayList<Agent> getLeaders() {
@@ -27,7 +38,7 @@ public class Crowd {
         return leaders;
     }
 
-    public ArrayList<ArrayList<Agent>> getGroups(ArrayList<Agent> list) {
+    private ArrayList<ArrayList<Agent>> getGroups(ArrayList<Agent> list) {
         ArrayList<Agent> leaders = (ArrayList<Agent>) list.clone();
         ArrayList<ArrayList<Agent>> groups = new ArrayList<>();
         for (Agent leader : leaders) {
@@ -39,7 +50,7 @@ public class Crowd {
                 for (Agent groupAgent : group) {
                     down.remove(groupAgent);
                 }
-                if(down.isEmpty()){
+                if (down.isEmpty()) {
                     group.add(stack.removeLast());
                 } else {
                     stack.add(down.getLast());

@@ -24,6 +24,7 @@ public final class Parameter {
     public static final int initAgentNum = 20;
     public static final int goalAgentNum = 0;
     public static final int followNum = 5;
+    public static final int moveGroupNum = 2;
     public static final float agentSpeed = 1;
     public static final float agentRadius = 10;
     public static final float viewRadius = 200;

@@ -97,6 +97,9 @@ public class Main extends ApplicationAdapter {
                     shapeRenderer.setColor(Color.BLACK);
                     shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
                     break;
+                case StateTag.moveGroupPosition:
+                    shapeRenderer.setColor(Color.BLUE);
+                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
             }
         }
         shapeRenderer.end();
