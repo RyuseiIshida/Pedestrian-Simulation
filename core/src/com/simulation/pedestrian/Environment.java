@@ -9,6 +9,8 @@ import com.simulation.pedestrian.Potential.PotentialCell;
 import com.simulation.pedestrian.Potential.PotentialMap;
 import com.simulation.pedestrian.Util.Tuple;
 
+import java.io.File;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -28,6 +30,8 @@ public class Environment {
     private Crowd crowd;
     private int agentCounter;
 
+    private String logPath;
+
     public Environment() {
         step = 0;
         agents = new ArrayList<>();
@@ -39,6 +43,20 @@ public class Environment {
         //obstacles.add(new Obstacle(150, 150, 300, 100, envPotentialMap, obstaclePotential));
         //setEdgePotential();
         setObstaclePotential();
+
+        initLogDir();
+    }
+
+    public void initLogDir() {
+        String path = new File(".").getAbsoluteFile().getParent();
+        path += "/core/src/com/simulation/pedestrian/Log/";
+        LocalDateTime ldt = LocalDateTime.now();
+        logPath = path+ldt;
+        new File(logPath).mkdir();
+    }
+
+    public String getLogPath(){
+        return logPath;
     }
 
     public void update() {

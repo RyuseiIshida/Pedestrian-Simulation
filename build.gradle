@@ -56,7 +56,7 @@ project(":core") {
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-        
+        compile "org.apache.commons:commons-csv:1.6"
     }
 }
 
