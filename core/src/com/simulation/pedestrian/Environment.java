@@ -44,7 +44,7 @@ public class Environment {
         //setEdgePotential();
         setObstaclePotential();
 
-        initLogDir();
+        //initLogDir();
     }
 
     public void initLogDir() {
@@ -134,6 +134,16 @@ public class Environment {
         }
         for (Agent agent : agents) {
             PotentialCell targetCell = envPotentialMap.getPotentialCell(agent.getPosition());
+            targetCell.setAgentPotential(Parameter.AGENTPOTENTIAL);
+        }
+        setLeaderPotential();
+    }
+
+    private void setLeaderPotential() {
+        for (Agent leader : crowd.getLeaders()) {
+            Vector2 movePoint = new Vector2(leader.getPosition().x + leader.getVelocity().x,
+                    leader.getPosition().y + leader.getVelocity().y);
+            PotentialCell targetCell = envPotentialMap.getPotentialCell(movePoint);
             targetCell.setAgentPotential(Parameter.AGENTPOTENTIAL);
         }
     }

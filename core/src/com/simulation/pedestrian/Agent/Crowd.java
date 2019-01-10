@@ -28,7 +28,7 @@ public class Crowd {
         return null;
     }
 
-    private ArrayList<Agent> getLeaders() {
+    public ArrayList<Agent> getLeaders() {
         ArrayList<Agent> leaders = new ArrayList<>();
         for (Agent agent : env.getAgents()) {
             if (!agent.getFollowers().isEmpty() && agent.getFollowAgent() == null) {

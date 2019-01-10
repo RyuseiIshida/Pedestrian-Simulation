@@ -63,7 +63,7 @@ public class Agent {
     public void action() throws Exception {
         decisionMaking();
         move(movePos);
-        writerCSV();
+        //writerCSV();
     }
 
     //意思決定
@@ -255,6 +255,10 @@ public class Agent {
 
     public Vector2 getPosition() {
         return position;
+    }
+
+    public Vector2 getVelocity() {
+        return velocity;
     }
 
     public Vector2 getGoal() {
