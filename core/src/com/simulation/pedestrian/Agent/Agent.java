@@ -4,9 +4,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.simulation.pedestrian.Environment;
 import com.simulation.pedestrian.Goal;
+import com.simulation.pedestrian.Obstacle.Obstacle;
 import com.simulation.pedestrian.Parameter;
 import com.simulation.pedestrian.Potential.PotentialCell;
-import com.simulation.pedestrian.Util.Tuple;
 import com.simulation.pedestrian.Util.Vector;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -75,7 +75,7 @@ public class Agent {
         if (env.getStep() % Parameter.stepInterval == 0
                 && stateTag != StateTag.moveGoal
                 && stateTag != StateTag.follow
-                ) {
+        ) {
             int random = MathUtils.random(0, 2);
             switch (random) {
                 case 0:
@@ -94,33 +94,80 @@ public class Agent {
     private void move(Vector2 movePos) {
         Vector2 direction = Vector.direction(position, movePos);
         setPotentialVector(direction);
+        direction.nor();
         velocity = direction.scl(speed);
-        position.add(velocity);
+
+        Vector2 tmpPos = new Vector2(position);
+        tmpPos.add(velocity);
+        if (tmpPos.x >= 0 + Parameter.agentRadius && tmpPos.x <= Parameter.SCALE.x - Parameter.agentRadius) {
+            position.x = tmpPos.x;
+        }
+        if (tmpPos.y >= 0 + Parameter.agentRadius && tmpPos.y <= Parameter.SCALE.y - Parameter.agentRadius) {
+            position.y = tmpPos.y;
+        }
     }
 
     private void setPotentialVector(Vector2 direction) {
-        List<PotentialCell> nearCell = new ArrayList<>();
-        Tuple index = env.getEnvPotentialMap().getIndex(position);
-        //TODO 後でrange変更
-        int range = 10;
-        for (int i = index.t1 - range; i <= index.t1 + range; i++) {
-            for (int j = index.t2 - range; j <= index.t2 + range; j++) {
-                if (!(index.t1 == i && index.t2 == j)
-                        && i >= 0
-                        && j >= 0
-                        && i <= env.getEnvPotentialMap().getLastIndex().t1
-                        && j <= env.getEnvPotentialMap().getLastIndex().t2
-                        ) {
-                    nearCell.add(env.getEnvPotentialMap().getMatrixPotentialCell(i, j));
-                }
+        Vector2 pVector = new Vector2();
+        float delta = 1f;
+        float vectorWeight = 100f;
+        //grad(P)
+        pVector.x = -1 * (getPotential(position.x + delta, position.y) - getPotential(position.x, position.y)) / delta;
+        pVector.y = -1 * (getPotential(position.x, position.y + delta) - getPotential(position.x, position.y)) / delta;
+        //pVector.scl(vectorWeight);
+        pVector.nor();
+        direction.add(pVector);
+    }
+
+    private float getPotential(float x, float y) {
+        return getAgentKIMPotential(x, y) + getObstaclePotential(x, y);
+        //return getAgentDefaultPotential (x, y);
+    }
+
+    private float getAgentDefaultPotential(float x, float y) {
+        Vector2 pos = new Vector2(x, y);
+        float potential = 0;
+        for (Agent agent : env.getAgents()) {
+            if (!agent.equals(this)) {
+                potential += pos.dst(agent.position);
             }
         }
-        for (PotentialCell potentialCell : nearCell) {
-            if (potentialCell.getPotential() != 0) {
-                Vector2 pVec = Vector.direction(potentialCell.getCenterPoint(), position);
-                direction.add(pVec.x, pVec.y).nor();
+        if(potential <= 0.01){
+            potential = 0;
+        }
+        return potential;
+    }
+
+    private float getAgentKIMPotential(float x, float y) {
+        Vector2 pos = new Vector2(x, y);
+        float potential = 0;
+        for (Agent agent : env.getAgents()) {
+            if (!agent.equals(this)) {
+                //potential += pos.dst(agent.position);
+                potential += (float) (Math.exp(-1 * (pos.dst2(agent.position) / (Parameter.KIMPOTENTIALRANGE * Parameter.KIMPOTENTIALRANGE))));
             }
         }
+        potential *= Parameter.KIMPOTENTIALWEIGHT;
+        if(potential <= 0.01){
+            potential = 0;
+        }
+        return potential;
+    }
+
+    private float getObstaclePotential(float x, float y) {
+        Vector2 pos = new Vector2(x, y);
+        float potential = 0;
+        float co = Parameter.KIMPOTENTIALWEIGHT;
+        float lo = Parameter.KIMPOTENTIALRANGE;
+        for (Obstacle obstacle : env.getObstacles()) {
+            for (PotentialCell obstacleCell : obstacle.getObstacleCells()) {
+                if (obstacleCell.getCenterPoint().dst(position) <= 10)
+                    //potential += pos.dst(obstacleCell.getCenterPoint());
+                    potential += (float) Math.exp(-1 * (pos.dst2(obstacleCell.getCenterPoint()) / (lo * lo)));
+            }
+        }
+        potential *= co;
+        return potential;
     }
 
     private boolean isMoved() {
@@ -165,7 +212,7 @@ public class Agent {
                     || isInView(goal.getLeftTop())
                     || isInView(goal.getRightButtom())
                     || isInView(goal.getRightTop())
-                    ) {
+            ) {
                 this.stateTag = StateTag.moveGoal;
                 this.goal = goal.getCenter();
                 this.movePos = this.goal;
@@ -190,7 +237,7 @@ public class Agent {
                         //&& stateTag != StateTag.follow
                         //&& agent.getStateTag() != StateTag.follow
                         && group == null
-                        ) {
+                ) {
                     list.add(agent);
                 }
 
@@ -236,7 +283,8 @@ public class Agent {
     }
 
     private void followAgent() {
-        movePos = followAgent.getPosition();
+        //movePos = followAgent.getPosition();
+        movePos = new Vector2(followAgent.getPosition()).sub(followAgent.getVelocity().scl(2f));
         float distance = position.dst(followAgent.getPosition());
         if (distance > 200) {
             stateTag = StateTag.none;
@@ -282,11 +330,11 @@ public class Agent {
         // Header
         //   0   1     2         3       4     5        6         7
         // step tag position velocity movepos goal followAgent followers
-        String path = env.getLogPath()+ "/" + ID + ".txt";
+        String path = env.getLogPath() + "/" + ID + ".txt";
         try {
-            if(!(new File(path).exists())){
+            if (!(new File(path).exists())) {
                 CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
-                printer.printRecord("step","tag","position","velocity","movepos","goal","followAgent","followers");
+                printer.printRecord("step", "tag", "position", "velocity", "movepos", "goal", "followAgent", "followers");
                 printer.close();
             }
             Reader reader = Files.newBufferedReader(Paths.get(path));
@@ -298,10 +346,10 @@ public class Agent {
             CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
             for (CSVRecord record : csvRecord) {
                 printer.printRecord(
-                        record.get(0),record.get(1),
+                        record.get(0), record.get(1),
                         record.get(2), record.get(3),
                         record.get(4), record.get(5),
-                        record.get(6),record.get(7));
+                        record.get(6), record.get(7));
             }
             printer.printRecord(env.getStep(), stateTag, position, velocity, movePos, goal, followAgent, followers);
             printer.close();

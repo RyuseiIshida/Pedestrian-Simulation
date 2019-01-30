@@ -28,6 +28,9 @@ public class Main extends ApplicationAdapter {
     private Environment environment;
 
     //drawFlag
+    private boolean drawPotential = false;
+    private boolean drawPVec = false;
+    private boolean drawConcentrationLevel = false;
     private boolean drawCell = false;
     private boolean drawView = false;
 
@@ -71,6 +74,10 @@ public class Main extends ApplicationAdapter {
         //renderObstacle();
         //ポテンシャル
         renderPotential();
+        //ベクトル場
+        renderPotentialVec();
+        //密集度合い
+        renderConcentrationLevel();
         //セルの描画
         renderCell();
         //入力処理
@@ -187,23 +194,72 @@ public class Main extends ApplicationAdapter {
     }
 
     private void renderPotential() {
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
-            if (potentialCell.getPotential() != 0) {
-                shapeRenderer.setColor(new Color(1, 0, 0, potentialCell.getPotential() * 0.5f));
-                shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
-                        potentialCell.getLeftBottomPoint().y,
-                        potentialCell.getCellInterval(),
-                        potentialCell.getCellInterval());
-                shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
-                        potentialCell.getLeftBottomPoint().y,
-                        potentialCell.getCellInterval(),
-                        potentialCell.getCellInterval());
+        if (drawPotential) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            for (PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
+                if (potentialCell.getPotential() != 0) {
+                    shapeRenderer.setColor(new Color(1, 0, 0, potentialCell.getPotential()));
+                    shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
+                            potentialCell.getLeftBottomPoint().y,
+                            potentialCell.getCellInterval(),
+                            potentialCell.getCellInterval());
+                    shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
+                            potentialCell.getLeftBottomPoint().y,
+                            potentialCell.getCellInterval(),
+                            potentialCell.getCellInterval());
+                }
             }
+            shapeRenderer.end();
         }
-        shapeRenderer.end();
+    }
+
+    private void renderConcentrationLevel() {
+        if (drawConcentrationLevel) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            for (PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
+                float concentrationLevel = 0;
+                float agentCounter = 0;
+                for (Agent agent : environment.getAgents()) {
+                    float tmp = (float)(1.0 / potentialCell.getCenterPoint().dst(agent.getPosition()));
+                    if(tmp >= 0.003) {
+                        concentrationLevel += tmp;
+                        agentCounter++;
+                    }
+                }
+                if (agentCounter >= 3) {
+                    shapeRenderer.setColor(new Color(1, 0, 0, concentrationLevel*1.5f));
+                    shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
+                            potentialCell.getLeftBottomPoint().y,
+                            potentialCell.getCellInterval(),
+                            potentialCell.getCellInterval());
+                    shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
+                            potentialCell.getLeftBottomPoint().y,
+                            potentialCell.getCellInterval(),
+                            potentialCell.getCellInterval());
+                }
+            }
+            shapeRenderer.end();
+        }
+    }
+
+    private void renderPotentialVec() {
+        if (drawPVec) {
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            for (PotentialCell cell : environment.getEnvPotentialMap().getPotentialCells()) {
+                if (cell.getPotential() != 0) {
+                    shapeRenderer.setColor(Color.RED);
+                    Vector2 targetPos = new Vector2(cell.getCenterPoint().x + environment.getAgentGrad(cell.getCenterPoint()).x,
+                            cell.getCenterPoint().y + environment.getAgentGrad(cell.getCenterPoint()).y);
+                    shapeRenderer.line(cell.getCenterPoint(), targetPos);
+                    shapeRenderer.circle(targetPos.x, targetPos.y, 1.5f);
+                }
+            }
+            shapeRenderer.end();
+        }
     }
 
     private void renderCell() {
@@ -246,10 +302,16 @@ public class Main extends ApplicationAdapter {
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
             environment.getAgents().clear();
             environment.setStep(0);
-        } else if (Gdx.input.isKeyJustPressed((Input.Keys.P))) {
+        } else if (Gdx.input.isKeyJustPressed((Input.Keys.S))) {
             environment.spawnInitAgents();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             PLAY = PLAY ? false : true;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            drawPotential = drawPotential ? false : true;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+            drawPVec = drawPVec ? false : true;
+        } else if (Gdx.input.isKeyJustPressed((Input.Keys.M))) {
+            drawConcentrationLevel = drawConcentrationLevel ? false : true;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
             drawCell = drawCell ? false : true;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.V)) {

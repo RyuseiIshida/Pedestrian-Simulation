@@ -48,6 +48,15 @@ public class PotentialMap {
         return getMatrixPotentialCells().get(index.t1).get(index.t2);
     }
 
+    public PotentialCell getPotentialCell(float x, float y) {
+        //System.out.printf("( %f , %f )", x, y);
+        Tuple index = getIndex(new Vector2(x, y));
+        //System.out.println("    index = " + index);
+        PotentialCell potentialCell = getMatrixPotentialCells().get(index.t1).get(index.t2);
+        return potentialCell;
+        //return getMatrixPotentialCells().get(index.t1).get(index.t2);
+    }
+
     public PotentialCell getMatrixPotentialCell(int i, int j) {
         return matrixPotentialCells.get(i).get(j);
     }

@@ -12,7 +12,6 @@ import com.simulation.pedestrian.Util.Tuple;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,12 +23,11 @@ public class Environment {
     private float maxPotential = Parameter.MAXPOTENTIAL;
     private float obstaclePotential = Parameter.OBSTACLEPOTENTIAL;
     private int obstaclePotentialRange = Parameter.OBSTACLEPOTENTIALRANGE;
-    private List<Goal> goals = new ArrayList<>(Arrays.asList(Parameter.goal1, Parameter.goal2));
+    private List<Goal> goals = new ArrayList<>(Parameter.GOALS);
     private List<Obstacle> obstacles;
     private List<Agent> agents;
     private Crowd crowd;
     private int agentCounter;
-
     private String logPath;
 
     public Environment() {
@@ -51,11 +49,11 @@ public class Environment {
         String path = new File(".").getAbsoluteFile().getParent();
         path += "/core/src/com/simulation/pedestrian/Log/";
         LocalDateTime ldt = LocalDateTime.now();
-        logPath = path+ldt;
+        logPath = path + ldt;
         new File(logPath).mkdir();
     }
 
-    public String getLogPath(){
+    public String getLogPath() {
         return logPath;
     }
 
@@ -69,7 +67,8 @@ public class Environment {
                     }
                 });
         //TODO ポテンシャル関数導入
-        setAgentPotential();
+        //setAgentPotential();
+        setAgentKimPotentialCell();
         ifAgentInGoal();
         step++;
     }
@@ -128,15 +127,44 @@ public class Environment {
         }
     }
 
-    private void setAgentPotential() {
-        for (PotentialCell potentialCell : envPotentialMap.getPotentialCells()) {
-            potentialCell.setAgentPotential(0);
+    private void setAgentKimPotentialCell() {
+        float weightPotential;
+        float co = Parameter.KIMPOTENTIALWEIGHT;
+        float lo = Parameter.KIMPOTENTIALRANGE;
+        for (PotentialCell cell : envPotentialMap.getPotentialCells()) {
+            cell.setAgentPotential(0); //前ステップ時のポテンシャルセルを初期化
+            weightPotential = 0;
+            for (Agent agent : agents) {
+                float kimPotential = (float) (Math.exp(-1 * (agent.getPosition().dst2(cell.getCenterPoint()) / (lo * lo))));
+                //float movePotential = (float) (Math.exp(-1 * ( /(lo*lo))));
+                weightPotential += kimPotential;
+            }
+            cell.setAgentPotential(co*weightPotential);
         }
-        for (Agent agent : agents) {
-            PotentialCell targetCell = envPotentialMap.getPotentialCell(agent.getPosition());
-            targetCell.setAgentPotential(Parameter.AGENTPOTENTIAL);
+    }
+
+
+    public Vector2 getAgentGrad(Vector2 targetPos) {
+        if (targetPos.x < 0 || targetPos.x > Parameter.SCALE.x
+                || targetPos.y < 0 || targetPos.y > Parameter.SCALE.y) {
+            return new Vector2(0, 0);
         }
-        setLeaderPotential();
+        Vector2 gradVec = new Vector2();
+        float delta = Parameter.CELLINTERVAL/2;
+        PotentialCell targetCell = envPotentialMap.getPotentialCell(targetPos);
+        PotentialCell deltaXCell = envPotentialMap.getPotentialCell(targetPos.x + delta, targetPos.y);
+        PotentialCell deltaYCell = envPotentialMap.getPotentialCell(targetPos.x, targetPos.y + delta);
+        if (targetCell.equals(deltaXCell) || targetCell.equals(deltaYCell)) {
+            System.out.println("重なりポテンシャルセル");
+        }
+        gradVec.x = -(deltaXCell.getAgentPotential() - targetCell.getAgentPotential() / delta);
+        gradVec.y = -(deltaYCell.getAgentPotential() - targetCell.getAgentPotential() / delta);
+        float v = (float) Math.sqrt(gradVec.x * gradVec.x + gradVec.y * gradVec.y);
+        //gradVec.x *= 5;
+        //gradVec.y *= 5;
+        gradVec.x /= v;
+        gradVec.y /= v;
+        return gradVec;
     }
 
     private void setLeaderPotential() {
@@ -178,7 +206,7 @@ public class Environment {
                                     && j >= 0
                                     && i <= envPotentialMap.getLastIndex().t1
                                     && j <= envPotentialMap.getLastIndex().t2
-                            ) {
+                    ) {
                         float u = meguroFunc(obstacle.getStartIndex().t1, obstacle.getStartIndex().t2, i, j);
                         envPotentialMap.getMatrixPotentialCell(i, j).addObstaclePotential(u);
                     }

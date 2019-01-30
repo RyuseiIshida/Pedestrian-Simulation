@@ -21,6 +21,13 @@ public class PotentialCell extends Cell {
         this.agentPotential = agentPotential;
     }
 
+    public void addAgentPotential(float agentPotential) {
+        this.agentPotential += agentPotential;
+        if(agentPotential > maxPotential) {
+            this.agentPotential = maxPotential;
+        }
+    }
+
     public float getAgentPotential() {
         return agentPotential;
     }
