@@ -71,7 +71,7 @@ public class Main extends ApplicationAdapter {
         //出口
         renderGoal();
         //障害物
-        //renderObstacle();
+        renderObstacle();
         //ポテンシャル
         renderPotential();
         //ベクトル場
@@ -195,6 +195,7 @@ public class Main extends ApplicationAdapter {
 
     private void renderPotential() {
         if (drawPotential) {
+            environment.setAgentKimPotentialCell();
             Gdx.gl.glEnable(GL20.GL_BLEND);
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);

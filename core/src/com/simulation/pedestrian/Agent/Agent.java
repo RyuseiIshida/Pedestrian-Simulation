@@ -111,7 +111,6 @@ public class Agent {
         Vector2 pVector = new Vector2();
         float delta = 1f;
         float vectorWeight = 100f;
-        //grad(P)
         pVector.x = -1 * (getPotential(position.x + delta, position.y) - getPotential(position.x, position.y)) / delta;
         pVector.y = -1 * (getPotential(position.x, position.y + delta) - getPotential(position.x, position.y)) / delta;
         //pVector.scl(vectorWeight);
@@ -124,7 +123,7 @@ public class Agent {
         //return getAgentDefaultPotential (x, y);
     }
 
-    private float getAgentDefaultPotential(float x, float y) {
+    private float getAgentDSTPotential(float x, float y) {
         Vector2 pos = new Vector2(x, y);
         float potential = 0;
         for (Agent agent : env.getAgents()) {
@@ -143,11 +142,9 @@ public class Agent {
         float potential = 0;
         for (Agent agent : env.getAgents()) {
             if (!agent.equals(this)) {
-                //potential += pos.dst(agent.position);
-                potential += (float) (Math.exp(-1 * (pos.dst2(agent.position) / (Parameter.KIMPOTENTIALRANGE * Parameter.KIMPOTENTIALRANGE))));
+                potential += (float) (Parameter.KIMPOTENTIALRANGE * Math.exp(-1 * (pos.dst2(agent.position) / (Parameter.KIMPOTENTIALRANGE * Parameter.KIMPOTENTIALRANGE))));
             }
         }
-        potential *= Parameter.KIMPOTENTIALWEIGHT;
         if(potential <= 0.01){
             potential = 0;
         }
@@ -183,17 +180,6 @@ public class Agent {
         float degree = (float) Math.toDegrees(radian);
         return degree;
     }
-
-//    public boolean isInView(Vector2 targetPos) {
-//        float targetDistance = position.dst(targetPos);
-//        float targetRadian = (float) Math.atan2(targetPos.x - position.x, targetPos.y - position.y);
-//        float targetDegree = (float) Math.toDegrees(targetRadian);
-//        //if (targetDistance < viewRadius && getDirectionDegree() - targetDegree < viewDegree / 2) {
-//        if (targetDistance < viewRadius && Math.abs(getDirectionDegree() - targetDegree) < viewDegree / 2) {
-//            return true;
-//        }
-//        return false;
-//    }
 
     public boolean isInView(Vector2 targetPos) {
         float targetDistance = position.dst(targetPos);
@@ -319,11 +305,6 @@ public class Agent {
 
     public LinkedList<Agent> getFollowers() {
         return followers;
-    }
-
-
-    public Environment getEnv() {
-        return env;
     }
 
     public void writerCSV() {

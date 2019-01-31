@@ -41,7 +41,6 @@ public class Environment {
         //obstacles.add(new Obstacle(150, 150, 300, 100, envPotentialMap, obstaclePotential));
         //setEdgePotential();
         setObstaclePotential();
-
         //initLogDir();
     }
 
@@ -66,9 +65,7 @@ public class Environment {
                     } catch (final Exception l_exception) {
                     }
                 });
-        //TODO ポテンシャル関数導入
-        //setAgentPotential();
-        setAgentKimPotentialCell();
+        //setAgentKimPotentialCell();
         ifAgentInGoal();
         step++;
     }
@@ -127,7 +124,7 @@ public class Environment {
         }
     }
 
-    private void setAgentKimPotentialCell() {
+    public void setAgentKimPotentialCell() {
         float weightPotential;
         float co = Parameter.KIMPOTENTIALWEIGHT;
         float lo = Parameter.KIMPOTENTIALRANGE;
@@ -154,9 +151,6 @@ public class Environment {
         PotentialCell targetCell = envPotentialMap.getPotentialCell(targetPos);
         PotentialCell deltaXCell = envPotentialMap.getPotentialCell(targetPos.x + delta, targetPos.y);
         PotentialCell deltaYCell = envPotentialMap.getPotentialCell(targetPos.x, targetPos.y + delta);
-        if (targetCell.equals(deltaXCell) || targetCell.equals(deltaYCell)) {
-            System.out.println("重なりポテンシャルセル");
-        }
         gradVec.x = -(deltaXCell.getAgentPotential() - targetCell.getAgentPotential() / delta);
         gradVec.y = -(deltaYCell.getAgentPotential() - targetCell.getAgentPotential() / delta);
         float v = (float) Math.sqrt(gradVec.x * gradVec.x + gradVec.y * gradVec.y);
@@ -165,15 +159,6 @@ public class Environment {
         gradVec.x /= v;
         gradVec.y /= v;
         return gradVec;
-    }
-
-    private void setLeaderPotential() {
-        for (Agent leader : crowd.getLeaders()) {
-            Vector2 movePoint = new Vector2(leader.getPosition().x + leader.getVelocity().x,
-                    leader.getPosition().y + leader.getVelocity().y);
-            PotentialCell targetCell = envPotentialMap.getPotentialCell(movePoint);
-            targetCell.setAgentPotential(Parameter.AGENTPOTENTIAL);
-        }
     }
 
     private void setObstaclePotential() {
@@ -196,7 +181,7 @@ public class Environment {
         getObstaclePotentialInfo();
     }
 
-    private void setInterpolationPotential() {
+    private void setInterpolationPotential() { //TODO 目黒のポテンシャルモデルからKIMのポテンシャルモデルに変更する。
         for (Obstacle obstacle : obstacles) {
             int range = obstaclePotentialRange;
             for (int i = obstacle.getStartIndex().t1 - range; i <= obstacle.getEndIndex().t1 + range; i++) {
@@ -258,8 +243,8 @@ public class Environment {
 
     public void spawnInitAgents() {
         for (int i = 0; i < Parameter.initAgentNum; i++) {
-            float x = MathUtils.random(0, scale.x);
-            float y = MathUtils.random(0, scale.y);
+            float x = MathUtils.random(50, scale.x-50);
+            float y = MathUtils.random(50, scale.y-50);
             Vector2 position = new Vector2(x, y);
             if (i < Parameter.goalAgentNum) {
                 agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
@@ -285,20 +270,4 @@ public class Environment {
         return crowd;
     }
 
-    //    public static void main(String[] args) {
-//        Environment env = new Environment();
-//        ArrayList<Agent> agents = new ArrayList<>();
-//        agents.add(new Agent("0", env, new Vector2()));
-//        agents.add(new Agent("1", env, new Vector2()));
-//        agents.add(new Agent("2", env, new Vector2()));
-//        Crowd.add(agents.get(0),agents.get(1));
-//        int i = 0;
-//        for (List<Agent> list : Crowd.getCrowds()) {
-//            System.out.println("-集団" + ++i + "-");
-//            for (Agent agent : list) {
-//                System.out.println(agent.getID());
-//            }
-//
-//        }
-//    }
 }
