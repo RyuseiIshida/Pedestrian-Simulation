@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.simulation.pedestrian.Potential.PotentialCell;
 import com.simulation.pedestrian.Potential.PotentialMap;
 import com.simulation.pedestrian.Util.Tuple;
+import com.simulation.pedestrian.Util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,19 +12,21 @@ import java.util.List;
 public class Obstacle {
     private PotentialMap potentialMap;
     private List<PotentialCell> obstacleCells;
-    private float potential;
     private Tuple startIndex;
     private Tuple endIndex;
 
-    public Obstacle(float x, float y, float w, float h, PotentialMap potentialMap, float potential) {
+    public Obstacle(float x, float y, float w, float h, PotentialMap potentialMap) {
         this.potentialMap = potentialMap;
         this.obstacleCells = new ArrayList<>();
-        this.potential = potential;
         setShapeObstacle(x, y, w, h);
     }
 
-    public Obstacle(Vector2 position, float w, float h, PotentialMap potentialMap, float potential) {
-        this(position.x, position.y, w, h, potentialMap, potential);
+    public Obstacle(Vector2 position, float w, float h, PotentialMap potentialMap) {
+        this(position.x, position.y, w, h, potentialMap);
+    }
+
+    public Obstacle(Vector2 position, Vector2 WH, PotentialMap potentialMap) {
+        this(position.x, position.y, WH.x, WH.y, potentialMap);
     }
 
     public void setShapeObstacle(Vector2 position, float w, float h) {

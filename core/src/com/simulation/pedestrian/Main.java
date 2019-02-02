@@ -42,7 +42,7 @@ public class Main extends ApplicationAdapter {
         shapeRenderer = new ShapeRenderer();
         bitmapFont = new BitmapFont();
         bitmapFont.setColor(Color.BLACK);
-        bitmapFont.getData().setScale(2);
+        bitmapFont.getData().setScale(5);
         environment = new Environment();
     }
 
@@ -58,11 +58,15 @@ public class Main extends ApplicationAdapter {
 
         //文字の描画
         batch.begin();
-        bitmapFont.draw(batch, "time " + String.format("%.2f", environment.getStep() / 60), Parameter.SCALE.x - 200, Parameter.SCALE.y - 10);
-        bitmapFont.draw(batch, "pedestrian = " + String.format(String.valueOf(environment.getAgents().size())), Parameter.SCALE.x - 450, Parameter.SCALE.y - 10);
-        bitmapFont.draw(batch, "group = " + String.format(String.valueOf(environment.getCrowd().getCrowdNum())), Parameter.SCALE.x - 600, Parameter.SCALE.y - 10);
+        bitmapFont.draw(batch,
+                "time " + String.format("%.2f", environment.getStep() / 60)
+                        + "  " + "pedestrian = " + String.format(String.valueOf(environment.getAgents().size()))
+                        + "  " + "group = " + String.format(String.valueOf(environment.getCrowd().getCrowdNum())),
+                30, Parameter.SCALE.y - 10);
         batch.end();
 
+        //ポテンシャル
+        renderPotential();
         //Agent
         renderAgent();
         renderAgentView();
@@ -72,8 +76,6 @@ public class Main extends ApplicationAdapter {
         renderGoal();
         //障害物
         renderObstacle();
-        //ポテンシャル
-        renderPotential();
         //ベクトル場
         renderPotentialVec();
         //密集度合い
@@ -164,19 +166,6 @@ public class Main extends ApplicationAdapter {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.FIREBRICK);
-        for (PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
-            if (potentialCell.getObstaclePotential() != 0) {
-                shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
-                        potentialCell.getLeftBottomPoint().y,
-                        potentialCell.getCellInterval(),
-                        potentialCell.getCellInterval());
-                shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
-                        potentialCell.getLeftBottomPoint().y,
-                        potentialCell.getCellInterval(),
-                        potentialCell.getCellInterval());
-            }
-        }
-
         shapeRenderer.setColor(Color.DARK_GRAY);
         for (Obstacle obstacle : environment.getObstacles()) {
             for (PotentialCell obstacleCell : obstacle.getObstacleCells()) {
@@ -201,7 +190,7 @@ public class Main extends ApplicationAdapter {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             for (PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
                 if (potentialCell.getPotential() != 0) {
-                    shapeRenderer.setColor(new Color(1, 0, 0, potentialCell.getPotential()));
+                    shapeRenderer.setColor(new Color(1, 0, 0, potentialCell.getPotential() * 1.5f));
                     shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
                             potentialCell.getLeftBottomPoint().y,
                             potentialCell.getCellInterval(),
@@ -225,14 +214,14 @@ public class Main extends ApplicationAdapter {
                 float concentrationLevel = 0;
                 float agentCounter = 0;
                 for (Agent agent : environment.getAgents()) {
-                    float tmp = (float)(1.0 / potentialCell.getCenterPoint().dst(agent.getPosition()));
-                    if(tmp >= 0.003) {
+                    float tmp = (float) (1.0 / potentialCell.getCenterPoint().dst(agent.getPosition()));
+                    if (tmp >= 0.003) {
                         concentrationLevel += tmp;
                         agentCounter++;
                     }
                 }
                 if (agentCounter >= 3) {
-                    shapeRenderer.setColor(new Color(1, 0, 0, concentrationLevel*1.5f));
+                    shapeRenderer.setColor(new Color(1, 0, 0, concentrationLevel * 1.5f));
                     shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
                             potentialCell.getLeftBottomPoint().y,
                             potentialCell.getCellInterval(),

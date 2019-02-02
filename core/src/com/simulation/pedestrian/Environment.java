@@ -21,8 +21,6 @@ public class Environment {
     private PotentialMap envPotentialMap;
     private float cellInterval = Parameter.CELLINTERVAL;
     private float maxPotential = Parameter.MAXPOTENTIAL;
-    private float obstaclePotential = Parameter.OBSTACLEPOTENTIAL;
-    private int obstaclePotentialRange = Parameter.OBSTACLEPOTENTIALRANGE;
     private List<Goal> goals = new ArrayList<>(Parameter.GOALS);
     private List<Obstacle> obstacles;
     private List<Agent> agents;
@@ -38,9 +36,17 @@ public class Environment {
         spawnInitAgents();
         envPotentialMap = new PotentialMap(scale, cellInterval, maxPotential);
         obstacles = new ArrayList<>();
-        //obstacles.add(new Obstacle(150, 150, 300, 100, envPotentialMap, obstaclePotential));
-        //setEdgePotential();
+        //obstacles.add(new Obstacle(900, 200, 1000, 1500, envPotentialMap));
+        //leftLine
+        obstacles.add(new Obstacle(900, 200, 10, 1500, envPotentialMap));
+        //rightLine
+        obstacles.add(new Obstacle(1900, 200, 10, 1500, envPotentialMap));
+        //bottomLine
+        obstacles.add(new Obstacle(1000, 200, 800, 10, envPotentialMap));
+        //TopLine
+        obstacles.add(new Obstacle(900, 1700, 1000, 10, envPotentialMap));
         setObstaclePotential();
+        //setEdgePotential();
         //initLogDir();
     }
 
@@ -65,7 +71,6 @@ public class Environment {
                     } catch (final Exception l_exception) {
                     }
                 });
-        //setAgentKimPotentialCell();
         ifAgentInGoal();
         step++;
     }
@@ -105,38 +110,19 @@ public class Environment {
         return envPotentialMap;
     }
 
-    private void setEdgePotential() {
-        //Bottom
-        for (int i = 0; i < envPotentialMap.getLastIndex().t1; i++) {
-            envPotentialMap.getMatrixPotentialCell(i, 0).setObstaclePotential(obstaclePotential);
-        }
-        //Top
-        for (int i = 0; i < envPotentialMap.getLastIndex().t1; i++) {
-            envPotentialMap.getMatrixPotentialCell(i, envPotentialMap.getLastIndex().t2).setObstaclePotential(obstaclePotential);
-        }
-        //Left
-        for (int j = 0; j < envPotentialMap.getLastIndex().t2; j++) {
-            envPotentialMap.getMatrixPotentialCell(0, j).setObstaclePotential(obstaclePotential);
-        }
-        //Right
-        for (int j = 0; j < envPotentialMap.getLastIndex().t2; j++) {
-            envPotentialMap.getMatrixPotentialCell(envPotentialMap.getLastIndex().t1, j).setObstaclePotential(obstaclePotential);
-        }
-    }
-
     public void setAgentKimPotentialCell() {
         float weightPotential;
-        float co = Parameter.KIMPOTENTIALWEIGHT;
-        float lo = Parameter.KIMPOTENTIALRANGE;
+        float co = Parameter.AGENT_KIMPOTENTIALWEIGHT;
+        float lo = Parameter.AGENT_KIMPOTENTIALRANGE;
         for (PotentialCell cell : envPotentialMap.getPotentialCells()) {
             cell.setAgentPotential(0); //前ステップ時のポテンシャルセルを初期化
             weightPotential = 0;
             for (Agent agent : agents) {
-                float kimPotential = (float) (Math.exp(-1 * (agent.getPosition().dst2(cell.getCenterPoint()) / (lo * lo))));
+                float kimPotential = (float) (co * Math.exp(-1 * (agent.getPosition().dst2(cell.getCenterPoint()) / (lo * lo))));
                 //float movePotential = (float) (Math.exp(-1 * ( /(lo*lo))));
                 weightPotential += kimPotential;
             }
-            cell.setAgentPotential(co*weightPotential);
+            cell.setAgentPotential(weightPotential);
         }
     }
 
@@ -147,7 +133,7 @@ public class Environment {
             return new Vector2(0, 0);
         }
         Vector2 gradVec = new Vector2();
-        float delta = Parameter.CELLINTERVAL/2;
+        float delta = Parameter.CELLINTERVAL / 2;
         PotentialCell targetCell = envPotentialMap.getPotentialCell(targetPos);
         PotentialCell deltaXCell = envPotentialMap.getPotentialCell(targetPos.x + delta, targetPos.y);
         PotentialCell deltaYCell = envPotentialMap.getPotentialCell(targetPos.x, targetPos.y + delta);
@@ -162,60 +148,33 @@ public class Environment {
     }
 
     private void setObstaclePotential() {
+        ArrayList<Vector2> obstaclePosList = new ArrayList<>();
+        float co = Parameter.OBSTACLE_KIMPOTENTIALWEIGHT;
+        float lo = Parameter.OBSTACLE_KIMPOTENTIALRANGE;
         for (Obstacle obstacle : obstacles) {
             Tuple startIndex = obstacle.getStartIndex();
             Tuple endIndex = obstacle.getEndIndex();
-            int range = 0;
-            for (int i = startIndex.t1 - range; i <= endIndex.t1 + range; i++) {
-                for (int j = startIndex.t2 - range; j <= endIndex.t2 + range; j++) {
-                    if (startIndex.t1 > i || startIndex.t2 > j || endIndex.t1 < i || endIndex.t2 < j) {
-                        manhattanDistance(startIndex, endIndex, new Tuple(i, j));
-                        envPotentialMap.getMatrixPotentialCell(i, j).setObstaclePotential(range);
-                    } else {
-                        envPotentialMap.getMatrixPotentialCell(i, j).setObstaclePotential(obstaclePotential);
-                    }
-                }
-            }
-            setInterpolationPotential();
-        }
-        getObstaclePotentialInfo();
-    }
-
-    private void setInterpolationPotential() { //TODO 目黒のポテンシャルモデルからKIMのポテンシャルモデルに変更する。
-        for (Obstacle obstacle : obstacles) {
-            int range = obstaclePotentialRange;
-            for (int i = obstacle.getStartIndex().t1 - range; i <= obstacle.getEndIndex().t1 + range; i++) {
-                for (int j = obstacle.getStartIndex().t2 - range; j <= obstacle.getEndIndex().t2 + range; j++) {
-                    if (
-                            i >= 0
-                                    && j >= 0
-                                    && i <= envPotentialMap.getLastIndex().t1
-                                    && j <= envPotentialMap.getLastIndex().t2
-                    ) {
-                        float u = meguroFunc(obstacle.getStartIndex().t1, obstacle.getStartIndex().t2, i, j);
-                        envPotentialMap.getMatrixPotentialCell(i, j).addObstaclePotential(u);
-                    }
+            for (int i = startIndex.t1; i <= endIndex.t1; i++) {
+                for (int j = startIndex.t2; j <= endIndex.t2; j++) {
+                    obstaclePosList.add(envPotentialMap.getMatrixPotentialCell(i, j).getCenterPoint());
                 }
             }
         }
-    }
-
-    private float meguroFunc(int x, int y, int xi, int yi) {
-        double sigma = 1; //パラメータ
-        double distance = Math.sqrt(Math.pow(x - xi, 2) + Math.pow(y - yi, 2));
-        return (float) Math.exp(-1 * Math.pow(distance / sigma, 2));
-    }
-
-    private void getObstaclePotentialInfo() {
-        for (PotentialCell potentialCell : envPotentialMap.getPotentialCells()) {
-            if (potentialCell.getObstaclePotential() != 0) {
-                System.out.println(envPotentialMap.getIndex(potentialCell) + " = " + potentialCell.getObstaclePotential());
-            }
+        for (PotentialCell cell : envPotentialMap.getPotentialCells()) {
+            cell.setObstaclePotential(getKIMPotential(cell.getCenterPoint(), obstaclePosList, co, lo));
         }
+    }
+
+    private float getKIMPotential(Vector2 targetPos, ArrayList<Vector2> obstaclePosList, float c, float l) {
+        float weightPotential = 0;
+        for (Vector2 pos : obstaclePosList) {
+            weightPotential += (float) (c * Math.exp(-1 * (pos.dst2(targetPos) / (l * l))));
+        }
+        return weightPotential;
     }
 
     public void spawnObstacle(Vector2 pos) {
-        obstacles.add(new Obstacle(pos.x, pos.y, Parameter.CELLINTERVAL, Parameter.CELLINTERVAL, envPotentialMap, obstaclePotential));
+        obstacles.add(new Obstacle(pos.x, pos.y, Parameter.CELLINTERVAL, Parameter.CELLINTERVAL, envPotentialMap));
         setObstaclePotential();
     }
 
@@ -223,28 +182,12 @@ public class Environment {
         return obstacles;
     }
 
-    private int manhattanDistance(Tuple startIndex, Tuple endIndex, Tuple targetIndex) {
-        int minDistance = 0;
-        for (Obstacle obstacle : obstacles) {
-            for (int i = startIndex.t1; i <= endIndex.t2; i++) {
-                for (int j = startIndex.t2; j <= endIndex.t2; j++) {
-                    int x = Math.abs(targetIndex.t1 - startIndex.t1);
-                    int y = Math.abs(targetIndex.t2 - startIndex.t2);
-                    int tmpDistance = x + y;
-                    if (minDistance == 0) minDistance = tmpDistance;
-                    minDistance = minDistance > tmpDistance ? tmpDistance : minDistance;
-                }
-            }
-        }
-        return minDistance;
-    }
 
     //Agent
-
     public void spawnInitAgents() {
         for (int i = 0; i < Parameter.initAgentNum; i++) {
-            float x = MathUtils.random(50, scale.x-50);
-            float y = MathUtils.random(50, scale.y-50);
+            float x = MathUtils.random(950, 1800);
+            float y = MathUtils.random(1300, 1600);
             Vector2 position = new Vector2(x, y);
             if (i < Parameter.goalAgentNum) {
                 agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));

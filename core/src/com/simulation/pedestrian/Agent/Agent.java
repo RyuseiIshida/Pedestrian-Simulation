@@ -53,7 +53,7 @@ public class Agent {
         this.env = env;
         this.stateTag = StateTag.moveGoal;
         this.position = position;
-        this.goal = goal.getPosition();
+        this.goal = goal.getCenter();
         this.movePos = goal.getCenter();
         this.velocity = new Vector2(0, 0);
         this.followers = new LinkedList<>();
@@ -109,8 +109,7 @@ public class Agent {
 
     private void setPotentialVector(Vector2 direction) {
         Vector2 pVector = new Vector2();
-        float delta = 1f;
-        float vectorWeight = 100f;
+        float delta = 1;
         pVector.x = -1 * (getPotential(position.x + delta, position.y) - getPotential(position.x, position.y)) / delta;
         pVector.y = -1 * (getPotential(position.x, position.y + delta) - getPotential(position.x, position.y)) / delta;
         //pVector.scl(vectorWeight);
@@ -119,8 +118,7 @@ public class Agent {
     }
 
     private float getPotential(float x, float y) {
-        return getAgentKIMPotential(x, y) + getObstaclePotential(x, y);
-        //return getAgentDefaultPotential (x, y);
+        return getAgentKIMPotential(x, y) + getObstacleDSTPotential(x, y);
     }
 
     private float getAgentDSTPotential(float x, float y) {
@@ -131,40 +129,39 @@ public class Agent {
                 potential += pos.dst(agent.position);
             }
         }
-        if(potential <= 0.01){
+        if (potential <= 0.01) {
             potential = 0;
         }
         return potential;
     }
 
     private float getAgentKIMPotential(float x, float y) {
+        float potentialWight = 0;
+        float co = Parameter.AGENT_KIMPOTENTIALWEIGHT;
+        float lo = Parameter.AGENT_KIMPOTENTIALRANGE;
         Vector2 pos = new Vector2(x, y);
-        float potential = 0;
         for (Agent agent : env.getAgents()) {
             if (!agent.equals(this)) {
-                potential += (float) (Parameter.KIMPOTENTIALRANGE * Math.exp(-1 * (pos.dst2(agent.position) / (Parameter.KIMPOTENTIALRANGE * Parameter.KIMPOTENTIALRANGE))));
+                potentialWight += co * Math.exp(-1 * (pos.dst2(agent.position) / (lo * lo)));
             }
         }
-        if(potential <= 0.01){
-            potential = 0;
+        if (potentialWight <= 0.01) {
+            potentialWight = 0;
         }
-        return potential;
+        return potentialWight;
     }
 
-    private float getObstaclePotential(float x, float y) {
+    private float getObstacleDSTPotential(float x, float y) {
         Vector2 pos = new Vector2(x, y);
-        float potential = 0;
-        float co = Parameter.KIMPOTENTIALWEIGHT;
-        float lo = Parameter.KIMPOTENTIALRANGE;
+        float potentialWeight = 0;
+        float co = Parameter.OBSTACLE_KIMPOTENTIALWEIGHT;
+        float lo = Parameter.OBSTACLE_KIMPOTENTIALRANGE;
         for (Obstacle obstacle : env.getObstacles()) {
             for (PotentialCell obstacleCell : obstacle.getObstacleCells()) {
-                if (obstacleCell.getCenterPoint().dst(position) <= 10)
-                    //potential += pos.dst(obstacleCell.getCenterPoint());
-                    potential += (float) Math.exp(-1 * (pos.dst2(obstacleCell.getCenterPoint()) / (lo * lo)));
+                potentialWeight += co * Math.exp(-1 * (pos.dst2(obstacleCell.getCenterPoint()) / (lo * lo)));
             }
         }
-        potential *= co;
-        return potential;
+        return potentialWeight;
     }
 
     private boolean isMoved() {
