@@ -8,8 +8,8 @@ import java.util.Arrays;
 
 public class Parameter {
     //Operation
-    public static final int MODE = 1;//0はシミュレーション, 1は軌跡描画
-    public static final float ENDSTEP = 600; //0は終わらない
+    public static final int MODE = 0;//0はシミュレーション, 1は軌跡描画
+    public static final float ENDSTEP = 0; //0は終わらない
     public static final int ATTEMPTSNUM = 1;
     public static boolean ISWRITELOG = true;
 

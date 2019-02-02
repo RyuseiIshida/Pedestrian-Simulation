@@ -54,17 +54,15 @@ public class Main extends ApplicationAdapter {
         bitmapFont = new BitmapFont();
         bitmapFont.setColor(Color.BLACK);
         bitmapFont.getData().setScale(5);
+        environment = new Environment();
     }
 
     @Override
     public void render() {
         if (Parameter.MODE == 0) {
-            environment = new Environment();
             simulationMode();
         }
         if (Parameter.MODE == 1){
-            Parameter.ISWRITELOG = false;
-            environment = new Environment();
             logMode();
         }
     }
