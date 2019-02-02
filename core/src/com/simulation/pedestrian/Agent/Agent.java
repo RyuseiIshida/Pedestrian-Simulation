@@ -32,6 +32,7 @@ public class Agent {
         this.env = env;
         this.stateTag = StateTag.none;
         this.position = position;
+        this.goal = new Vector2(-1, -1);
         this.movePos = position;
         this.velocity = new Vector2(0, 0);
         this.followers = new LinkedList<>();

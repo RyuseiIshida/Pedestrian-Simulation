@@ -88,8 +88,9 @@ public class Main extends ApplicationAdapter {
         batch.begin();
         bitmapFont.draw(batch,
                 "time " + String.format("%.2f", environment.getStep() / 60)
-                        + "  " + "pedestrian = " + String.format(String.valueOf(environment.getAgents().size()))
-                        + "  " + "group = " + String.format(String.valueOf(environment.getCrowd().getCrowdNum())),
+                        + "  " + "agentNum = " + String.format(String.valueOf(environment.getAgents().size()))
+                        + "  " + "groupNum= " + String.format(String.valueOf(environment.getCrowd().getCrowdNum()))
+                        + "  " + "goalNum= " + String.format(String.valueOf(environment.getGoalAgentNum())),
                 30, Parameter.SCALE.y - 10);
         batch.end();
 

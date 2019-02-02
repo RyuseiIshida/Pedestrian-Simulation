@@ -1,6 +1,8 @@
 package com.simulation.pedestrian.Log;
 
+import com.badlogic.gdx.math.Vector2;
 import com.simulation.pedestrian.Agent.Agent;
+import com.simulation.pedestrian.Agent.StateTag;
 import com.simulation.pedestrian.Environment;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -79,6 +81,48 @@ public class WriterLog {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void writeEnvLog() {
+        try {
+            String path = this.path + "/env" + ".txt";
+            if (!(new File(path).exists())) {
+                CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
+                printer.printRecord("step", "goalAgentNum", "groupSize", "follow");
+                printer.close();
+            }
+            Reader reader = Files.newBufferedReader(Paths.get(path));
+            CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+            ArrayList<CSVRecord> csvRecords = new ArrayList<>();
+            for (CSVRecord record : csvParser) {
+                csvRecords.add(record);
+            }
+            CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
+            for (CSVRecord csvRecord : csvRecords) {
+                printer.printRecord(
+                        csvRecord.get(0),
+                        csvRecord.get(1),
+                        csvRecord.get(2),
+                        csvRecord.get(3)
+                );
+            }
+            int follow = 0;
+            for (Agent agent : env.getAgents()) {
+                if(agent.getStateTag().equals(StateTag.follow)){
+                    follow++;
+                }
+            }
+            printer.printRecord(
+                    env.getStep(), //0
+                    env.getGoalAgentNum(), //1
+                    env.getCrowd().getCrowdNum(), //2
+                    follow //3
+            );
+            printer.close();
+            csvParser.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -24,6 +24,7 @@ public class Environment {
     private ArrayList<Agent> agents;
     private Crowd crowd;
     private int agentCounter;
+    private int goalAgentNum;
 
     private WriterLog writerLog;
 
@@ -54,6 +55,7 @@ public class Environment {
     public void update() {
         if (Parameter.ISWRITELOG) {
             writerLog.writeAgentLog();
+            writerLog.writeEnvLog();
         }
         agents.stream()
                 .parallel()
@@ -91,6 +93,7 @@ public class Environment {
                         && aPosX < goal.getRightTop().x
                         && aPosY < goal.getRightTop().y) {
                     iterator.remove();
+                    goalAgentNum++;
                 }
             }
         }
@@ -199,6 +202,10 @@ public class Environment {
 
     public ArrayList<Agent> getAgents() {
         return agents;
+    }
+
+    public int getGoalAgentNum() {
+        return goalAgentNum;
     }
 
     public Crowd getCrowd() {
