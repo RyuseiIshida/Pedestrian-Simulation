@@ -4,16 +4,14 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.simulation.pedestrian.Agent.Agent;
 import com.simulation.pedestrian.Agent.Crowd;
+import com.simulation.pedestrian.Log.WriterLog;
 import com.simulation.pedestrian.Obstacle.Obstacle;
 import com.simulation.pedestrian.Potential.PotentialCell;
 import com.simulation.pedestrian.Potential.PotentialMap;
 import com.simulation.pedestrian.Util.Tuple;
 
-import java.io.File;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 public class Environment {
     private float step;
@@ -21,12 +19,13 @@ public class Environment {
     private PotentialMap envPotentialMap;
     private float cellInterval = Parameter.CELLINTERVAL;
     private float maxPotential = Parameter.MAXPOTENTIAL;
-    private List<Goal> goals = new ArrayList<>(Parameter.GOALS);
-    private List<Obstacle> obstacles;
-    private List<Agent> agents;
+    private ArrayList<Goal> goals = new ArrayList<>(Parameter.GOALS);
+    private ArrayList<Obstacle> obstacles;
+    private ArrayList<Agent> agents;
     private Crowd crowd;
     private int agentCounter;
-    private String logPath;
+
+    private WriterLog writerLog;
 
     public Environment() {
         step = 0;
@@ -42,27 +41,20 @@ public class Environment {
         //rightLine
         obstacles.add(new Obstacle(1900, 200, 10, 1500, envPotentialMap));
         //bottomLine
-        obstacles.add(new Obstacle(1000, 200, 800, 10, envPotentialMap));
+        obstacles.add(new Obstacle(1010, 200, 810, 10, envPotentialMap));
         //TopLine
         obstacles.add(new Obstacle(900, 1700, 1000, 10, envPotentialMap));
         setObstaclePotential();
         //setEdgePotential();
-        //initLogDir();
-    }
-
-    public void initLogDir() {
-        String path = new File(".").getAbsoluteFile().getParent();
-        path += "/core/src/com/simulation/pedestrian/Log/";
-        LocalDateTime ldt = LocalDateTime.now();
-        logPath = path + ldt;
-        new File(logPath).mkdir();
-    }
-
-    public String getLogPath() {
-        return logPath;
+        if(Parameter.ISWRITELOG) {
+            writerLog = new WriterLog(this);
+        }
     }
 
     public void update() {
+        if (Parameter.ISWRITELOG) {
+            writerLog.writeAgentLog();
+        }
         agents.stream()
                 .parallel()
                 .forEach(agent -> {
@@ -83,7 +75,7 @@ public class Environment {
         return step;
     }
 
-    public List<Goal> getGoals() {
+    public ArrayList<Goal> getGoals() {
         return goals;
     }
 
@@ -178,7 +170,7 @@ public class Environment {
         setObstaclePotential();
     }
 
-    public List<Obstacle> getObstacles() {
+    public ArrayList<Obstacle> getObstacles() {
         return obstacles;
     }
 
@@ -205,7 +197,7 @@ public class Environment {
         agents.add(new Agent(String.valueOf(++agentCounter), this, pos, goals.get(goalIndex)));
     }
 
-    public List<Agent> getAgents() {
+    public ArrayList<Agent> getAgents() {
         return agents;
     }
 

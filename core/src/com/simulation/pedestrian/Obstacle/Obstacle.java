@@ -4,8 +4,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.simulation.pedestrian.Potential.PotentialCell;
 import com.simulation.pedestrian.Potential.PotentialMap;
 import com.simulation.pedestrian.Util.Tuple;
-import com.simulation.pedestrian.Util.Vector;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class Obstacle {
         PotentialCell endCell = potentialMap.getPotentialCell(new Vector2(position.x + w, position.y + h));
         startIndex = potentialMap.getIndex(startCell);
         endIndex = potentialMap.getIndex(endCell);
-        List<List<PotentialCell>> matrixCell = potentialMap.getMatrixPotentialCells();
+        ArrayList<ArrayList<PotentialCell>> matrixCell = potentialMap.getMatrixPotentialCells();
         for (int i = startIndex.t1; i <= endIndex.t1; i++) {
             for (int j = startIndex.t2; j <= endIndex.t2; j++) {
                 //matrixCell.get(i).get(j).setObstaclePotential(potential);

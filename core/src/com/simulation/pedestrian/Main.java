@@ -3,6 +3,7 @@ package com.simulation.pedestrian;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -13,8 +14,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.simulation.pedestrian.Agent.Agent;
 import com.simulation.pedestrian.Agent.StateTag;
+import com.simulation.pedestrian.Log.LoadLog;
 import com.simulation.pedestrian.Obstacle.Obstacle;
 import com.simulation.pedestrian.Potential.PotentialCell;
+
+import java.util.ArrayList;
 
 public class Main extends ApplicationAdapter {
     //libGdx
@@ -23,9 +27,15 @@ public class Main extends ApplicationAdapter {
     private ShapeRenderer shapeRenderer;
     private BitmapFont bitmapFont;
 
-    //myClass
-    private boolean PLAY = false;
     private Environment environment;
+
+    //Operation
+    private boolean PLAY = false;
+    private int attemptsNum = 0;
+
+    //modeLog
+    private int agentNumber = 1;
+    private boolean drawAllTrajectory = false;
 
     //drawFlag
     private boolean drawPotential = false;
@@ -33,6 +43,7 @@ public class Main extends ApplicationAdapter {
     private boolean drawConcentrationLevel = false;
     private boolean drawCell = false;
     private boolean drawView = false;
+
 
     @Override
     public void create() {
@@ -43,11 +54,30 @@ public class Main extends ApplicationAdapter {
         bitmapFont = new BitmapFont();
         bitmapFont.setColor(Color.BLACK);
         bitmapFont.getData().setScale(5);
-        environment = new Environment();
     }
 
     @Override
     public void render() {
+        if (Parameter.MODE == 0) {
+            environment = new Environment();
+            simulationMode();
+        }
+        if (Parameter.MODE == 1){
+            Parameter.ISWRITELOG = false;
+            environment = new Environment();
+            logMode();
+        }
+    }
+
+    private void simulationMode() {
+        if (Parameter.ENDSTEP != 0 && Parameter.ENDSTEP + 1 == environment.getStep()) {
+            environment = new Environment();
+            attemptsNum++;
+            System.out.println("attemptsNum = " + attemptsNum);
+            if (attemptsNum == Parameter.ATTEMPTSNUM) {
+                dispose();
+            }
+        }
         if (PLAY) {
             environment.update();
         }
@@ -112,6 +142,38 @@ public class Main extends ApplicationAdapter {
             }
         }
         shapeRenderer.end();
+    }
+
+    private void logMode() {
+        Gdx.gl.glClearColor(255, 255, 255, 255);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
+
+
+        //文字の描画
+        batch.begin();
+        if(drawAllTrajectory) {
+            bitmapFont.draw(batch, "agent all", 30, Parameter.SCALE.y - 10);
+        } else {
+            bitmapFont.draw(batch, "agent" + agentNumber, 30, Parameter.SCALE.y - 10);
+        }
+        batch.end();
+
+        //出口
+        renderGoal();
+        //障害物
+        renderObstacle();
+        //入力処理
+        input();
+
+        //軌跡
+        if(drawAllTrajectory) {
+            trajectory();
+        } else {
+            trajectory(agentNumber);
+        }
+
     }
 
     private void renderAgentView() {
@@ -264,6 +326,30 @@ public class Main extends ApplicationAdapter {
         shapeRenderer.end();
     }
 
+    private void trajectory() {
+        LoadLog loadLog = new LoadLog();
+        for (int i = 1; i <= loadLog.getAgentNum(); i++) {
+            trajectory(i);
+        }
+    }
+
+    private void trajectory(int num) {
+        LoadLog loadLog = new LoadLog();
+        ArrayList<Vector2> posList = loadLog.getPosList(num);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED);
+        Vector2 tmp = null;
+        for (Vector2 vector2 : posList) {
+            if(tmp == null) {
+                tmp = vector2;
+            } else {
+                shapeRenderer.line(tmp, vector2);
+                tmp = vector2;
+            }
+        }
+        shapeRenderer.end();
+    }
+
     private void input() {
         if (Gdx.input.isTouched()) {
             Vector3 touchPos = new Vector3();
@@ -306,6 +392,12 @@ public class Main extends ApplicationAdapter {
             drawCell = drawCell ? false : true;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.V)) {
             drawView = drawView ? false : true;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            agentNumber++;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+            agentNumber--;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+            drawAllTrajectory = drawAllTrajectory ? false : true;
         }
     }
 

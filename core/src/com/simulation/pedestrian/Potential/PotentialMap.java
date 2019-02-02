@@ -4,11 +4,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.simulation.pedestrian.Util.Tuple;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class PotentialMap {
-    List<PotentialCell> potentialCells;
-    List<List<PotentialCell>> matrixPotentialCells;
+    ArrayList<PotentialCell> potentialCells;
+    ArrayList<ArrayList<PotentialCell>> matrixPotentialCells;
     Vector2 scale;
     float maxPotential;
     float cellInterval;
@@ -34,11 +33,11 @@ public class PotentialMap {
         }
     }
 
-    public List<PotentialCell> getPotentialCells() {
+    public ArrayList<PotentialCell> getPotentialCells() {
         return potentialCells;
     }
 
-    public List<List<PotentialCell>> getMatrixPotentialCells() {
+    public ArrayList<ArrayList<PotentialCell>> getMatrixPotentialCells() {
         return matrixPotentialCells;
     }
 

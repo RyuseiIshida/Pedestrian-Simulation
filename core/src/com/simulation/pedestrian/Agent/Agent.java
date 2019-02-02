@@ -8,20 +8,9 @@ import com.simulation.pedestrian.Obstacle.Obstacle;
 import com.simulation.pedestrian.Parameter;
 import com.simulation.pedestrian.Potential.PotentialCell;
 import com.simulation.pedestrian.Util.Vector;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 public class Agent {
     private Environment env;
@@ -212,7 +201,7 @@ public class Agent {
     }
 
     private void judgeCrowd() {
-        List<Agent> list = new ArrayList<>();
+        ArrayList<Agent> list = new ArrayList<>();
         for (Agent agent : env.getAgents()) {
             if (!agent.equals(this)) {
                 ArrayList<Agent> group = env.getCrowd().getMyGroup(this);
@@ -244,7 +233,7 @@ public class Agent {
     }
 
     private void moveGroupPosition() {
-        List<Agent> list = new ArrayList<>();
+        ArrayList<Agent> list = new ArrayList<>();
         ArrayList<Agent> group = env.getCrowd().getMyGroup(this);
         for (Agent agent : env.getAgents()) {
             if (!agent.equals(this)
@@ -296,6 +285,10 @@ public class Agent {
         return goal;
     }
 
+    public Vector2 getMovePos() {
+        return movePos;
+    }
+
     public Agent getFollowAgent() {
         return followAgent;
     }
@@ -304,36 +297,4 @@ public class Agent {
         return followers;
     }
 
-    public void writerCSV() {
-        // Header
-        //   0   1     2         3       4     5        6         7
-        // step tag position velocity movepos goal followAgent followers
-        String path = env.getLogPath() + "/" + ID + ".txt";
-        try {
-            if (!(new File(path).exists())) {
-                CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
-                printer.printRecord("step", "tag", "position", "velocity", "movepos", "goal", "followAgent", "followers");
-                printer.close();
-            }
-            Reader reader = Files.newBufferedReader(Paths.get(path));
-            CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-            ArrayList<CSVRecord> csvRecord = new ArrayList<>();
-            for (CSVRecord record : csvParser) {
-                csvRecord.add(record);
-            }
-            CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
-            for (CSVRecord record : csvRecord) {
-                printer.printRecord(
-                        record.get(0), record.get(1),
-                        record.get(2), record.get(3),
-                        record.get(4), record.get(5),
-                        record.get(6), record.get(7));
-            }
-            printer.printRecord(env.getStep(), stateTag, position, velocity, movePos, goal, followAgent, followers);
-            printer.close();
-            csvParser.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
 }
