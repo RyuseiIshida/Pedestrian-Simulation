@@ -115,34 +115,6 @@ public class Main extends ApplicationAdapter {
         input();
     }
 
-    private void renderAgent() {
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (Agent agent : environment.getAgents()) {
-            shapeRenderer.setColor(Color.GRAY);
-            shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius);
-            float range = 0.7f;
-            switch (agent.getStateTag()) {
-                case StateTag.moveGoal:
-                    shapeRenderer.setColor(Color.RED);
-                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
-                    break;
-                case StateTag.follow:
-                    shapeRenderer.setColor(Color.GREEN);
-                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
-                    break;
-                case StateTag.randomWalk:
-                    shapeRenderer.setColor(Color.BLACK);
-                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
-                    break;
-                case StateTag.moveGroupPosition:
-                    shapeRenderer.setColor(Color.BLUE);
-                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
-            }
-        }
-        shapeRenderer.end();
-    }
-
     private void logMode() {
         Gdx.gl.glClearColor(255, 255, 255, 255);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -173,6 +145,34 @@ public class Main extends ApplicationAdapter {
             trajectory(agentNumber);
         }
 
+    }
+
+    private void renderAgent() {
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        for (Agent agent : environment.getAgents()) {
+            shapeRenderer.setColor(Color.GRAY);
+            shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius);
+            float range = 0.7f;
+            switch (agent.getStateTag()) {
+                case StateTag.moveGoal:
+                    shapeRenderer.setColor(Color.RED);
+                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
+                    break;
+                case StateTag.follow:
+                    shapeRenderer.setColor(Color.GREEN);
+                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
+                    break;
+                case StateTag.randomWalk:
+                    shapeRenderer.setColor(Color.BLACK);
+                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
+                    break;
+                case StateTag.moveGroupPosition:
+                    shapeRenderer.setColor(Color.BLUE);
+                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.agentRadius * range);
+            }
+        }
+        shapeRenderer.end();
     }
 
     private void renderAgentView() {

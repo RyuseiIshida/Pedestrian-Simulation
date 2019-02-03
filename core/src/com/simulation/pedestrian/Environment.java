@@ -45,7 +45,7 @@ public class Environment {
         obstacles.add(new Obstacle(1010, 200, 810, 10, envPotentialMap));
         //TopLine
         obstacles.add(new Obstacle(900, 1700, 1000, 10, envPotentialMap));
-        setObstaclePotential();
+        //setObstaclePotential();
         //setEdgePotential();
         if(Parameter.ISWRITELOG) {
             writerLog = new WriterLog(this);
@@ -185,7 +185,16 @@ public class Environment {
             float y = MathUtils.random(1300, 1600);
             Vector2 position = new Vector2(x, y);
             if (i < Parameter.goalAgentNum) {
-                agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
+//                if(i < Parameter.goalAgentNum / 2){
+//                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
+//                } else {
+//                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(1)));
+//                }
+                if(Parameter.goalAgentDestination.equals("random")) {
+                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(MathUtils.random(goals.size()-1))));
+                } else {
+                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(Integer.valueOf(Parameter.goalAgentDestination))));
+                }
             } else {
                 agents.add(new Agent(String.valueOf(++agentCounter), this, position));
             }

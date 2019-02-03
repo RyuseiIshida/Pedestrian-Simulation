@@ -21,7 +21,9 @@ public class LoadLog {
         File dir = new File(path);
         for (File file : dir.listFiles()) {
             for (File listFile : file.listFiles()) {
-                agentFile.add(listFile);
+                if(!listFile.getPath().contains("env.txt")) {
+                    agentFile.add(listFile);
+                }
             }
         }
     }
