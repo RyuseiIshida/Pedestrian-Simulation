@@ -9,7 +9,9 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "Pedestrian Simulation";
 		config.width = 800;
-		config.height = 480;
+        config.height = 480;
+        config.x = -1;
+        config.y = -1;
 		new LwjglApplication(new Main(), config);
 	}
 }

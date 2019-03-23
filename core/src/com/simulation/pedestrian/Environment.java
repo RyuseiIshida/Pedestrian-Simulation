@@ -40,14 +40,14 @@ public class Environment {
         //leftLine
         obstacles.add(new Obstacle(900, 200, 10, 1500, envPotentialMap));
         //rightLine
-        obstacles.add(new Obstacle(1900, 200, 10, 1500, envPotentialMap));
+        obstacles.add(new Obstacle(2400, 200, 10, 1500, envPotentialMap));
         //bottomLine
-        obstacles.add(new Obstacle(1010, 200, 810, 10, envPotentialMap));
+        obstacles.add(new Obstacle(1010, 200, 1290, 10, envPotentialMap));
         //TopLine
-        obstacles.add(new Obstacle(900, 1700, 1000, 10, envPotentialMap));
+        obstacles.add(new Obstacle(900, 1700, 1500, 10, envPotentialMap));
         //setObstaclePotential();
         //setEdgePotential();
-        if(Parameter.ISWRITELOG) {
+        if (Parameter.ISWRITELOG) {
             writerLog = new WriterLog(this);
         }
     }
@@ -181,20 +181,25 @@ public class Environment {
     //Agent
     public void spawnInitAgents() {
         for (int i = 0; i < Parameter.initAgentNum; i++) {
-            float x = MathUtils.random(950, 1800);
+            float x = MathUtils.random(950, 2300);
             float y = MathUtils.random(1300, 1600);
             Vector2 position = new Vector2(x, y);
             if (i < Parameter.goalAgentNum) {
-//                if(i < Parameter.goalAgentNum / 2){
-//                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
-//                } else {
-//                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(1)));
-//                }
-                if(Parameter.goalAgentDestination.equals("random")) {
-                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(MathUtils.random(goals.size()-1))));
+                if(i < Parameter.goalAgentNum / 2){
+                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
                 } else {
-                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(Integer.valueOf(Parameter.goalAgentDestination))));
+                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(1)));
                 }
+//                if(Parameter.goalAgentDestination.equals("random")) {
+//                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(MathUtils.random(goals.size()-1))));
+//                } else {
+//                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get()));
+//                }
+//                if (Parameter.goalAgentDestination.equals("random")) {
+//                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(MathUtils.random(goals.size() - 1))));
+//                } else {
+//                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(Integer.valueOf(Parameter.goalAgentDestination))));
+//                }
             } else {
                 agents.add(new Agent(String.valueOf(++agentCounter), this, position));
             }

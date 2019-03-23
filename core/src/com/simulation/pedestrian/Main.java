@@ -3,7 +3,6 @@ package com.simulation.pedestrian;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -18,6 +17,7 @@ import com.simulation.pedestrian.Log.LoadLog;
 import com.simulation.pedestrian.Obstacle.Obstacle;
 import com.simulation.pedestrian.Potential.PotentialCell;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Main extends ApplicationAdapter {
@@ -30,7 +30,7 @@ public class Main extends ApplicationAdapter {
     private Environment environment;
 
     //Operation
-    private boolean PLAY = false;
+    public boolean PLAY = false;
     private int attemptsNum = 0;
 
     //modeLog
@@ -47,6 +47,7 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void create() {
+        //createSubWindow();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Parameter.SCALE.x, Parameter.SCALE.y);
         batch = new SpriteBatch();
@@ -55,6 +56,11 @@ public class Main extends ApplicationAdapter {
         bitmapFont.setColor(Color.BLACK);
         bitmapFont.getData().setScale(5);
         environment = new Environment();
+    }
+
+    public void createSubWindow(){
+        ParameterWindow frame = new ParameterWindow("タイトル");
+        frame.setVisible(true);
     }
 
     @Override
