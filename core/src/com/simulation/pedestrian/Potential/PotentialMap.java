@@ -108,4 +108,9 @@ public class PotentialMap {
     public float getCellInterval() {
         return cellInterval;
     }
+
+    @Override
+    public String toString() {
+        return "Constructor is " + "scale=" +scale + ", maxPotential=" + maxPotential + ", cellInterval" + cellInterval;
+    }
 }

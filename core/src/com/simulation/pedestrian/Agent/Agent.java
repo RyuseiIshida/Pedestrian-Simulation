@@ -9,8 +9,7 @@ import com.simulation.pedestrian.Parameter;
 import com.simulation.pedestrian.Potential.PotentialCell;
 import com.simulation.pedestrian.Util.Vector;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.*;
 
 public class Agent {
     private Environment env;
@@ -27,12 +26,33 @@ public class Agent {
     private Agent followAgent;
     private LinkedList<Agent> followers;
 
+    //perception
+    private ArrayList<Agent> perceptionAgentList = new ArrayList<>();
+    private ArrayList<Agent> perceptionFollowAgentList = new ArrayList<>();
+    private String perceptionBeforeStateTag;
+    private Vector2 perceptionBeforePos;
+    private float perceptionContinueStep = 0;
+    private float perceptionContinueDst = 0;
+    private float perceptionAllDst = 0;
+
+    //utility weight
+    private float alpha = Parameter.alpha;
+    private float beta = Parameter.beta;
+    private float gamma = Parameter.gamma;
+    private float delta = Parameter.delta;
+    private float epsilon = Parameter.epsilon;
+
+    float utilityRandomWalk = 0;
+    float utilityFollow = 0;
+    float utilityMoveGoal = 0;
+
     public Agent(String id, Environment env, Vector2 position) {
         this.ID = id;
         this.env = env;
         this.stateTag = StateTag.none;
+        this.perceptionBeforeStateTag = StateTag.none;
         this.position = position;
-        this.goal = new Vector2(-1, -1);
+        this.perceptionBeforePos = position;
         this.movePos = position;
         this.velocity = new Vector2(0, 0);
         this.followers = new LinkedList<>();
@@ -42,43 +62,169 @@ public class Agent {
         this.ID = id;
         this.env = env;
         this.stateTag = StateTag.moveGoal;
+        this.perceptionBeforeStateTag = StateTag.moveGoal;
         this.position = position;
+        this.perceptionBeforePos = position;
         this.goal = goal.getCenter();
         this.movePos = goal.getCenter();
         this.velocity = new Vector2(0, 0);
         this.followers = new LinkedList<>();
     }
 
-
-    public void action() throws Exception {
-        decisionMaking();
-        move(movePos);
-        //writerCSV();
+    public void action() {
+        perception();
+        utilityFunction();
     }
 
-    //意思決定
-    private void decisionMaking() {
-        ifGoalInView();
-        if (stateTag == StateTag.follow) {
-            followAgent();
+    private void perception() {
+        setPerceptionContinue(); //同じルールをどれくらい継続しているのか
+        setPerceptionAgent(); //視界にいるエージェント
+        setPerceptionFollowAgent(); //視野内にいる追従できそうなエージェント
+        leSetPerceptionFollowAgent(); //追従を辞めた時の後処理
+        setPerceptionGoal();
+    }
+
+    private void setPerceptionContinue() {
+        if (perceptionBeforeStateTag.equals(stateTag)) {
+            perceptionContinueStep++;
+            perceptionContinueDst += position.dst(perceptionBeforePos);
+        } else { //ルール変更でリセット
+            perceptionContinueStep = 0;
+            perceptionContinueDst = 0;
         }
-        if (env.getStep() % Parameter.stepInterval == 0
-                && stateTag != StateTag.moveGoal
-                && stateTag != StateTag.follow
-        ) {
-            int random = MathUtils.random(0, 2);
-            switch (random) {
-                case 0:
-                    randomWalk();
-                    break;
-                case 1:
-                    judgeCrowd();
-                    break;
-                case 2:
-                    moveGroupPosition();
-                    break;
+        perceptionAllDst += position.dst(perceptionBeforePos);
+        //次stepへの後処理
+        perceptionBeforeStateTag = stateTag;
+        perceptionBeforePos = new Vector2(position);
+    }
+
+    private void setPerceptionAgent() {
+        perceptionAgentList = new ArrayList<>();
+        env.getAgents().stream()
+                .filter(agent -> !agent.equals(this) && isInView(agent.getPosition()))
+                .forEach(agent -> perceptionAgentList.add(agent));
+    }
+
+    private void setPerceptionFollowAgent() {
+        perceptionFollowAgentList = new ArrayList<>();
+        ArrayList<Agent> group = env.getCrowd().getMyGroup(this);
+        perceptionAgentList.stream()
+                //.filter(agent -> !StateTag.follow.equals(agent.stateTag))
+                .filter(agent -> group == null)
+                .forEach(agent -> perceptionFollowAgentList.add(agent));
+    }
+
+    private void leSetPerceptionFollowAgent() {
+        if (!StateTag.follow.equals(stateTag) && followAgent != null) {
+            followAgent.followers.remove(this);
+            followAgent = null;
+        }
+    }
+
+    private void setPerceptionGoal() {
+        for (Goal goal : env.getGoals()) {
+            if (isInView(goal.getCenter())
+                    || isInView(goal.getLeftButtom())
+                    || isInView(goal.getLeftTop())
+                    || isInView(goal.getRightButtom())
+                    || isInView(goal.getRightTop())
+            ) {
+                this.goal = goal.getCenter();
+                this.movePos = this.goal;
+                break;
             }
         }
+    }
+
+    private void utilityFunction() {
+        utilityRandomWalk = StateTag.randomWalk.equals(stateTag)
+                ? perceptionContinueStep * alpha + getObstacleKIMPotential(position) * beta + 1
+                : getObstacleKIMPotential(position) * beta;
+        utilityRandomWalk = (utilityRandomWalk > 0.3f) ? utilityRandomWalk : 0.3f; //0回避(follow回避)
+
+        utilityFollow = StateTag.follow.equals(stateTag)
+                ? perceptionContinueStep * gamma + perceptionFollowAgentList.size() * delta + 1
+                : perceptionFollowAgentList.size() * delta;
+        utilityFollow = (utilityFollow > 0.8f) ? 0.8f : utilityFollow;
+
+        utilityMoveGoal = StateTag.moveGoal.equals(stateTag)
+                ? perceptionContinueDst * epsilon + 1
+                : (goal != null ? 1 : -1);
+
+        Map<String, Float> actionMap = new TreeMap<>();
+        ArrayList<String> actionList = new ArrayList<>();
+        actionMap.put(StateTag.randomWalk, utilityRandomWalk);
+        actionMap.put(StateTag.follow, utilityFollow);
+        actionMap.put(StateTag.moveGoal, utilityMoveGoal);
+        actionMap.entrySet().stream()
+                .sorted(Collections.reverseOrder(java.util.Map.Entry.comparingByValue()))
+                .forEach(action -> actionList.add(action.getKey()));
+        if (StateTag.randomWalk.equals(actionList.get(0))) {
+            //System.out.println("utilityRandomWalk = " + utilityRandomWalk);
+            if (!StateTag.randomWalk.equals(stateTag)) {
+                initRandomWalk();
+            } else {
+                randomWalk();
+            }
+        } else if (StateTag.follow.equals(actionList.get(0))) {
+            //System.out.println("utilityFollow = " + utilityFollow);
+            if (!StateTag.follow.equals(stateTag)) {
+                initFollowAgent();
+            }
+            followAgent();
+        } else if (StateTag.moveGoal.equals(actionList.get(0))) {
+            //System.out.println("utilityMoveGoal = " + utilityMoveGoal);
+            moveGoal();
+        }
+    }
+
+    private void moveGoal() {
+        stateTag = StateTag.moveGoal;
+        move(goal);
+    }
+
+    private void initRandomWalk() {
+        stateTag = StateTag.randomWalk;
+        float posX = MathUtils.random(Parameter.SCALE.x);
+        float posY = MathUtils.random(Parameter.SCALE.y);
+        movePos = new Vector2(posX, posY);
+        move(movePos);
+    }
+
+    private void randomWalk() {
+        if (getObstacleKIMPotential(position) > 0) {
+            initRandomWalk();
+            return;
+        }
+        movePos = movePos.add(velocity);
+        move(movePos);
+    }
+
+    private void initFollowAgent() {
+        Optional<Agent> closestAgent = perceptionFollowAgentList.stream()
+                .min((a, b) -> new Float(position.dst(a.position))
+                        .compareTo(position.dst(b.position)));
+        followAgent = closestAgent.get();
+        followAgent.setFollower(this);
+        stateTag = StateTag.follow;
+    }
+
+    private void followAgent() {
+        if (followAgent == null) {
+            System.out.println("Iam  = " + this + "     step = " + perceptionContinueStep + "     followAgent = " + followAgent);
+            System.out.println("Iam  = " + this + "     step = " + perceptionContinueStep + "     perceptionFollowAgentList = " + perceptionFollowAgentList);
+            followAgent = perceptionFollowAgentList.get(0);
+        }
+        movePos = new Vector2(followAgent.getPosition()).sub(followAgent.getVelocity().scl(2f));
+        float distance = position.dst(followAgent.getPosition());
+        if (distance > Parameter.viewRadius || followers.contains(followAgent)) {
+            followAgent.followers.remove(this);
+            followAgent = null;
+            initRandomWalk();
+            return;
+        }
+        move(movePos);
+        stateTag = StateTag.follow;
     }
 
     private void move(Vector2 movePos) {
@@ -108,7 +254,7 @@ public class Agent {
     }
 
     private float getPotential(float x, float y) {
-        return getAgentKIMPotential(x, y) + getObstacleDSTPotential(x, y);
+        return getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y);
     }
 
     private float getAgentDSTPotential(float x, float y) {
@@ -141,7 +287,7 @@ public class Agent {
         return potentialWight;
     }
 
-    private float getObstacleDSTPotential(float x, float y) {
+    private float getObstacleKIMPotential(float x, float y) {
         Vector2 pos = new Vector2(x, y);
         float potentialWeight = 0;
         float co = Parameter.OBSTACLE_KIMPOTENTIALWEIGHT;
@@ -152,6 +298,10 @@ public class Agent {
             }
         }
         return potentialWeight;
+    }
+
+    private float getObstacleKIMPotential(Vector2 vec) {
+        return getObstacleKIMPotential(vec.x, vec.y);
     }
 
     private boolean isMoved() {
@@ -178,92 +328,8 @@ public class Agent {
         return false;
     }
 
-    private void ifGoalInView() {//視野内にゴールが入った場合
-        for (Goal goal : env.getGoals()) {
-            if (isInView(goal.getCenter())
-                    || isInView(goal.getLeftButtom())
-                    || isInView(goal.getLeftTop())
-                    || isInView(goal.getRightButtom())
-                    || isInView(goal.getRightTop())
-            ) {
-                this.stateTag = StateTag.moveGoal;
-                this.goal = goal.getCenter();
-                this.movePos = this.goal;
-                break;
-            }
-        }
-    }
-
-    private void randomWalk() {
-        stateTag = StateTag.randomWalk;
-        float posX = MathUtils.random(Parameter.SCALE.x);
-        float posY = MathUtils.random(Parameter.SCALE.y);
-        movePos = new Vector2(posX, posY);
-    }
-
-    private void judgeCrowd() {
-        ArrayList<Agent> list = new ArrayList<>();
-        for (Agent agent : env.getAgents()) {
-            if (!agent.equals(this)) {
-                ArrayList<Agent> group = env.getCrowd().getMyGroup(this);
-                if (isInView(agent.getPosition())
-                        //&& stateTag != StateTag.follow
-                        //&& agent.getStateTag() != StateTag.follow
-                        && group == null
-                ) {
-                    list.add(agent);
-                }
-
-            }
-        }
-        if (list.size() >= Parameter.followNum) {
-            stateTag = StateTag.follow;
-            Agent agent = list.get(0);
-            for (Agent follow : list) {
-                if (follow.getStateTag() == StateTag.moveGoal) {
-                    agent = follow;
-                    break;
-                }
-                agent = follow;
-            }
-            followAgent = agent;
-            agent.setFollower(this);
-        } else {
-            randomWalk();
-        }
-    }
-
-    private void moveGroupPosition() {
-        ArrayList<Agent> list = new ArrayList<>();
-        ArrayList<Agent> group = env.getCrowd().getMyGroup(this);
-        for (Agent agent : env.getAgents()) {
-            if (!agent.equals(this)
-                    && isInView(agent.getPosition())
-                    && group == null) {
-                list.add(agent);
-            }
-        }
-        if (list.size() >= Parameter.moveGroupNum) {
-            movePos = list.get(0).getPosition();
-            stateTag = StateTag.moveGroupPosition;
-        } else {
-            randomWalk();
-        }
-    }
-
-    public void setFollower(Agent follower) {
-        followers.add(follower);
-    }
-
-    private void followAgent() {
-        //movePos = followAgent.getPosition();
-        movePos = new Vector2(followAgent.getPosition()).sub(followAgent.getVelocity().scl(2f));
-        float distance = position.dst(followAgent.getPosition());
-        if (distance > 200) {
-            stateTag = StateTag.none;
-            followAgent = null;
-            followers.remove(this);
-        }
+    public void setFollower(Agent agent) {
+        followers.add(agent);
     }
 
     public String getID() {
@@ -298,4 +364,63 @@ public class Agent {
         return followers;
     }
 
+
+    public ArrayList<Agent> getPerceptionAgentList() {
+        return perceptionAgentList;
+    }
+
+    public ArrayList<Agent> getPerceptionFollowAgentList() {
+        return perceptionFollowAgentList;
+    }
+
+
+    public float getPerceptionContinueStep() {
+        return perceptionContinueStep;
+    }
+
+    public float getPerceptionContinueDst() {
+        return perceptionContinueDst;
+    }
+
+    public float getPerceptionAllDst() {
+        return perceptionAllDst;
+    }
+
+    public float getAlpha() {
+        return alpha;
+    }
+
+    public float getBeta() {
+        return beta;
+    }
+
+    public float getGamma() {
+        return gamma;
+    }
+
+    public float getDelta() {
+        return delta;
+    }
+
+    public float getEpsilon() {
+        return epsilon;
+    }
+
+    public float getUtilityRandomWalk() {
+        return utilityRandomWalk;
+    }
+
+    public float getUtilityFollow() {
+        return utilityFollow;
+    }
+
+    public float getUtilityMoveGoal() {
+        return utilityMoveGoal;
+    }
+
+
+    @Override
+    public String toString() {
+        return "agent" + ID;
+    }
 }

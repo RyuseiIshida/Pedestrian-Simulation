@@ -15,12 +15,9 @@ import java.util.Iterator;
 
 public class Environment {
     private float step;
-    private Vector2 scale = Parameter.SCALE;
-    private PotentialMap envPotentialMap;
-    private float cellInterval = Parameter.CELLINTERVAL;
-    private float maxPotential = Parameter.MAXPOTENTIAL;
+    private PotentialMap envPotentialMap = Parameter.POTENTIALMAP;
     private ArrayList<Goal> goals = new ArrayList<>(Parameter.GOALS);
-    private ArrayList<Obstacle> obstacles;
+    private ArrayList<Obstacle> obstacles = Parameter.obstacles;
     private ArrayList<Agent> agents;
     private Crowd crowd;
     private int agentCounter;
@@ -34,19 +31,6 @@ public class Environment {
         agentCounter = 0;
         crowd = new Crowd(this);
         spawnInitAgents();
-        envPotentialMap = new PotentialMap(scale, cellInterval, maxPotential);
-        obstacles = new ArrayList<>();
-        //obstacles.add(new Obstacle(900, 200, 1000, 1500, envPotentialMap));
-        //leftLine
-        obstacles.add(new Obstacle(900, 200, 10, 1500, envPotentialMap));
-        //rightLine
-        obstacles.add(new Obstacle(2400, 200, 10, 1500, envPotentialMap));
-        //bottomLine
-        obstacles.add(new Obstacle(1010, 200, 1290, 10, envPotentialMap));
-        //TopLine
-        obstacles.add(new Obstacle(900, 1700, 1500, 10, envPotentialMap));
-        //setObstaclePotential();
-        //setEdgePotential();
         if (Parameter.ISWRITELOG) {
             writerLog = new WriterLog(this);
         }
@@ -55,16 +39,11 @@ public class Environment {
     public void update() {
         if (Parameter.ISWRITELOG) {
             writerLog.writeAgentLog();
-            writerLog.writeEnvLog();
+            writerLog.writeMacroLog();
         }
         agents.stream()
                 .parallel()
-                .forEach(agent -> {
-                    try {
-                        agent.action();
-                    } catch (final Exception l_exception) {
-                    }
-                });
+                .forEach(agent -> agent.action());
         ifAgentInGoal();
         step++;
     }
@@ -181,11 +160,11 @@ public class Environment {
     //Agent
     public void spawnInitAgents() {
         for (int i = 0; i < Parameter.initAgentNum; i++) {
-            float x = MathUtils.random(950, 2300);
-            float y = MathUtils.random(1300, 1600);
+            float x = MathUtils.random(Parameter.initAgentRandomPosX1, Parameter.initAgentRandomPosX2);
+            float y = MathUtils.random(Parameter.initAgentRandomPosY1, Parameter.initAgentRandomPosY2);
             Vector2 position = new Vector2(x, y);
             if (i < Parameter.goalAgentNum) {
-                if(i < Parameter.goalAgentNum / 2){
+                if (i < Parameter.goalAgentNum / 2) {
                     agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
                 } else {
                     agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(1)));

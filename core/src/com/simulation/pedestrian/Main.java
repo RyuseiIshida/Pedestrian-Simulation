@@ -17,7 +17,6 @@ import com.simulation.pedestrian.Log.LoadLog;
 import com.simulation.pedestrian.Obstacle.Obstacle;
 import com.simulation.pedestrian.Potential.PotentialCell;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 public class Main extends ApplicationAdapter {
@@ -59,7 +58,7 @@ public class Main extends ApplicationAdapter {
     }
 
     public void createSubWindow(){
-        ParameterWindow frame = new ParameterWindow("タイトル");
+        ParameterWindow frame = new ParameterWindow("Sub Window");
         frame.setVisible(true);
     }
 

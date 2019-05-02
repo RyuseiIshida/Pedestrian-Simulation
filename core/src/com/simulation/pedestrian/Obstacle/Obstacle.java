@@ -12,12 +12,20 @@ import java.util.List;
 public class Obstacle {
     private PotentialMap potentialMap;
     private List<PotentialCell> obstacleCells;
+    private float x;
+    private float y;
+    private float width;
+    private float height;
     private Tuple startIndex;
     private Tuple endIndex;
 
     public Obstacle(float x, float y, float w, float h, PotentialMap potentialMap) {
         this.potentialMap = potentialMap;
         this.obstacleCells = new ArrayList<>();
+        this.x = x;
+        this.y = y;
+        this.width = w;
+        this.height = h;
         setShapeObstacle(x, y, w, h);
     }
 
@@ -57,5 +65,10 @@ public class Obstacle {
 
     public Tuple getEndIndex() {
         return endIndex;
+    }
+
+    @Override
+    public String toString() {
+        return "Obstacle = (x=" + x + ", y=" + y + ", w=" + width + ", h=" + height + ")";
     }
 }

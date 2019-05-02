@@ -53,4 +53,9 @@ public class Goal {
         return new Vector2(getPositionX() + width, getPositionY() + height);
     }
 
+    @Override
+    public String toString() {
+        return "Goal = (x=" + position.x + ", y=" + position.y + ", w=" + width + ", h=" + height + ")";
+    }
+
 }
