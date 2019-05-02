@@ -16,8 +16,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -29,7 +31,9 @@ public class WriterLog {
     public WriterLog(Environment env) {
         this.env = env;
         this.agents = env.getAgents();
-        path = Paths.get("SimLog/" + LocalDateTime.now().toString()).toAbsolutePath().toString();
+        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd_hhmm");
+        String time = format.format(Calendar.getInstance().getTime());
+        path = Paths.get("SimLog/" + time).toString();
         new File(path).mkdir();
         writeSourceCode(path);
     }
