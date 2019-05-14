@@ -1,5 +1,8 @@
 package com.simulation.pedestrian;
 
+import com.badlogic.gdx.math.Vector2;
+import com.simulation.pedestrian.Agent.Agent;
+
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -13,18 +16,28 @@ import java.util.List;
 
 public class Test {
     public Test() {
-        Calendar  calendar = Calendar.getInstance();
+        Fruit fruit_type = Fruit.Orange;
+        System.out.println("fruit_type.getClass() = " + fruit_type.getClass());
+        System.out.println(fruit_type);
+    }
 
-        System.out.println(calendar.getTime());
-        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd_hhmm");
-        String formatData = format.format(calendar.getTime());
-        System.out.println("formatData = " + formatData);
+    public static enum enumTest {
+        orange, dest
+    }
+
+    public static enum agentEnum {
+
 
     }
 
 
-
     public static void main(String[] args) {
-        Test test = new Test();
+        Test tet = new  Test();
+    }
+
+    protected enum Fruit {
+        Orange,
+        Apple,
+        Melon,
     }
 }

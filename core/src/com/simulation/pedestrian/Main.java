@@ -64,10 +64,10 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
-        if (Parameter.MODE == 0) {
+        if (Parameter.MODE == 0 || Parameter.MODE == 1) {
             simulationMode();
         }
-        if (Parameter.MODE == 1){
+        if (Parameter.MODE == 2){
             logMode();
         }
     }

@@ -10,8 +10,15 @@ import com.simulation.pedestrian.Potential.PotentialCell;
 import com.simulation.pedestrian.Potential.PotentialMap;
 import com.simulation.pedestrian.Util.Tuple;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class Environment {
     private float step;
@@ -159,6 +166,10 @@ public class Environment {
 
     //Agent
     public void spawnInitAgents() {
+        if (Parameter.MODE == 1) {
+            spawnLogAgents();
+            return;
+        }
         for (int i = 0; i < Parameter.initAgentNum; i++) {
             float x = MathUtils.random(Parameter.initAgentRandomPosX1, Parameter.initAgentRandomPosX2);
             float y = MathUtils.random(Parameter.initAgentRandomPosY1, Parameter.initAgentRandomPosY2);
@@ -167,7 +178,7 @@ public class Environment {
                 if (i < Parameter.goalAgentNum / 2) {
                     agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
                 } else {
-                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(1)));
+                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
                 }
 //                if(Parameter.goalAgentDestination.equals("random")) {
 //                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(MathUtils.random(goals.size()-1))));
@@ -186,11 +197,37 @@ public class Environment {
     }
 
     public void spawnAgent1(Vector2 pos) {
-        agents.add(new Agent(String.valueOf(++agentCounter), this, pos));
+        //agents.add(new Agent(String.valueOf(++agentCounter), this, pos));
     }
 
     public void spawnAgent2(Vector2 pos, int goalIndex) {
-        agents.add(new Agent(String.valueOf(++agentCounter), this, pos, goals.get(goalIndex)));
+        //agents.add(new Agent(String.valueOf(++agentCounter), this, pos, goals.get(goalIndex)));
+    }
+
+    public void spawnLogAgents() {
+        Path path = Paths.get("core/src/com/simulation/pedestrian/Log/AgentPos.txt");
+        ArrayList<Vector2> posList = new ArrayList<>();
+        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                String[] str = line.split(",");
+                Vector2 position = new Vector2(new Vector2(Float.valueOf(str[0]), Float.valueOf(str[1])));
+                posList.add(position);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for (int i = 0; i < Parameter.initAgentNum; i++) {
+            if (i < Parameter.goalAgentNum) {
+                if (i < Parameter.goalAgentNum / 2) {
+                    agents.add(new Agent(String.valueOf(++agentCounter), this, posList.get(i), goals.get(0)));
+                } else {
+                    agents.add(new Agent(String.valueOf(++agentCounter), this, posList.get(i), goals.get(1)));
+                }
+            } else {
+                    agents.add(new Agent(String.valueOf(++agentCounter), this, posList.get(i)));
+            }
+        }
     }
 
     public ArrayList<Agent> getAgents() {

@@ -31,11 +31,12 @@ public class WriterLog {
     public WriterLog(Environment env) {
         this.env = env;
         this.agents = env.getAgents();
-        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd_hhmm");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_hhmm");
         String time = format.format(Calendar.getInstance().getTime());
         path = Paths.get("SimLog/" + time).toString();
         new File(path).mkdir();
         writeSourceCode(path);
+        writeAgentPos(path);
     }
 
     public void writeSourceCode(String path) {
@@ -115,6 +116,18 @@ public class WriterLog {
         }
     }
 
+    public void writeAgentPos(String outPath) {
+        Path out = Paths.get(outPath + "/AgentPos.txt");
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(out, StandardCharsets.UTF_8)) {
+            for (Agent agent : agents) {
+                bufferedWriter.append(agent.getPosition().toString().replace("(","").replace(")",""));
+                bufferedWriter.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void writeAgentLog() {
         agents.stream().parallel().forEach(agent -> {
             String path = this.path + "/agent" + agent.getID() + ".txt";
@@ -135,7 +148,7 @@ public class WriterLog {
                 //書き込み
                 CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
                 for (CSVRecord csvRecord : csvRecords) {
-                    printer.printRecord(csvRecord.get(0), csvRecord.get(1), csvRecord.get(2), csvRecord.get(3), csvRecord.get(4), csvRecord.get(5), csvRecord.get(6), csvRecord.get(7),csvRecord.get(8),csvRecord.get(9), csvRecord.get(10), csvRecord.get(11), csvRecord.get(12), csvRecord.get(13), csvRecord.get(14), csvRecord.get(15), csvRecord.get(16), csvRecord.get(17), csvRecord.get(18), csvRecord.get(19),csvRecord.get(20));
+                    printer.printRecord(csvRecord.get(0), csvRecord.get(1), csvRecord.get(2), csvRecord.get(3), csvRecord.get(4), csvRecord.get(5), csvRecord.get(6), csvRecord.get(7), csvRecord.get(8), csvRecord.get(9), csvRecord.get(10), csvRecord.get(11), csvRecord.get(12), csvRecord.get(13), csvRecord.get(14), csvRecord.get(15), csvRecord.get(16), csvRecord.get(17), csvRecord.get(18), csvRecord.get(19), csvRecord.get(20), csvRecord.get(21), csvRecord.get(22), csvRecord.get(23), csvRecord.get(24), csvRecord.get(25), csvRecord.get(26));
                 }
 
                 String wgoal = agent.getGoal() == null ? "null" : agent.getGoal().toString().replace("\"", "").replace(",", ":");
@@ -145,24 +158,28 @@ public class WriterLog {
                         agent.getPosition().toString().replace("\"", "").replace(",", ":"), //2
                         agent.getVelocity().toString().replace("\"", "").replace(",", ":"), //3
                         agent.getMovePos().toString().replace("\"", "").replace(",", ":"), //4
-                        //agent.getGoal().toString().replace("\"", "").replace(",", ":"), //5
                         wgoal, //5
                         agent.getFollowAgent(), //6
                         agent.getFollowers().toString().replace(",", ":"), //7
-                        agent.getPerceptionAgentList().toString().replace(",", ":"), //8
-                        agent.getPerceptionFollowAgentList().toString().replace(",", ":"), //9
-                        agent.getPerceptionContinueStep(), //10
-                        agent.getPerceptionContinueDst(), //11
-                        agent.getPerceptionAllDst(), //12
-                        agent.getAlpha(), //13
-                        agent.getBeta(), //14
-                        agent.getGamma(), //15
-                        agent.getDelta(), //16
-                        agent.getEpsilon(), //17
-                        agent.getUtilityRandomWalk(), //18
-                        agent.getUtilityFollow(), //19
-                        agent.getUtilityMoveGoal()); //20
-
+                        agent.getFollowers().size(), //8
+                        agent.getPerceptionAgentList().toString().replace(",", ":"), //9
+                        agent.getPerceptionAgentList().size(), //10
+                        agent.getPerceptionFollowAgentList().toString().replace(",", ":"), //11
+                        agent.getPerceptionFollowAgentList().size(), //12
+                        agent.getPerceptionContinueStep(), //13
+                        agent.getPerceptionContinueDst(), //14
+                        agent.getPerceptionAllDst(), //15
+                        agent.getURandomWalk(), //16
+                        agent.getUFollowAgent(), //17
+                        agent.getUMoveGoal(), //18
+                        agent.getAlpha(), //19
+                        agent.getBeta(), //20
+                        agent.getGamma(), //21
+                        agent.getDelta(), //22
+                        agent.getEpsilon(), //23
+                        agent.getUtilityRandomWalk(), //24
+                        agent.getUtilityFollow(), //25
+                        agent.getUtilityMoveGoal()); //26
                 printer.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -174,9 +191,26 @@ public class WriterLog {
     private void initWriteAgentLog(String path) {
         try {
             CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
-            printer.printRecord("step", "tag", "position", "velocity", "movePos", "goal",
-                    "followAgent", "followers", "p_viewAgent", "p_followAgent", "p_ContinueStep",
-                    "p_ContinueDst", "p_AllDst", "alpha", "beta", "gamma", "delta", "epsilon",
+            printer.printRecord("step",
+                    "tag",
+                    "position",
+                    "velocity",
+                    "movePos",
+                    "goal",
+                    "followAgent",
+                    "followers",
+                    "followersSize",
+                    "p_viewAgent",
+                    "p_viewAgentSize",
+                    "p_followAgent",
+                    "p_followAgentSize",
+                    "p_ContinueStep",
+                    "p_ContinueDst",
+                    "p_AllDst",
+                    "u_utilityRandomWalk",
+                    "u_utilityFollow",
+                    "u_utilityMoveGoal",
+                    "alpha", "beta", "gamma", "delta", "epsilon",
                     "utilityRandomWalk", "utilityFollow", "utilityMoveGoal");
             printer.close();
         } catch (IOException e) {

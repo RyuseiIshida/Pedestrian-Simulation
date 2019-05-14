@@ -9,6 +9,7 @@ import com.simulation.pedestrian.Parameter;
 import com.simulation.pedestrian.Potential.PotentialCell;
 import com.simulation.pedestrian.Util.Vector;
 
+import java.io.IOException;
 import java.util.*;
 
 public class Agent {
@@ -36,11 +37,14 @@ public class Agent {
     private float perceptionAllDst = 0;
 
     //utility weight
-    private float alpha = Parameter.alpha;
-    private float beta = Parameter.beta;
-    private float gamma = Parameter.gamma;
-    private float delta = Parameter.delta;
-    private float epsilon = Parameter.epsilon;
+    private final float uRandomWalk = Parameter.uRandomWalk;
+    private final float uFollowAgent = Parameter.uFollowAgent;
+    private final float uMoveGoal = Parameter.uMoveGoal;
+    private final float alpha = Parameter.alpha;
+    private final float beta = Parameter.beta;
+    private final float gamma = Parameter.gamma;
+    private final float delta = Parameter.delta;
+    private final float epsilon = Parameter.epsilon;
 
     float utilityRandomWalk = 0;
     float utilityFollow = 0;
@@ -138,17 +142,19 @@ public class Agent {
 
     private void utilityFunction() {
         utilityRandomWalk = StateTag.randomWalk.equals(stateTag)
-                ? perceptionContinueStep * alpha + getObstacleKIMPotential(position) * beta + 1
-                : getObstacleKIMPotential(position) * beta;
-        utilityRandomWalk = (utilityRandomWalk > 0.3f) ? utilityRandomWalk : 0.3f; //0回避(follow回避)
+                ? uRandomWalk - perceptionContinueStep * gamma
+                : uRandomWalk;
+        utilityRandomWalk = (utilityRandomWalk > 0.01f) ? utilityRandomWalk : 0.01f; //follow回避
 
         utilityFollow = StateTag.follow.equals(stateTag)
-                ? perceptionContinueStep * gamma + perceptionFollowAgentList.size() * delta + 1
-                : perceptionFollowAgentList.size() * delta;
+                ? perceptionAgentList.size() * beta
+                : perceptionFollowAgentList.size() * beta;
+                //? 1 - perceptionContinueStep * delta
+                //: perceptionFollowAgentList.size() * beta;
         utilityFollow = (utilityFollow > 0.8f) ? 0.8f : utilityFollow;
 
         utilityMoveGoal = StateTag.moveGoal.equals(stateTag)
-                ? perceptionContinueDst * epsilon + 1
+                ? 1 - perceptionContinueDst * epsilon
                 : (goal != null ? 1 : -1);
 
         Map<String, Float> actionMap = new TreeMap<>();
@@ -205,16 +211,15 @@ public class Agent {
                 .min((a, b) -> new Float(position.dst(a.position))
                         .compareTo(position.dst(b.position)));
         followAgent = closestAgent.get();
-        followAgent.setFollower(this);
-        stateTag = StateTag.follow;
+        if(perceptionFollowAgentList.size() != 0) {
+            followAgent.setFollower(this);
+            stateTag = StateTag.follow;
+        } else {
+            throw new NullPointerException();
+        }
     }
 
     private void followAgent() {
-        if (followAgent == null) {
-            System.out.println("Iam  = " + this + "     step = " + perceptionContinueStep + "     followAgent = " + followAgent);
-            System.out.println("Iam  = " + this + "     step = " + perceptionContinueStep + "     perceptionFollowAgentList = " + perceptionFollowAgentList);
-            followAgent = perceptionFollowAgentList.get(0);
-        }
         movePos = new Vector2(followAgent.getPosition()).sub(followAgent.getVelocity().scl(2f));
         float distance = position.dst(followAgent.getPosition());
         if (distance > Parameter.viewRadius || followers.contains(followAgent)) {
@@ -384,6 +389,18 @@ public class Agent {
 
     public float getPerceptionAllDst() {
         return perceptionAllDst;
+    }
+
+    public float getURandomWalk() {
+        return uRandomWalk;
+    }
+
+    public float getUFollowAgent() {
+        return uFollowAgent;
+    }
+
+    public float getUMoveGoal() {
+        return uMoveGoal;
     }
 
     public float getAlpha() {
