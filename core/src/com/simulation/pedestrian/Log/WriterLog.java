@@ -1,27 +1,22 @@
 package com.simulation.pedestrian.Log;
 
-import com.badlogic.gdx.math.Vector2;
 import com.simulation.pedestrian.Agent.Agent;
 import com.simulation.pedestrian.Agent.StateTag;
 import com.simulation.pedestrian.Environment;
-import com.simulation.pedestrian.Parameter;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class WriterLog {
     String path;
@@ -30,7 +25,7 @@ public class WriterLog {
 
     public WriterLog(Environment env) {
         this.env = env;
-        this.agents = env.getAgents();
+        this.agents = env.getAllAgent();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_hhmm");
         String time = format.format(Calendar.getInstance().getTime());
         path = Paths.get("SimLog/" + time).toString();
@@ -242,7 +237,7 @@ public class WriterLog {
                 );
             }
             int follow = 0;
-            for (Agent agent : env.getAgents()) {
+            for (Agent agent : env.getAllAgent()) {
                 if (agent.getStateTag().equals(StateTag.follow)) {
                     follow++;
                 }

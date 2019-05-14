@@ -9,15 +9,14 @@ import com.simulation.pedestrian.Parameter;
 import com.simulation.pedestrian.Potential.PotentialCell;
 import com.simulation.pedestrian.Util.Vector;
 
-import java.io.IOException;
 import java.util.*;
 
 public class Agent {
     private Environment env;
-    private static final float radius = Parameter.agentRadius;
-    private float viewRadius = Parameter.viewRadius;
-    private float viewDegree = Parameter.viewDegree;
-    private float speed = Parameter.agentSpeed;
+    private static final float radius = Parameter.AGENT_RADIUS;
+    private float viewRadius = Parameter.VIEW_RADIUS;
+    private float viewDegree = Parameter.VIEW_DEGREE;
+    private float speed = Parameter.AGENT_SPEED;
     private String ID;
     private String stateTag;
     private Vector2 position;
@@ -37,14 +36,14 @@ public class Agent {
     private float perceptionAllDst = 0;
 
     //utility weight
-    private final float uRandomWalk = Parameter.uRandomWalk;
-    private final float uFollowAgent = Parameter.uFollowAgent;
-    private final float uMoveGoal = Parameter.uMoveGoal;
-    private final float alpha = Parameter.alpha;
-    private final float beta = Parameter.beta;
-    private final float gamma = Parameter.gamma;
-    private final float delta = Parameter.delta;
-    private final float epsilon = Parameter.epsilon;
+    private final float uRandomWalk = Parameter.U_RANDOM_WALK;
+    private final float uFollowAgent = Parameter.U_FOLLOW_AGENT;
+    private final float uMoveGoal = Parameter.U_MOVE_GOAL;
+    private final float alpha = Parameter.ALPHA;
+    private final float beta = Parameter.BETA;
+    private final float gamma = Parameter.GAMMA;
+    private final float delta = Parameter.DELTA;
+    private final float epsilon = Parameter.EPSILON;
 
     float utilityRandomWalk = 0;
     float utilityFollow = 0;
@@ -104,7 +103,7 @@ public class Agent {
 
     private void setPerceptionAgent() {
         perceptionAgentList = new ArrayList<>();
-        env.getAgents().stream()
+        env.getAllAgent().stream()
                 .filter(agent -> !agent.equals(this) && isInView(agent.getPosition()))
                 .forEach(agent -> perceptionAgentList.add(agent));
     }
@@ -222,7 +221,7 @@ public class Agent {
     private void followAgent() {
         movePos = new Vector2(followAgent.getPosition()).sub(followAgent.getVelocity().scl(2f));
         float distance = position.dst(followAgent.getPosition());
-        if (distance > Parameter.viewRadius || followers.contains(followAgent)) {
+        if (distance > viewRadius || followers.contains(followAgent)) {
             followAgent.followers.remove(this);
             followAgent = null;
             initRandomWalk();
@@ -240,10 +239,10 @@ public class Agent {
 
         Vector2 tmpPos = new Vector2(position);
         tmpPos.add(velocity);
-        if (tmpPos.x >= 0 + Parameter.agentRadius && tmpPos.x <= Parameter.SCALE.x - Parameter.agentRadius) {
+        if (tmpPos.x >= 0 + viewRadius && tmpPos.x <= Parameter.SCALE.x - Parameter.AGENT_RADIUS) {
             position.x = tmpPos.x;
         }
-        if (tmpPos.y >= 0 + Parameter.agentRadius && tmpPos.y <= Parameter.SCALE.y - Parameter.agentRadius) {
+        if (tmpPos.y >= 0 + viewRadius && tmpPos.y <= Parameter.SCALE.y - Parameter.AGENT_RADIUS) {
             position.y = tmpPos.y;
         }
     }
@@ -265,7 +264,7 @@ public class Agent {
     private float getAgentDSTPotential(float x, float y) {
         Vector2 pos = new Vector2(x, y);
         float potential = 0;
-        for (Agent agent : env.getAgents()) {
+        for (Agent agent : env.getAllAgent()) {
             if (!agent.equals(this)) {
                 potential += pos.dst(agent.position);
             }
@@ -278,10 +277,10 @@ public class Agent {
 
     private float getAgentKIMPotential(float x, float y) {
         float potentialWight = 0;
-        float co = Parameter.AGENT_KIMPOTENTIALWEIGHT;
-        float lo = Parameter.AGENT_KIMPOTENTIALRANGE;
+        float co = Parameter.AGENT_KIM_POTENTIAL_WEIGHT;
+        float lo = Parameter.AGENT_KIM_POTENTIAL_RANGE;
         Vector2 pos = new Vector2(x, y);
-        for (Agent agent : env.getAgents()) {
+        for (Agent agent : env.getAllAgent()) {
             if (!agent.equals(this)) {
                 potentialWight += co * Math.exp(-1 * (pos.dst2(agent.position) / (lo * lo)));
             }
@@ -295,8 +294,8 @@ public class Agent {
     private float getObstacleKIMPotential(float x, float y) {
         Vector2 pos = new Vector2(x, y);
         float potentialWeight = 0;
-        float co = Parameter.OBSTACLE_KIMPOTENTIALWEIGHT;
-        float lo = Parameter.OBSTACLE_KIMPOTENTIALRANGE;
+        float co = Parameter.OBSTACLE_KIM_POTENTIAL_WEIGHT;
+        float lo = Parameter.OBSTACLE_KIM_POTENTIAL_RANGE;
         for (Obstacle obstacle : env.getObstacles()) {
             for (PotentialCell obstacleCell : obstacle.getObstacleCells()) {
                 potentialWeight += co * Math.exp(-1 * (pos.dst2(obstacleCell.getCenterPoint()) / (lo * lo)));

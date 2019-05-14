@@ -18,14 +18,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 public class Environment {
     private float step;
     private PotentialMap envPotentialMap = Parameter.POTENTIALMAP;
     private ArrayList<Goal> goals = new ArrayList<>(Parameter.GOALS);
-    private ArrayList<Obstacle> obstacles = Parameter.obstacles;
-    private ArrayList<Agent> agents;
+    private ArrayList<Obstacle> obstacles = Parameter.ALL_OBSTACLE;
+    private ArrayList<Agent> allAgent;
     private Crowd crowd;
     private int agentCounter;
     private int goalAgentNum;
@@ -34,7 +33,7 @@ public class Environment {
 
     public Environment() {
         step = 0;
-        agents = new ArrayList<>();
+        allAgent = new ArrayList<>();
         agentCounter = 0;
         crowd = new Crowd(this);
         spawnInitAgents();
@@ -48,7 +47,7 @@ public class Environment {
             writerLog.writeAgentLog();
             writerLog.writeMacroLog();
         }
-        agents.stream()
+        allAgent.stream()
                 .parallel()
                 .forEach(agent -> agent.action());
         ifAgentInGoal();
@@ -68,7 +67,7 @@ public class Environment {
     }
 
     private void ifAgentInGoal() {
-        Iterator<Agent> iterator = agents.iterator();
+        Iterator<Agent> iterator = allAgent.iterator();
         while (iterator.hasNext()) {
             Agent agent = iterator.next();
             for (Goal goal : goals) {
@@ -93,12 +92,12 @@ public class Environment {
 
     public void setAgentKimPotentialCell() {
         float weightPotential;
-        float co = Parameter.AGENT_KIMPOTENTIALWEIGHT;
-        float lo = Parameter.AGENT_KIMPOTENTIALRANGE;
+        float co = Parameter.AGENT_KIM_POTENTIAL_WEIGHT;
+        float lo = Parameter.AGENT_KIM_POTENTIAL_RANGE;
         for (PotentialCell cell : envPotentialMap.getPotentialCells()) {
             cell.setAgentPotential(0); //前ステップ時のポテンシャルセルを初期化
             weightPotential = 0;
-            for (Agent agent : agents) {
+            for (Agent agent : allAgent) {
                 float kimPotential = (float) (co * Math.exp(-1 * (agent.getPosition().dst2(cell.getCenterPoint()) / (lo * lo))));
                 //float movePotential = (float) (Math.exp(-1 * ( /(lo*lo))));
                 weightPotential += kimPotential;
@@ -114,7 +113,7 @@ public class Environment {
             return new Vector2(0, 0);
         }
         Vector2 gradVec = new Vector2();
-        float delta = Parameter.CELLINTERVAL / 2;
+        float delta = Parameter.CELL_INTERVAL / 2;
         PotentialCell targetCell = envPotentialMap.getPotentialCell(targetPos);
         PotentialCell deltaXCell = envPotentialMap.getPotentialCell(targetPos.x + delta, targetPos.y);
         PotentialCell deltaYCell = envPotentialMap.getPotentialCell(targetPos.x, targetPos.y + delta);
@@ -130,8 +129,8 @@ public class Environment {
 
     private void setObstaclePotential() {
         ArrayList<Vector2> obstaclePosList = new ArrayList<>();
-        float co = Parameter.OBSTACLE_KIMPOTENTIALWEIGHT;
-        float lo = Parameter.OBSTACLE_KIMPOTENTIALRANGE;
+        float co = Parameter.OBSTACLE_KIM_POTENTIAL_WEIGHT;
+        float lo = Parameter.OBSTACLE_KIM_POTENTIAL_RANGE;
         for (Obstacle obstacle : obstacles) {
             Tuple startIndex = obstacle.getStartIndex();
             Tuple endIndex = obstacle.getEndIndex();
@@ -155,7 +154,7 @@ public class Environment {
     }
 
     public void spawnObstacle(Vector2 pos) {
-        obstacles.add(new Obstacle(pos.x, pos.y, Parameter.CELLINTERVAL, Parameter.CELLINTERVAL, envPotentialMap));
+        obstacles.add(new Obstacle(pos.x, pos.y, Parameter.CELL_INTERVAL, Parameter.CELL_INTERVAL, envPotentialMap));
         setObstaclePotential();
     }
 
@@ -170,38 +169,38 @@ public class Environment {
             spawnLogAgents();
             return;
         }
-        for (int i = 0; i < Parameter.initAgentNum; i++) {
-            float x = MathUtils.random(Parameter.initAgentRandomPosX1, Parameter.initAgentRandomPosX2);
-            float y = MathUtils.random(Parameter.initAgentRandomPosY1, Parameter.initAgentRandomPosY2);
+        for (int i = 0; i < Parameter.INIT_AGENT_NUM; i++) {
+            float x = MathUtils.random(Parameter.INIT_RANDOM_X1, Parameter.INIT_RANDOM_X2);
+            float y = MathUtils.random(Parameter.INIT_RANDOM_Y1, Parameter.INIT_RANDOM_Y2);
             Vector2 position = new Vector2(x, y);
-            if (i < Parameter.goalAgentNum) {
-                if (i < Parameter.goalAgentNum / 2) {
-                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
+            if (i < Parameter.GOAL_AGENT_NUM) {
+                if (i < Parameter.GOAL_AGENT_NUM / 2) {
+                    allAgent.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
                 } else {
-                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
+                    allAgent.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
                 }
-//                if(Parameter.goalAgentDestination.equals("random")) {
-//                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(MathUtils.random(goals.size()-1))));
+//                if(Parameter.GOALAGENT_DESTINATION.equals("random")) {
+//                    allAgent.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(MathUtils.random(goals.size()-1))));
 //                } else {
-//                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get()));
+//                    allAgent.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get()));
 //                }
-//                if (Parameter.goalAgentDestination.equals("random")) {
-//                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(MathUtils.random(goals.size() - 1))));
+//                if (Parameter.GOALAGENT_DESTINATION.equals("random")) {
+//                    allAgent.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(MathUtils.random(goals.size() - 1))));
 //                } else {
-//                    agents.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(Integer.valueOf(Parameter.goalAgentDestination))));
+//                    allAgent.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(Integer.valueOf(Parameter.GOALAGENT_DESTINATION))));
 //                }
             } else {
-                agents.add(new Agent(String.valueOf(++agentCounter), this, position));
+                allAgent.add(new Agent(String.valueOf(++agentCounter), this, position));
             }
         }
     }
 
     public void spawnAgent1(Vector2 pos) {
-        //agents.add(new Agent(String.valueOf(++agentCounter), this, pos));
+        //allAgent.add(new Agent(String.valueOf(++agentCounter), this, pos));
     }
 
     public void spawnAgent2(Vector2 pos, int goalIndex) {
-        //agents.add(new Agent(String.valueOf(++agentCounter), this, pos, goals.get(goalIndex)));
+        //allAgent.add(new Agent(String.valueOf(++agentCounter), this, pos, goals.get(goalIndex)));
     }
 
     public void spawnLogAgents() {
@@ -217,21 +216,21 @@ public class Environment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        for (int i = 0; i < Parameter.initAgentNum; i++) {
-            if (i < Parameter.goalAgentNum) {
-                if (i < Parameter.goalAgentNum / 2) {
-                    agents.add(new Agent(String.valueOf(++agentCounter), this, posList.get(i), goals.get(0)));
+        for (int i = 0; i < Parameter.INIT_AGENT_NUM; i++) {
+            if (i < Parameter.GOAL_AGENT_NUM) {
+                if (i < Parameter.GOAL_AGENT_NUM / 2) {
+                    allAgent.add(new Agent(String.valueOf(++agentCounter), this, posList.get(i), goals.get(0)));
                 } else {
-                    agents.add(new Agent(String.valueOf(++agentCounter), this, posList.get(i), goals.get(1)));
+                    allAgent.add(new Agent(String.valueOf(++agentCounter), this, posList.get(i), goals.get(1)));
                 }
             } else {
-                    agents.add(new Agent(String.valueOf(++agentCounter), this, posList.get(i)));
+                    allAgent.add(new Agent(String.valueOf(++agentCounter), this, posList.get(i)));
             }
         }
     }
 
-    public ArrayList<Agent> getAgents() {
-        return agents;
+    public ArrayList<Agent> getAllAgent() {
+        return allAgent;
     }
 
     public int getGoalAgentNum() {
