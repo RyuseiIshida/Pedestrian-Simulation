@@ -26,10 +26,10 @@ public class Main extends ApplicationAdapter {
     private ShapeRenderer shapeRenderer;
     private BitmapFont bitmapFont;
 
-    private Environment environment;
+    private static Environment environment;
 
     //Operation
-    public boolean PLAY = false;
+    private static boolean PLAY = false;
     private int attemptsNum = 0;
 
     //modeLog
@@ -37,11 +37,13 @@ public class Main extends ApplicationAdapter {
     private boolean drawAllTrajectory = false;
 
     //drawFlag
-    private boolean drawPotential = false;
-    private boolean drawPVec = false;
-    private boolean drawConcentrationLevel = false;
-    private boolean drawCell = false;
-    private boolean drawView = false;
+    private static boolean drawGoalLine = true;
+    private static boolean drawFollowLine = true;
+    private static boolean drawPotential = false;
+    private static boolean drawPVec = false;
+    private static boolean drawConcentrationLevel = false;
+    private static boolean drawCell = false;
+    private static boolean  drawView = false;
 
 
     @Override
@@ -83,6 +85,12 @@ public class Main extends ApplicationAdapter {
         }
         if (PLAY) {
             environment.update();
+        }
+        if(environment.agentClearFlag) {
+            environment.getAllAgent().clear();
+            environment.agentClearFlag = false;
+            environment.setStep(0);
+            PLAY = false;
         }
         Gdx.gl.glClearColor(255, 255, 255, 255);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -197,25 +205,29 @@ public class Main extends ApplicationAdapter {
     }
 
     private void renderGoalLine() {
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.RED);
-        for (Agent agent : environment.getAllAgent()) {
-            if (agent.getStateTag() == StateTag.moveGoal) {
-                shapeRenderer.line(agent.getPosition(), agent.getGoal());
+        if(drawGoalLine) {
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setColor(Color.RED);
+            for (Agent agent : environment.getAllAgent()) {
+                if (agent.getStateTag() == StateTag.moveGoal) {
+                    shapeRenderer.line(agent.getPosition(), agent.getGoal());
+                }
             }
+            shapeRenderer.end();
         }
-        shapeRenderer.end();
     }
 
     private void renderAgentFollowLine() {
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.BLACK);
-        for (Agent agent : environment.getAllAgent()) {
-            if (agent.getFollowAgent() != null) {
-                shapeRenderer.line(agent.getPosition(), agent.getFollowAgent().getPosition());
+        if(drawFollowLine) {
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setColor(Color.BLACK);
+            for (Agent agent : environment.getAllAgent()) {
+                if (agent.getFollowAgent() != null) {
+                    shapeRenderer.line(agent.getPosition(), agent.getFollowAgent().getPosition());
+                }
             }
+            shapeRenderer.end();
         }
-        shapeRenderer.end();
     }
 
     private void renderGoal() {
@@ -382,6 +394,7 @@ public class Main extends ApplicationAdapter {
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
             environment.getAllAgent().clear();
             environment.setStep(0);
+            environment.setGoalAgentNum(0);
         } else if (Gdx.input.isKeyJustPressed((Input.Keys.S))) {
             environment.spawnInitAgents();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -404,6 +417,51 @@ public class Main extends ApplicationAdapter {
             drawAllTrajectory = drawAllTrajectory ? false : true;
         }
     }
+
+    public static Environment getEnvironment() {
+        return environment;
+    }
+
+    public static void setEnvironment(Environment env) {
+        environment =  env;
+    }
+
+    public static boolean getPLAY(){
+        return PLAY;
+    }
+
+    public static void setPLAY(boolean flag) {
+        PLAY = flag;
+    }
+
+    public static void setDrawGoalLine() {
+        drawGoalLine = drawGoalLine ? false : true;
+    }
+
+    public static void  setDrawFollowLine() {
+        drawFollowLine = drawFollowLine ? false : true;
+    }
+
+    public static void setDrawPotential() {
+        drawPotential = drawPotential ? false : true;
+    }
+
+    public static void setDrawPVec() {
+        drawPVec = drawPVec ? false : true;
+    }
+
+    public static void setDrawConcentrationLevel(){
+        drawConcentrationLevel = drawConcentrationLevel ? false : true;
+    }
+
+    public static void setDrawCell() {
+        drawCell = drawCell ? false : true;
+    }
+
+    public static void setDrawView()  {
+        drawView = drawView ? false : true;
+    }
+
 
     @Override
     public void dispose() {

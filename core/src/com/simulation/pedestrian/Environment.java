@@ -28,6 +28,7 @@ public class Environment {
     private Crowd crowd;
     private int agentCounter;
     private int goalAgentNum;
+    public boolean agentClearFlag = false;
 
     private WriterLog writerLog;
 
@@ -52,6 +53,11 @@ public class Environment {
                 .forEach(agent -> agent.action());
         ifAgentInGoal();
         step++;
+    }
+
+    public void clearAgent() {
+        agentClearFlag = true;
+        goalAgentNum = 0;
     }
 
     public void setStep(float step) {
@@ -131,7 +137,7 @@ public class Environment {
         ArrayList<Vector2> obstaclePosList = new ArrayList<>();
         float co = Parameter.OBSTACLE_KIM_POTENTIAL_WEIGHT;
         float lo = Parameter.OBSTACLE_KIM_POTENTIAL_RANGE;
-        for (Obstacle obstacle : obstacles) {
+        obstacles.forEach(obstacle -> {
             Tuple startIndex = obstacle.getStartIndex();
             Tuple endIndex = obstacle.getEndIndex();
             for (int i = startIndex.t1; i <= endIndex.t1; i++) {
@@ -139,10 +145,8 @@ public class Environment {
                     obstaclePosList.add(envPotentialMap.getMatrixPotentialCell(i, j).getCenterPoint());
                 }
             }
-        }
-        for (PotentialCell cell : envPotentialMap.getPotentialCells()) {
-            cell.setObstaclePotential(getKIMPotential(cell.getCenterPoint(), obstaclePosList, co, lo));
-        }
+        });
+        envPotentialMap.getPotentialCells().forEach(cell ->  cell.setObstaclePotential(getKIMPotential(cell.getCenterPoint(), obstaclePosList, co, lo)));
     }
 
     private float getKIMPotential(Vector2 targetPos, ArrayList<Vector2> obstaclePosList, float c, float l) {
@@ -196,11 +200,11 @@ public class Environment {
     }
 
     public void spawnAgent1(Vector2 pos) {
-        //allAgent.add(new Agent(String.valueOf(++agentCounter), this, pos));
+        allAgent.add(new Agent(String.valueOf(++agentCounter), this, pos));
     }
 
     public void spawnAgent2(Vector2 pos, int goalIndex) {
-        //allAgent.add(new Agent(String.valueOf(++agentCounter), this, pos, goals.get(goalIndex)));
+        allAgent.add(new Agent(String.valueOf(++agentCounter), this, pos, goals.get(goalIndex)));
     }
 
     public void spawnLogAgents() {
@@ -237,8 +241,13 @@ public class Environment {
         return goalAgentNum;
     }
 
+    public void setGoalAgentNum(int num) {
+        this.goalAgentNum = num;
+    }
+
     public Crowd getCrowd() {
         return crowd;
     }
+
 
 }
