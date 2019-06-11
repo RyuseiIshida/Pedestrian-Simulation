@@ -231,20 +231,47 @@ public class Agent {
         stateTag = StateTag.follow;
     }
 
+    private void boidsFollow(){
+        if(perceptionFollowAgentList.size() == 0) {
+            return;
+        }
+        Vector2 vector2 = new Vector2();
+        vector2.add(cohesion());
+        vector2.add(separation());
+    }
+
+    private Vector2 cohesion() { //Crowd Average Position
+        Vector2 vec = new Vector2();
+        //perceptionFollowAgentList;
+        return vec;
+    }
+
+    private Vector2 separation() {
+        Vector2 vec = new Vector2();
+
+        return vec;
+    }
+
+    private Vector2 alignment() {
+        Vector2 vec = new Vector2();
+
+        return vec;
+    }
+
     private void move(Vector2 movePos) {
         Vector2 direction = Vector.direction(position, movePos);
         setPotentialVector(direction);
-        direction.nor();
+        //direction.nor();
         velocity = direction.scl(speed);
 
         Vector2 tmpPos = new Vector2(position);
         tmpPos.add(velocity);
-        if (tmpPos.x >= 0 + viewRadius && tmpPos.x <= Parameter.SCALE.x - Parameter.AGENT_RADIUS) {
+        //if (tmpPos.x >= 0 + Parameter.AGENT_RADIUS && tmpPos.x <= Parameter.SCALE.x - Parameter.AGENT_RADIUS) {
             position.x = tmpPos.x;
-        }
-        if (tmpPos.y >= 0 + viewRadius && tmpPos.y <= Parameter.SCALE.y - Parameter.AGENT_RADIUS) {
+        //}
+        //if (tmpPos.y >= 0 + Parameter.AGENT_RADIUS && tmpPos.y <= Parameter.SCALE.y - Parameter.AGENT_RADIUS) {
             position.y = tmpPos.y;
-        }
+        //}
     }
 
     private void setPotentialVector(Vector2 direction) {
@@ -254,25 +281,11 @@ public class Agent {
         pVector.y = -1 * (getPotential(position.x, position.y + delta) - getPotential(position.x, position.y)) / delta;
         //pVector.scl(vectorWeight);
         pVector.nor();
-        direction.add(pVector);
+        direction.add(pVector); //方向を決定
     }
 
     private float getPotential(float x, float y) {
         return getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y);
-    }
-
-    private float getAgentDSTPotential(float x, float y) {
-        Vector2 pos = new Vector2(x, y);
-        float potential = 0;
-        for (Agent agent : env.getAllAgent()) {
-            if (!agent.equals(this)) {
-                potential += pos.dst(agent.position);
-            }
-        }
-        if (potential <= 0.01) {
-            potential = 0;
-        }
-        return potential;
     }
 
     private float getAgentKIMPotential(float x, float y) {
