@@ -2,8 +2,8 @@ package com.simulation.pedestrian;
 
 
 import com.badlogic.gdx.math.Vector2;
-import com.simulation.pedestrian.Obstacle.Obstacle;
-import com.simulation.pedestrian.Potential.PotentialMap;
+import com.simulation.pedestrian.obstacle.Obstacle;
+import com.simulation.pedestrian.potential.PotentialMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +23,7 @@ public class Parameter {
     //public static final ArrayList<Goal> GOALS = new ArrayList<>(Arrays.asList(new Goal(3100, 2000, 20, 100)));
     public static float CELL_INTERVAL = 10;
 
-    //Potential
+    //potential
     public static float MAX_POTENTIAL = 10;
     public static PotentialMap POTENTIALMAP = new PotentialMap(SCALE, CELL_INTERVAL, MAX_POTENTIAL);
     public static float AGENT_KIM_POTENTIAL_WEIGHT = 1;
@@ -31,22 +31,22 @@ public class Parameter {
     public static float OBSTACLE_KIM_POTENTIAL_WEIGHT = 100;
     public static float OBSTACLE_KIM_POTENTIAL_RANGE = 10;
 
-    //Obstacle
+    //obstacle
     public static ArrayList<Obstacle> ALL_OBSTACLE = new ArrayList<>(Arrays.asList(
             //leftLine描画
             new Obstacle(100, 100, 10, 2000, POTENTIALMAP),
             //rightLine
-            //new Obstacle(800, 100, 10, 1400, POTENTIALMAP),
+            //new obstacle(800, 100, 10, 1400, POTENTIALMAP),
             new Obstacle(3100, 100, 10, 1900, POTENTIALMAP),
             //bottomLine
             new Obstacle(100, 100, 3000, 10, POTENTIALMAP),
             //TopLine
-            //new Obstacle(800,1500,2300, 10, POTENTIALMAP),
+            //new obstacle(800,1500,2300, 10, POTENTIALMAP),
             new Obstacle(100, 2100, 3000, 10, POTENTIALMAP)
 
     ));
 
-    //Agent
+    //agent
     public static int INIT_AGENT_NUM = 100;
     public static int GOAL_AGENT_NUM = 50;
     public static float INIT_RANDOM_X1 = 150;

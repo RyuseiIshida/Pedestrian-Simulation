@@ -1,7 +1,7 @@
-package com.simulation.pedestrian.Log;
+package com.simulation.pedestrian.log;
 
-import com.simulation.pedestrian.Agent.Agent;
-import com.simulation.pedestrian.Agent.StateTag;
+import com.simulation.pedestrian.agent.Agent;
+import com.simulation.pedestrian.agent.StateTag;
 import com.simulation.pedestrian.Environment;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -89,8 +89,8 @@ public class WriterLog {
     }
 
     public void writeAgent(String outPath) {
-        Path path = Paths.get("core/src/com/simulation/pedestrian/Agent/Agent.java");
-        Path out = Paths.get(outPath + "/Agent.txt");
+        Path path = Paths.get("core/src/com/simulation/pedestrian/agent/agent.java");
+        Path out = Paths.get(outPath + "/agent.txt");
         List<String> readList = new ArrayList<>();
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             String line = null;

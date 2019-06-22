@@ -1,4 +1,4 @@
-package com.simulation.pedestrian.Agent;
+package com.simulation.pedestrian.agent;
 
 import com.simulation.pedestrian.Environment;
 

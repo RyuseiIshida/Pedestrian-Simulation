@@ -1,11 +1,10 @@
-package com.simulation.pedestrian.Obstacle;
+package com.simulation.pedestrian.obstacle;
 
 import com.badlogic.gdx.math.Vector2;
-import com.simulation.pedestrian.Potential.PotentialCell;
-import com.simulation.pedestrian.Potential.PotentialMap;
-import com.simulation.pedestrian.Util.Tuple;
+import com.simulation.pedestrian.potential.PotentialCell;
+import com.simulation.pedestrian.potential.PotentialMap;
+import com.simulation.pedestrian.util.Tuple;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +68,6 @@ public class Obstacle {
 
     @Override
     public String toString() {
-        return "Obstacle = (x=" + x + ", y=" + y + ", w=" + width + ", h=" + height + ")";
+        return "obstacle = (x=" + x + ", y=" + y + ", w=" + width + ", h=" + height + ")";
     }
 }

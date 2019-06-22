@@ -1,4 +1,4 @@
-package com.simulation.pedestrian.Cell;
+package com.simulation.pedestrian.cell;
 
 import com.badlogic.gdx.math.Vector2;
 

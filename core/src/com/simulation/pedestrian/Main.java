@@ -11,11 +11,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.simulation.pedestrian.Agent.Agent;
-import com.simulation.pedestrian.Agent.StateTag;
-import com.simulation.pedestrian.Log.LoadLog;
-import com.simulation.pedestrian.Obstacle.Obstacle;
-import com.simulation.pedestrian.Potential.PotentialCell;
+import com.simulation.pedestrian.agent.Agent;
+import com.simulation.pedestrian.agent.StateTag;
+import com.simulation.pedestrian.log.LoadLog;
+import com.simulation.pedestrian.obstacle.Obstacle;
+import com.simulation.pedestrian.potential.PotentialCell;
 
 import java.util.ArrayList;
 
@@ -109,7 +109,7 @@ public class Main extends ApplicationAdapter {
 
         //ポテンシャル
         renderPotential();
-        //Agent
+        //agent
         renderAgent();
         renderAgentView();
         renderGoalLine();

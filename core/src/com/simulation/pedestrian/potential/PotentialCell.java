@@ -1,7 +1,7 @@
-package com.simulation.pedestrian.Potential;
+package com.simulation.pedestrian.potential;
 
 import com.badlogic.gdx.math.Vector2;
-import com.simulation.pedestrian.Cell.Cell;
+import com.simulation.pedestrian.cell.Cell;
 
 public class PotentialCell extends Cell {
     float maxPotential;

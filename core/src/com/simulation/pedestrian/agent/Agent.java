@@ -1,13 +1,13 @@
-package com.simulation.pedestrian.Agent;
+package com.simulation.pedestrian.agent;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.simulation.pedestrian.Environment;
 import com.simulation.pedestrian.Goal;
-import com.simulation.pedestrian.Obstacle.Obstacle;
+import com.simulation.pedestrian.obstacle.Obstacle;
 import com.simulation.pedestrian.Parameter;
-import com.simulation.pedestrian.Potential.PotentialCell;
-import com.simulation.pedestrian.Util.Vector;
+import com.simulation.pedestrian.potential.PotentialCell;
+import com.simulation.pedestrian.util.Vector;
 
 import java.util.*;
 

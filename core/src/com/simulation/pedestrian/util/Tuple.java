@@ -1,7 +1,4 @@
-package com.simulation.pedestrian.Util;
-
-import java.util.ArrayList;
-import java.util.Arrays;
+package com.simulation.pedestrian.util;
 
 public class Tuple {
     public int t1;

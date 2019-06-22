@@ -1,7 +1,6 @@
-package com.simulation.pedestrian.Log;
+package com.simulation.pedestrian.log;
 
 import com.badlogic.gdx.math.Vector2;
-import com.simulation.pedestrian.Util.Vector;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -16,7 +15,7 @@ public class LoadLog {
     ArrayList<File> agentFile;
 
     public LoadLog() {
-        path = Paths.get("core/src/com/simulation/pedestrian/Log/LoadMode/").toAbsolutePath().toString();
+        path = Paths.get("core/src/com/simulation/pedestrian/log/LoadMode/").toAbsolutePath().toString();
         agentFile = new ArrayList<>();
         File dir = new File(path);
         for (File file : dir.listFiles()) {
