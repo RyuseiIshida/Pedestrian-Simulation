@@ -7,11 +7,13 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 public class JavaFX extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("Controller.fxml"));
+        String path = "desktop/src/com/simulation/pedestrian/desktop/Controller.fxml";
+        Parent root = FXMLLoader.load(Paths.get(path).toUri().toURL());
         stage.setX(0);
         stage.setScene(new Scene(root));
         stage.show();

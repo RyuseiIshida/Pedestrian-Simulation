@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="348.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.simulation.pedestrian.desktop.Controller">
+  <tabs>
+    <Tab text="HOME">
+         <content>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <ToolBar prefHeight="49.0" prefWidth="348.0">
+                     <items>
+                        <Button mnemonicParsing="false" onAction="#startButton" prefHeight="28.0" prefWidth="42.0" text="▶︎">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#stopButton" prefHeight="24.0" prefWidth="19.0" text="||">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#recordButton" prefHeight="0.0" prefWidth="0.0" text="●">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#InitButton" prefHeight="35.0" prefWidth="54.0" text="Init">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#deleteButton" prefHeight="35.0" prefWidth="86.0" text="Delete">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Button>
+                     </items>
+                  </ToolBar>
+                  <Pane prefHeight="50.0" prefWidth="348.0">
+                     <children>
+                      <AnchorPane layoutX="1.0" layoutY="-4.0" minHeight="0.0" minWidth="0.0" prefHeight="56.0" prefWidth="346.0">
+                           <children>
+                              <RadioButton layoutX="116.0" layoutY="4.0" mnemonicParsing="false" onAction="#selectFollowLine" prefHeight="50.0" prefWidth="96.0" text="FollowLine">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </RadioButton>
+                              <RadioButton layoutX="14.0" layoutY="10.0" mnemonicParsing="false" onAction="#selectAgentView" prefHeight="37.0" prefWidth="102.0" text="AgentView">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </RadioButton>
+                              <RadioButton layoutX="219.0" layoutY="4.0" mnemonicParsing="false" onAction="#selectGoalLine" prefHeight="50.0" prefWidth="96.0" text="GoalLine">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </RadioButton>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </Pane>
+                  <ScrollPane prefHeight="730.0" prefWidth="348.0">
+                     <content>
+                        <VBox prefHeight="802.0" prefWidth="348.0" spacing="30.0">
+                           <children>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="ENDSTEP_text" layoutX="181.0" layoutY="2.0" prefHeight="6.0" prefWidth="131.0" />
+                                    <Button mnemonicParsing="false" onAction="#ENDSTEP_Button" text="ENDSTEP" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="ATTEMPTSNUM_text" layoutX="181.0" layoutY="3.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#ATTEMPTSNUM_Button" text="ATTEMPTSNUM" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="CELL_INTERVAL_text" layoutX="181.0" layoutY="3.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#CELL_INTERVAL_Button" text="CELL_INTERVAL" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="MAX_POTENTIAL_text" layoutX="181.0" layoutY="3.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#MAX_POTENTIAL_Button" text="MAX_POTENTIAL" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="AGENT_POTENTIAL_WEIGHT_text" layoutX="181.0" layoutY="3.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#AGENT_POTENTIAL_WEIGHT_Button" prefHeight="27.0" prefWidth="153.0" text="AGENT_POTENTIAL_WEIGHT">
+                                       <font>
+                                          <Font size="10.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="AGENT_POTENTIAL_RANGE_text" layoutX="181.0" layoutY="3.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#AGENT_POTENTIAL_RANGE_Button" prefHeight="26.0" prefWidth="154.0" text="AGENT_POTENTIAL_RANGE">
+                                       <font>
+                                          <Font size="10.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="OBSTACLE_POTENTIAL_WEIGHT_text" layoutX="181.0" layoutY="1.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#OBSTACLE_POTENTIAL_WEIGHT_Button" prefHeight="26.0" prefWidth="172.0" text="OBSTACLE_POTENTIAL_WEIGHT">
+                                       <font>
+                                          <Font size="10.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="OBSTACLE_POTENTIAL_RANGE_text" layoutX="181.0" layoutY="2.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#OBSTACLE_POTENTIAL_RANGE_Button" prefHeight="27.0" prefWidth="165.0" text="OBSTACLE_POTENTIAL_RANGE">
+                                       <font>
+                                          <Font size="10.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="INIT_AGENT_NUM_text" layoutX="181.0" layoutY="1.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#INIT_AGENT_NUM_Button" text="INIT_AGENT_NUM" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="GOAL_AGENT_NUM_text" layoutX="181.0" layoutY="3.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#GOAL_AGENT_NUM_Button" text="GOAL_AGENT_NUM" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="INIT_RANDOM_X1_text" layoutX="181.0" layoutY="3.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#INIT_RANDOM_X1_Button" text="INIT_RANDOM_X1" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="INIT_RANDOM_X2_text" layoutX="181.0" layoutY="3.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#INIT_RANDOM_X2_Button" text="INIT_RANDOM_X2" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="INIT_RANDOM_Y1_text" layoutX="181.0" layoutY="1.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#INIT_RANDOM_Y1_Button" text="INIT_RANDOM_Y1" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="INIT_RANDOM_Y2_text" layoutX="181.0" layoutY="2.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#INIT_RANDOM_Y2_Button" text="INIT_RANDOM_Y2" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="GOALAGENT_DESTINATION_text" layoutX="181.0" layoutY="2.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#GOALAGENT_DESTINATION_Button" prefHeight="27.0" prefWidth="165.0" text="GOALAGENT_DESTINATION">
+                                       <font>
+                                          <Font size="11.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="AGENT_SPEED_text" layoutX="181.0" layoutY="2.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#AGENT_SPEED_Button" text="AGENT_SPEED" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="AGENT_RADIUS_text" layoutX="181.0" layoutY="2.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#AGENT_RADIUS_Button" text="AGENT_RADIUS" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="VIEW_RADIUS_text" layoutX="181.0" layoutY="2.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#VIEW_RADIUS_Button" text="VIEW_RADIUS" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="VIEW_DEGREE_text" layoutX="181.0" layoutY="2.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#VIEW_DEGREE_Button" text="VIEW_DEGREE" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <Button mnemonicParsing="false" onAction="#U_RANDOM_WALK_Button" text="U_RANDOM_WALK" />
+                                    <TextField fx:id="U_RANDOM_WALK_text" layoutX="181.0" layoutY="2.0" prefHeight="27.0" prefWidth="153.0" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="U_FOLLOW_AGENT_text" layoutX="181.0" layoutY="2.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#U_FOLLOW_AGENT_Button" text="U_FOLLOW_AGENT" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="U_MOVE_GOAL_text" layoutX="181.0" layoutY="2.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#U_MOVE_GOAL_Button" text="U_MOVE_GOAL" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="ALPHA_text" layoutX="181.0" layoutY="2.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#ALPHA_Button" text="ALPHA" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="BETA_text" layoutX="181.0" layoutY="2.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#BETA_Button" text="BETA" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="GAMMA_text" layoutX="181.0" layoutY="2.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#GAMMA_Button" text="GAMMA" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="DELTA_text" layoutX="181.0" layoutY="2.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#DELTA_Button" text="DELTA" />
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="30.0" prefWidth="240.0">
+                                 <children>
+                                    <TextField fx:id="EPSILON_text" layoutX="181.0" layoutY="2.0" prefHeight="27.0" prefWidth="153.0" />
+                                    <Button mnemonicParsing="false" onAction="#EPSILON_Button" text="EPSILON" />
+                                 </children>
+                              </Pane>
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </children>
+            </VBox>
+         </content>
+    </Tab>
+      <Tab text=" Log ">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+        </content>
+      </Tab>
+      <Tab text="SET">
+         <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <VBox layoutX="2.0" layoutY="2.0" prefHeight="300.0" prefWidth="348.0">
+                     <children>
+                        <AnchorPane prefHeight="85.0" prefWidth="348.0">
+                           <children>
+                              <Button layoutX="112.0" layoutY="15.0" mnemonicParsing="false" onAction="#Default" prefHeight="55.0" prefWidth="124.0" text="Default" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane prefHeight="85.0" prefWidth="348.0">
+                           <children>
+                              <Button layoutX="112.0" layoutY="15.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="124.0" text="Potential_1" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane prefHeight="85.0" prefWidth="348.0">
+                           <children>
+                              <Button layoutX="112.0" layoutY="15.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="124.0" text="Potential_2" />
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+         </content>
+      </Tab>
+  </tabs>
+</TabPane>
