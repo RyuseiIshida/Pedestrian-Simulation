@@ -30,7 +30,7 @@ public class Crowd {
 
     public ArrayList<Agent> getLeaders() {
         ArrayList<Agent> leaders = new ArrayList<>();
-        for (Agent agent : env.getAllAgent()) {
+        for (Agent agent : env.getAgentList()) {
             if (!agent.getFollowers().isEmpty() && agent.getFollowAgent() == null) {
                 leaders.add(agent);
             }

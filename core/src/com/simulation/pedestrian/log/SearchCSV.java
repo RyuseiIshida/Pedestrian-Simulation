@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class SearchCSV {
-    private final Path path = Paths.get("/Users/ryuseiishida/IdeaProjects/Pedestrian-Simulation/SimLog/beta=0.3/macro.txt");
+    private final Path path = Paths.get("SimLog/beta=0.3/macro.txt");
     private final int step = 0;
     private final int tag = 1;
     private final int positioin = 2;
@@ -63,8 +63,8 @@ public class SearchCSV {
     }
 
     public void writers() {
-        String path ="/Users/ryuseiishida/IdeaProjects/Pedestrian-Simulation/SimLog/beta=0.1/";
-        String out ="/Users/ryuseiishida/IdeaProjects/Pedestrian-Simulation/SimLog/out";
+        String path ="SimLog/beta=0.1/";
+        String out ="SimLog/out";
         for (int i = 10; i < 50; i++) {
             System.out.println(path + "agent" + i + "txt");
             write(Paths.get(path + "agent" + i + ".txt"), Paths.get(out + i + ".txt"));

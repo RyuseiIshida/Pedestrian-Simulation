@@ -66,10 +66,10 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
-        if (Parameter.MODE == 0 || Parameter.MODE == 1) {
+        if (Parameter.MODE.equals("Simulation")) {
             simulationMode();
         }
-        if (Parameter.MODE == 2){
+        if (Parameter.MODE.equals("DrawLogAgentLines")){
             logMode();
         }
     }
@@ -87,7 +87,7 @@ public class Main extends ApplicationAdapter {
             environment.update();
         }
         if(environment.agentClearFlag) {
-            environment.getAllAgent().clear();
+            environment.getAgentList().clear();
             environment.agentClearFlag = false;
             environment.setStep(0);
             PLAY = false;
@@ -101,14 +101,14 @@ public class Main extends ApplicationAdapter {
         batch.begin();
         bitmapFont.draw(batch,
                 "time " + String.format("%.2f", environment.getStep() / 60)
-                        + "  " + "agentNum = " + String.format(String.valueOf(environment.getAllAgent().size()))
+                        + "  " + "agentNum = " + String.format(String.valueOf(environment.getAgentList().size()))
                         + "  " + "groupNum= " + String.format(String.valueOf(environment.getCrowd().getCrowdNum()))
                         + "  " + "goalNum= " + String.format(String.valueOf(environment.getGoalAgentNum())),
                 30, Parameter.SCALE.y - 10);
         batch.end();
 
         //ポテンシャル
-        renderPotential();
+        //renderPotential();
         //agent
         renderAgent();
         renderAgentView();
@@ -157,13 +157,12 @@ public class Main extends ApplicationAdapter {
         } else {
             trajectory(agentNumber);
         }
-
     }
 
     private void renderAgent() {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (Agent agent : environment.getAllAgent()) {
+        for (Agent agent : environment.getAgentList()) {
             shapeRenderer.setColor(Color.GRAY);
             shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.AGENT_RADIUS);
             float range = 0.7f;
@@ -194,7 +193,7 @@ public class Main extends ApplicationAdapter {
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.setColor(new Color(0, 1, 0, 0.5f));
-            for (Agent agent : environment.getAllAgent()) {
+            for (Agent agent : environment.getAgentList()) {
                 float moveDegree = agent.getDirectionDegree();
                 moveDegree -= Parameter.VIEW_DEGREE / 2;
                 shapeRenderer.arc(agent.getPosition().x, agent.getPosition().y, Parameter.VIEW_RADIUS, moveDegree, Parameter.VIEW_DEGREE);
@@ -208,7 +207,7 @@ public class Main extends ApplicationAdapter {
         if(drawGoalLine) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(Color.RED);
-            for (Agent agent : environment.getAllAgent()) {
+            for (Agent agent : environment.getAgentList()) {
                 if (agent.getStateTag() == StateTag.moveGoal) {
                     shapeRenderer.line(agent.getPosition(), agent.getGoal());
                 }
@@ -221,7 +220,7 @@ public class Main extends ApplicationAdapter {
         if(drawFollowLine) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(Color.BLACK);
-            for (Agent agent : environment.getAllAgent()) {
+            for (Agent agent : environment.getAgentList()) {
                 if (agent.getFollowAgent() != null) {
                     shapeRenderer.line(agent.getPosition(), agent.getFollowAgent().getPosition());
                 }
@@ -291,7 +290,7 @@ public class Main extends ApplicationAdapter {
             for (PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
                 float concentrationLevel = 0;
                 float agentCounter = 0;
-                for (Agent agent : environment.getAllAgent()) {
+                for (Agent agent : environment.getAgentList()) {
                     float tmp = (float) (1.0 / potentialCell.getCenterPoint().dst(agent.getPosition()));
                     if (tmp >= 0.003) {
                         concentrationLevel += tmp;
@@ -378,21 +377,21 @@ public class Main extends ApplicationAdapter {
                 camera.unproject(touchPos);
                 System.out.println("touchPos = " + touchPos);
                 if (Gdx.input.isKeyPressed(Input.Keys.F)) {
-                    environment.spawnAgent1(new Vector2(touchPos.x, touchPos.y));
+                    environment.spawnAgent(new Vector2(touchPos.x, touchPos.y));
                 } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) {
-                    environment.spawnAgent2(new Vector2(touchPos.x, touchPos.y), 0);
+                    environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), 0);
                 } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) {
-                    environment.spawnAgent2(new Vector2(touchPos.x, touchPos.y), 1);
+                    environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), 1);
                 } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {
-                    environment.spawnAgent2(new Vector2(touchPos.x, touchPos.y), 2);
+                    environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), 2);
                 } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_4)) {
-                    environment.spawnAgent2(new Vector2(touchPos.x, touchPos.y), 3);
+                    environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), 3);
                 } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_5)) {
-                    environment.spawnAgent2(new Vector2(touchPos.x, touchPos.y), 4);
+                    environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), 4);
                 }
             }
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-            environment.getAllAgent().clear();
+            environment.getAgentList().clear();
             environment.setStep(0);
             environment.setGoalAgentNum(0);
         } else if (Gdx.input.isKeyJustPressed((Input.Keys.S))) {

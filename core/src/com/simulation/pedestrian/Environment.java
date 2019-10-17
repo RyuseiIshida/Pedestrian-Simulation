@@ -4,18 +4,14 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.simulation.pedestrian.agent.Agent;
 import com.simulation.pedestrian.agent.Crowd;
+import com.simulation.pedestrian.log.LoadLog;
 import com.simulation.pedestrian.log.WriterLog;
 import com.simulation.pedestrian.obstacle.Obstacle;
 import com.simulation.pedestrian.potential.PotentialCell;
 import com.simulation.pedestrian.potential.PotentialMap;
 import com.simulation.pedestrian.util.Tuple;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -24,20 +20,26 @@ public class Environment {
     private PotentialMap envPotentialMap = Parameter.POTENTIALMAP;
     private ArrayList<Goal> goals = new ArrayList<>(Parameter.GOALS);
     private ArrayList<Obstacle> obstacles = Parameter.ALL_OBSTACLE;
-    private ArrayList<Agent> allAgent;
+    private ArrayList<Agent> agentList;
     private Crowd crowd;
     private int agentCounter;
     private int goalAgentNum;
     public boolean agentClearFlag = false;
 
+    private LoadLog loadLog;
     private WriterLog writerLog;
 
     public Environment() {
         step = 0;
-        allAgent = new ArrayList<>();
+        agentList = new ArrayList<>();
         agentCounter = 0;
         crowd = new Crowd(this);
-        spawnInitAgents();
+        if (Parameter.MODE == "LogSimulation") {
+            loadLog = new LoadLog();
+            spawnLogAgents();
+        } else {
+            spawnInitAgents();
+        }
         if (Parameter.ISWRITELOG) {
             writerLog = new WriterLog(this);
         }
@@ -48,7 +50,7 @@ public class Environment {
             writerLog.writeAgentLog();
             writerLog.writeMacroLog();
         }
-        allAgent.stream()
+        agentList.stream()
                 .parallel()
                 .forEach(agent -> agent.action());
         ifAgentInGoal();
@@ -73,7 +75,7 @@ public class Environment {
     }
 
     private void ifAgentInGoal() {
-        Iterator<Agent> iterator = allAgent.iterator();
+        Iterator<Agent> iterator = agentList.iterator();
         while (iterator.hasNext()) {
             Agent agent = iterator.next();
             for (Goal goal : goals) {
@@ -103,7 +105,7 @@ public class Environment {
         for (PotentialCell cell : envPotentialMap.getPotentialCells()) {
             cell.setAgentPotential(0); //前ステップ時のポテンシャルセルを初期化
             weightPotential = 0;
-            for (Agent agent : allAgent) {
+            for (Agent agent : agentList) {
                 float kimPotential = (float) (co * Math.exp(-1 * (agent.getPosition().dst2(cell.getCenterPoint()) / (lo * lo))));
                 //float movePotential = (float) (Math.exp(-1 * ( /(lo*lo))));
                 weightPotential += kimPotential;
@@ -169,72 +171,38 @@ public class Environment {
 
     //agent
     public void spawnInitAgents() {
-        if (Parameter.MODE == 1) {
-            spawnLogAgents();
-            return;
-        }
         for (int i = 0; i < Parameter.INIT_AGENT_NUM; i++) {
             float x = MathUtils.random(Parameter.INIT_RANDOM_X1, Parameter.INIT_RANDOM_X2);
             float y = MathUtils.random(Parameter.INIT_RANDOM_Y1, Parameter.INIT_RANDOM_Y2);
             Vector2 position = new Vector2(x, y);
             if (i < Parameter.GOAL_AGENT_NUM) {
                 if (i < Parameter.GOAL_AGENT_NUM / 2) {
-                    allAgent.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
+                    agentList.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
                 } else {
-                    allAgent.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
+                    agentList.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
                 }
-//                if(Parameter.GOALAGENT_DESTINATION.equals("random")) {
-//                    allAgent.add(new agent(String.valueOf(++agentCounter), this, position, goals.get(MathUtils.random(goals.size()-1))));
-//                } else {
-//                    allAgent.add(new agent(String.valueOf(++agentCounter), this, position, goals.get()));
-//                }
-//                if (Parameter.GOALAGENT_DESTINATION.equals("random")) {
-//                    allAgent.add(new agent(String.valueOf(++agentCounter), this, position, goals.get(MathUtils.random(goals.size() - 1))));
-//                } else {
-//                    allAgent.add(new agent(String.valueOf(++agentCounter), this, position, goals.get(Integer.valueOf(Parameter.GOALAGENT_DESTINATION))));
-//                }
             } else {
-                allAgent.add(new Agent(String.valueOf(++agentCounter), this, position));
+                agentList.add(new Agent(String.valueOf(++agentCounter), this, position));
             }
         }
-    }
-
-    public void spawnAgent1(Vector2 pos) {
-        allAgent.add(new Agent(String.valueOf(++agentCounter), this, pos));
-    }
-
-    public void spawnAgent2(Vector2 pos, int goalIndex) {
-        allAgent.add(new Agent(String.valueOf(++agentCounter), this, pos, goals.get(goalIndex)));
     }
 
     public void spawnLogAgents() {
-        Path path = Paths.get("core/src/com/simulation/pedestrian/log/AgentPos.txt");
-        ArrayList<Vector2> posList = new ArrayList<>();
-        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                String[] str = line.split(",");
-                Vector2 position = new Vector2(new Vector2(Float.valueOf(str[0]), Float.valueOf(str[1])));
-                posList.add(position);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        for (int i = 0; i < Parameter.INIT_AGENT_NUM; i++) {
-            if (i < Parameter.GOAL_AGENT_NUM) {
-                if (i < Parameter.GOAL_AGENT_NUM / 2) {
-                    allAgent.add(new Agent(String.valueOf(++agentCounter), this, posList.get(i), goals.get(0)));
-                } else {
-                    allAgent.add(new Agent(String.valueOf(++agentCounter), this, posList.get(i), goals.get(1)));
-                }
-            } else {
-                    allAgent.add(new Agent(String.valueOf(++agentCounter), this, posList.get(i)));
-            }
+        for (File AgentLogFile : loadLog.getAgentFileList()) {
+            agentList.add(new Agent(AgentLogFile));
         }
     }
 
-    public ArrayList<Agent> getAllAgent() {
-        return allAgent;
+    public void spawnAgent(Vector2 pos) {
+        agentList.add(new Agent(String.valueOf(++agentCounter), this, pos));
+    }
+
+    public void spawnAgent(Vector2 pos, int goalIndex) {
+        agentList.add(new Agent(String.valueOf(++agentCounter), this, pos, goals.get(goalIndex)));
+    }
+
+    public ArrayList<Agent> getAgentList() {
+        return agentList;
     }
 
     public int getGoalAgentNum() {

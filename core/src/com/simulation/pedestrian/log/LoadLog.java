@@ -11,31 +11,34 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class LoadLog {
-    String path;
-    ArrayList<File> agentFile;
+    private String strPath = "core/src/com/simulation/pedestrian/log/LoadMode/";
+    private ArrayList<File> agentFileList;
 
     public LoadLog() {
-        path = Paths.get("core/src/com/simulation/pedestrian/log/LoadMode/").toAbsolutePath().toString();
-        agentFile = new ArrayList<>();
-        File dir = new File(path);
-        for (File file : dir.listFiles()) {
-            for (File listFile : file.listFiles()) {
-                if(!listFile.getPath().contains("env.txt")) {
-                    agentFile.add(listFile);
-                }
-            }
+        setAgentFileList();
+    }
+
+    private void setAgentFileList() {
+        agentFileList = new ArrayList<>();
+        File agentFileList = new File(strPath + "Agents");
+        for (File listFile : agentFileList.listFiles()) {
+            this.agentFileList.add(listFile);
         }
     }
 
+    public ArrayList<File> getAgentFileList() {
+        return agentFileList;
+    }
+
     public int getAgentNum() {
-        return agentFile.size();
+        return agentFileList.size();
     }
 
     public ArrayList<Vector2> getPosList(int ID) {
         ArrayList<Vector2> posList = new ArrayList<>();
         String agentID = "agent" + ID + ".txt";
         String agentPath = "";
-        for (File file : agentFile) {
+        for (File file : agentFileList) {
             if (file.getPath().contains(agentID)) {
                 agentPath = file.getPath();
                 break;
@@ -56,7 +59,7 @@ public class LoadLog {
         return posList;
     }
 
-    public void print(ArrayList<Vector2> vec) {
+    private void print(ArrayList<Vector2> vec) {
         for (Vector2 vector2 : vec) {
             System.out.println("vector2 = " + vector2);
         }

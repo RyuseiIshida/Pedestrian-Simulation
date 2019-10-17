@@ -25,7 +25,7 @@ public class WriterLog {
 
     public WriterLog(Environment env) {
         this.env = env;
-        this.agents = env.getAllAgent();
+        this.agents = env.getAgentList();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_hhmm");
         String time = format.format(Calendar.getInstance().getTime());
         path = Paths.get("SimLog/" + time).toString();
@@ -237,7 +237,7 @@ public class WriterLog {
                 );
             }
             int follow = 0;
-            for (Agent agent : env.getAllAgent()) {
+            for (Agent agent : env.getAgentList()) {
                 if (agent.getStateTag().equals(StateTag.follow)) {
                     follow++;
                 }

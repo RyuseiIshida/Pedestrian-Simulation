@@ -9,6 +9,7 @@ import com.simulation.pedestrian.Parameter;
 import com.simulation.pedestrian.potential.PotentialCell;
 import com.simulation.pedestrian.util.Vector;
 
+import java.io.File;
 import java.util.*;
 
 public class Agent {
@@ -49,6 +50,8 @@ public class Agent {
     float utilityFollow = 0;
     float utilityMoveGoal = 0;
 
+    private File loadLog;
+
     public Agent(String id, Environment env, Vector2 position) {
         this.ID = id;
         this.env = env;
@@ -74,9 +77,17 @@ public class Agent {
         this.followers = new LinkedList<>();
     }
 
+    public Agent(File logFile) {
+     loadLog = logFile;
+    }
+
     public void action() {
-        perception();
-        utilityFunction();
+        if(loadLog != null) {
+            setLogToAgent();
+        } else {
+            perception();
+            utilityFunction();
+        }
     }
 
     private void perception() {
@@ -85,6 +96,10 @@ public class Agent {
         setPerceptionFollowAgent(); //視野内にいる追従できそうなエージェント
         leSetPerceptionFollowAgent(); //追従を辞めた時の後処理
         setPerceptionGoal();
+    }
+
+    private void setLogToAgent(){
+        //TODO ログからエージェント状態をセットする
     }
 
     private void setPerceptionContinue() {
@@ -103,7 +118,7 @@ public class Agent {
 
     private void setPerceptionAgent() {
         perceptionAgentList = new ArrayList<>();
-        env.getAllAgent().stream()
+        env.getAgentList().stream()
                 .filter(agent -> !agent.equals(this) && isInView(agent.getPosition()))
                 .forEach(agent -> perceptionAgentList.add(agent));
     }
@@ -148,8 +163,8 @@ public class Agent {
         utilityFollow = StateTag.follow.equals(stateTag)
                 ? perceptionAgentList.size() * beta
                 : perceptionFollowAgentList.size() * beta;
-                //? 1 - perceptionContinueStep * delta
-                //: perceptionFollowAgentList.size() * beta;
+        //? 1 - perceptionContinueStep * delta
+        //: perceptionFollowAgentList.size() * beta;
         utilityFollow = (utilityFollow > 0.8f) ? 0.8f : utilityFollow;
 
         utilityMoveGoal = StateTag.moveGoal.equals(stateTag)
@@ -210,7 +225,7 @@ public class Agent {
                 .min((a, b) -> new Float(position.dst(a.position))
                         .compareTo(position.dst(b.position)));
         followAgent = closestAgent.get();
-        if(perceptionFollowAgentList.size() != 0) {
+        if (perceptionFollowAgentList.size() != 0) {
             followAgent.setFollower(this);
             stateTag = StateTag.follow;
         } else {
@@ -231,8 +246,8 @@ public class Agent {
         stateTag = StateTag.follow;
     }
 
-    private void boidsFollow(){
-        if(perceptionFollowAgentList.size() == 0) {
+    private void boidsFollow() {
+        if (perceptionFollowAgentList.size() == 0) {
             return;
         }
         Vector2 vector2 = new Vector2();
@@ -261,45 +276,57 @@ public class Agent {
     private void move(Vector2 movePos) {
         Vector2 direction = Vector.direction(position, movePos);
         setPotentialVector(direction);
-        //direction.nor();
+        direction.nor();
         velocity = direction.scl(speed);
-
         Vector2 tmpPos = new Vector2(position);
         tmpPos.add(velocity);
-        //if (tmpPos.x >= 0 + Parameter.AGENT_RADIUS && tmpPos.x <= Parameter.SCALE.x - Parameter.AGENT_RADIUS) {
+        if (tmpPos.x >= 0 + Parameter.AGENT_RADIUS && tmpPos.x <= Parameter.SCALE.x - Parameter.AGENT_RADIUS) {
             position.x = tmpPos.x;
-        //}
-        //if (tmpPos.y >= 0 + Parameter.AGENT_RADIUS && tmpPos.y <= Parameter.SCALE.y - Parameter.AGENT_RADIUS) {
+        }
+        if (tmpPos.y >= 0 + Parameter.AGENT_RADIUS && tmpPos.y <= Parameter.SCALE.y - Parameter.AGENT_RADIUS) {
             position.y = tmpPos.y;
-        //}
+        }
     }
 
     private void setPotentialVector(Vector2 direction) {
         Vector2 pVector = new Vector2();
-        float delta = 1;
+        float delta = 1f;
         pVector.x = -1 * (getPotential(position.x + delta, position.y) - getPotential(position.x, position.y)) / delta;
         pVector.y = -1 * (getPotential(position.x, position.y + delta) - getPotential(position.x, position.y)) / delta;
-        //pVector.scl(vectorWeight);
+        //System.out.println("pVector = " + pVector);
         pVector.nor();
-        direction.add(pVector); //方向を決定
+        direction.set(pVector);
+        //direction.add(pVector); //方向を決定
     }
 
     private float getPotential(float x, float y) {
-        return getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y);
+        float cg = 200;
+        float Ug = getGoalKIMPotential(x, y);
+        float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y);
+        float U = (((1 / cg) * Uo) + 1) * Ug;
+        //System.out.println("U = " + U);
+        return U;
+    }
+
+    private float getGoalKIMPotential(float x, float y) {
+        float cg = 200;
+        float lg = 1000;
+        Vector2 pos = new Vector2(x, y);
+        //Vector2 pos = new Vector2(movePos.x, movePos.y);
+        double len = pos.dst2(goal);
+        double potentialWeight = cg * (1 - Math.exp(-1 * (len / (lg * lg))));
+        return (float) potentialWeight;
     }
 
     private float getAgentKIMPotential(float x, float y) {
         float potentialWight = 0;
-        float co = Parameter.AGENT_KIM_POTENTIAL_WEIGHT;
-        float lo = Parameter.AGENT_KIM_POTENTIAL_RANGE;
+        float co = 700;
+        float lo = 20;
         Vector2 pos = new Vector2(x, y);
-        for (Agent agent : env.getAllAgent()) {
+        for (Agent agent : env.getAgentList()) {
             if (!agent.equals(this)) {
                 potentialWight += co * Math.exp(-1 * (pos.dst2(agent.position) / (lo * lo)));
             }
-        }
-        if (potentialWight <= 0.01) {
-            potentialWight = 0;
         }
         return potentialWight;
     }
@@ -307,8 +334,8 @@ public class Agent {
     private float getObstacleKIMPotential(float x, float y) {
         Vector2 pos = new Vector2(x, y);
         float potentialWeight = 0;
-        float co = Parameter.OBSTACLE_KIM_POTENTIAL_WEIGHT;
-        float lo = Parameter.OBSTACLE_KIM_POTENTIAL_RANGE;
+        float co = 1000;
+        float lo = 20;
         for (Obstacle obstacle : env.getObstacles()) {
             for (PotentialCell obstacleCell : obstacle.getObstacleCells()) {
                 potentialWeight += co * Math.exp(-1 * (pos.dst2(obstacleCell.getCenterPoint()) / (lo * lo)));
@@ -446,7 +473,6 @@ public class Agent {
     public float getUtilityMoveGoal() {
         return utilityMoveGoal;
     }
-
 
     @Override
     public String toString() {
