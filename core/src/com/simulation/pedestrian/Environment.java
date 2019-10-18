@@ -205,6 +205,15 @@ public class Environment {
         return agentList;
     }
 
+    public Agent getAgent(String ID) {
+        for (Agent agent : agentList) {
+            if(agent.getID().equals(ID)){
+                return agent;
+            }
+        }
+        return null;
+    }
+
     public int getGoalAgentNum() {
         return goalAgentNum;
     }

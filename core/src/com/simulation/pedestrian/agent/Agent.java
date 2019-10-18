@@ -9,7 +9,11 @@ import com.simulation.pedestrian.Parameter;
 import com.simulation.pedestrian.potential.PotentialCell;
 import com.simulation.pedestrian.util.Vector;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Agent {
@@ -78,11 +82,11 @@ public class Agent {
     }
 
     public Agent(File logFile) {
-     loadLog = logFile;
+        loadLog = logFile;
     }
 
     public void action() {
-        if(loadLog != null) {
+        if (loadLog != null) {
             setLogToAgent();
         } else {
             perception();
@@ -98,8 +102,30 @@ public class Agent {
         setPerceptionGoal();
     }
 
-    private void setLogToAgent(){
-        //TODO ログからエージェント状態をセットする
+    private void setLogToAgent() {
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(loadLog.getPath()))) {
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                String[] valueList = br.readLine().split(",", 0);
+                this.stateTag = valueList[1]; // tag
+                this.position = strToVector(valueList[2]); // position
+                this.velocity = strToVector(valueList[3]); // velocity
+                this.movePos = strToVector(valueList[4]); // movePos
+                this.goal = strToVector(valueList[5]); // goal
+                this.followAgent = env.getAgent(valueList[6]); //followAgent
+                this.followAgent.setFollower(this);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Vector2 strToVector(String str) {
+        //(-0.25262105:2.4872038) ログの形式例
+        String[] splitStr = str.substring(1, str.length() - 1).split(":", 0);
+        float x = Float.valueOf(splitStr[0]);
+        float y = Float.valueOf(splitStr[1]);
+        return new Vector2(x, y);
     }
 
     private void setPerceptionContinue() {
@@ -373,6 +399,9 @@ public class Agent {
     }
 
     public void setFollower(Agent agent) {
+        if(agent.equals(this)){
+            throw new IllegalArgumentException();
+        }
         followers.add(agent);
     }
 
