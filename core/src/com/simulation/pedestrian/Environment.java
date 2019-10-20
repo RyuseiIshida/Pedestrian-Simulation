@@ -16,13 +16,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Environment {
-    private float step;
+    private int step;
     private PotentialMap envPotentialMap = Parameter.POTENTIALMAP;
     private ArrayList<Goal> goals = new ArrayList<>(Parameter.GOALS);
     private ArrayList<Obstacle> obstacles = Parameter.ALL_OBSTACLE;
     private ArrayList<Agent> agentList;
     private Crowd crowd;
-    private int agentCounter;
     private int goalAgentNum;
     public boolean agentClearFlag = false;
 
@@ -32,7 +31,6 @@ public class Environment {
     public Environment() {
         step = 0;
         agentList = new ArrayList<>();
-        agentCounter = 0;
         crowd = new Crowd(this);
         if (Parameter.MODE == "LogSimulation") {
             loadLog = new LoadLog();
@@ -62,11 +60,11 @@ public class Environment {
         goalAgentNum = 0;
     }
 
-    public void setStep(float step) {
+    public void setStep(int step) {
         this.step = step;
     }
 
-    public float getStep() {
+    public int getStep() {
         return step;
     }
 
@@ -148,7 +146,7 @@ public class Environment {
                 }
             }
         });
-        envPotentialMap.getPotentialCells().forEach(cell ->  cell.setObstaclePotential(getKIMPotential(cell.getCenterPoint(), obstaclePosList, co, lo)));
+        envPotentialMap.getPotentialCells().forEach(cell -> cell.setObstaclePotential(getKIMPotential(cell.getCenterPoint(), obstaclePosList, co, lo)));
     }
 
     private float getKIMPotential(Vector2 targetPos, ArrayList<Vector2> obstaclePosList, float c, float l) {
@@ -177,28 +175,29 @@ public class Environment {
             Vector2 position = new Vector2(x, y);
             if (i < Parameter.GOAL_AGENT_NUM) {
                 if (i < Parameter.GOAL_AGENT_NUM / 2) {
-                    agentList.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
+                    agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position, goals.get(0)));
                 } else {
-                    agentList.add(new Agent(String.valueOf(++agentCounter), this, position, goals.get(0)));
+                    agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position, goals.get(0)));
                 }
             } else {
-                agentList.add(new Agent(String.valueOf(++agentCounter), this, position));
+                agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position));
             }
         }
     }
 
     public void spawnLogAgents() {
         for (File AgentLogFile : loadLog.getAgentFileList()) {
-            agentList.add(new Agent(AgentLogFile));
+            agentList.add(new Agent(AgentLogFile, this));
+
         }
     }
 
     public void spawnAgent(Vector2 pos) {
-        agentList.add(new Agent(String.valueOf(++agentCounter), this, pos));
+        agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos));
     }
 
     public void spawnAgent(Vector2 pos, int goalIndex) {
-        agentList.add(new Agent(String.valueOf(++agentCounter), this, pos, goals.get(goalIndex)));
+        agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos, goals.get(goalIndex)));
     }
 
     public ArrayList<Agent> getAgentList() {
@@ -206,8 +205,11 @@ public class Environment {
     }
 
     public Agent getAgent(String ID) {
+        if(ID.contains("agent")){//if txt is "agentNN"
+            ID = ID.replace("agent","");
+        }
         for (Agent agent : agentList) {
-            if(agent.getID().equals(ID)){
+            if (agent.getID().equals(ID)) {
                 return agent;
             }
         }

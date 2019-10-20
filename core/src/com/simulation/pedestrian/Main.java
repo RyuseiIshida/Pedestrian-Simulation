@@ -66,11 +66,16 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
-        if (Parameter.MODE.equals("Simulation")) {
-            simulationMode();
-        }
-        if (Parameter.MODE.equals("DrawLogAgentLines")){
-            logMode();
+        switch(Parameter.MODE){
+            case "Simulation":
+                simulationMode();
+                break;
+            case "LogSimulation":
+                simulationMode();
+                break;
+            case "DrawLogAgentLines":
+                logMode();
+                break;
         }
     }
 
@@ -100,7 +105,7 @@ public class Main extends ApplicationAdapter {
         //文字の描画
         batch.begin();
         bitmapFont.draw(batch,
-                "time " + String.format("%.2f", environment.getStep() / 60)
+                "time " + environment.getStep() / 60
                         + "  " + "agentNum = " + String.format(String.valueOf(environment.getAgentList().size()))
                         + "  " + "groupNum= " + String.format(String.valueOf(environment.getCrowd().getCrowdNum()))
                         + "  " + "goalNum= " + String.format(String.valueOf(environment.getGoalAgentNum())),
@@ -163,6 +168,10 @@ public class Main extends ApplicationAdapter {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (Agent agent : environment.getAgentList()) {
+            if(agent.getPosition() == null) {
+                shapeRenderer.end();
+                return;
+            }
             shapeRenderer.setColor(Color.GRAY);
             shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.AGENT_RADIUS);
             float range = 0.7f;

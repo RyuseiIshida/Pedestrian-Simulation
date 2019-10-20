@@ -30,19 +30,19 @@ public class WriterLog {
         String time = format.format(Calendar.getInstance().getTime());
         path = Paths.get("SimLog/" + time).toString();
         new File(path).mkdir();
+        new File(path+"/Agents").mkdir();
         writeSourceCode(path);
-        writeAgentPos(path);
     }
 
     public void writeSourceCode(String path) {
         path += "/SourceCode";
         new File(path).mkdir();
-        writeParameter(path);
-        writeEnvironment(path);
-        writeAgent(path);
+        writeSourceCodeToParameter(path);
+        writeSourceCodeToEnvironment(path);
+        writeSourceCodeToAgent(path);
     }
 
-    public void writeParameter(String outPath) {
+    private void writeSourceCodeToParameter(String outPath) {
         Path path = Paths.get("core/src/com/simulation/pedestrian/Parameter.java");
         Path out = Paths.get(outPath + "/Parameter.txt");
         List<String> readList = new ArrayList<>();
@@ -65,7 +65,7 @@ public class WriterLog {
         }
     }
 
-    public void writeEnvironment(String outPath) {
+    private void writeSourceCodeToEnvironment(String outPath) {
         Path path = Paths.get("core/src/com/simulation/pedestrian/Environment.java");
         Path out = Paths.get(outPath + "/Envionment.txt");
         List<String> readList = new ArrayList<>();
@@ -88,9 +88,9 @@ public class WriterLog {
         }
     }
 
-    public void writeAgent(String outPath) {
+    private void writeSourceCodeToAgent(String outPath) {
         Path path = Paths.get("core/src/com/simulation/pedestrian/agent/agent.java");
-        Path out = Paths.get(outPath + "/agent.txt");
+        Path out = Paths.get(outPath + "/Agent.txt");
         List<String> readList = new ArrayList<>();
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             String line = null;
@@ -111,21 +111,9 @@ public class WriterLog {
         }
     }
 
-    public void writeAgentPos(String outPath) {
-        Path out = Paths.get(outPath + "/AgentPos.txt");
-        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(out, StandardCharsets.UTF_8)) {
-            for (Agent agent : agents) {
-                bufferedWriter.append(agent.getPosition().toString().replace("(","").replace(")",""));
-                bufferedWriter.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void writeAgentLog() {
         agents.stream().parallel().forEach(agent -> {
-            String path = this.path + "/agent" + agent.getID() + ".txt";
+            String path = this.path + "/Agents" + "/agent" + agent.getID() + ".txt";
 
             if (!(new File(path).exists())) {
                 initWriteAgentLog(path);
@@ -215,7 +203,8 @@ public class WriterLog {
 
     public void writeMacroLog() {
         try {
-            String path = this.path + "/macro" + ".txt";
+            new File(this.path + "/Macro").mkdir();
+            String path = this.path + "/Macro" + "/macro" + ".txt";
             if (!(new File(path).exists())) {
                 CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
                 printer.printRecord("step", "goalAgentNum", "groupSize", "follow");

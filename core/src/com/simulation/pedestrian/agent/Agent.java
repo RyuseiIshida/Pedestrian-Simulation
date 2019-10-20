@@ -7,7 +7,7 @@ import com.simulation.pedestrian.Goal;
 import com.simulation.pedestrian.obstacle.Obstacle;
 import com.simulation.pedestrian.Parameter;
 import com.simulation.pedestrian.potential.PotentialCell;
-import com.simulation.pedestrian.util.Vector;
+import com.simulation.pedestrian.util.UtilVector;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,8 +32,8 @@ public class Agent {
     private LinkedList<Agent> followers;
 
     //perception
-    private ArrayList<Agent> perceptionAgentList = new ArrayList<>();
-    private ArrayList<Agent> perceptionFollowAgentList = new ArrayList<>();
+    private LinkedList<Agent> perceptionAgentList = new LinkedList<>();
+    private LinkedList<Agent> perceptionFollowAgentList = new LinkedList<>();
     private String perceptionBeforeStateTag;
     private Vector2 perceptionBeforePos;
     private float perceptionContinueStep = 0;
@@ -41,20 +41,20 @@ public class Agent {
     private float perceptionAllDst = 0;
 
     //utility weight
-    private final float uRandomWalk = Parameter.U_RANDOM_WALK;
-    private final float uFollowAgent = Parameter.U_FOLLOW_AGENT;
-    private final float uMoveGoal = Parameter.U_MOVE_GOAL;
-    private final float alpha = Parameter.ALPHA;
-    private final float beta = Parameter.BETA;
-    private final float gamma = Parameter.GAMMA;
-    private final float delta = Parameter.DELTA;
-    private final float epsilon = Parameter.EPSILON;
+    private float uRandomWalk = Parameter.U_RANDOM_WALK;
+    private float uFollowAgent = Parameter.U_FOLLOW_AGENT;
+    private float uMoveGoal = Parameter.U_MOVE_GOAL;
+    private float alpha = Parameter.ALPHA;
+    private float beta = Parameter.BETA;
+    private float gamma = Parameter.GAMMA;
+    private float delta = Parameter.DELTA;
+    private float epsilon = Parameter.EPSILON;
 
     float utilityRandomWalk = 0;
     float utilityFollow = 0;
     float utilityMoveGoal = 0;
 
-    private File loadLog;
+    private File loadLogFile;
 
     public Agent(String id, Environment env, Vector2 position) {
         this.ID = id;
@@ -81,13 +81,20 @@ public class Agent {
         this.followers = new LinkedList<>();
     }
 
-    public Agent(File logFile) {
-        loadLog = logFile;
+    public Agent(File logFile, Environment env) {
+        int startIndexID = logFile.getPath().indexOf("agent") + "agent".length();
+        int endIndexID = logFile.getPath().indexOf(".txt");
+        this.ID = logFile.getPath().substring(startIndexID, endIndexID);
+        this.env = env;
+        this.followers = new LinkedList<>();
+        loadLogFile = logFile;
+        initLogToAgent();
+        action();
     }
 
     public void action() {
-        if (loadLog != null) {
-            setLogToAgent();
+        if (loadLogFile != null) {
+            setLogToAgent(env.getStep());
         } else {
             perception();
             utilityFunction();
@@ -102,30 +109,116 @@ public class Agent {
         setPerceptionGoal();
     }
 
-    private void setLogToAgent() {
-        try (BufferedReader br = Files.newBufferedReader(Paths.get(loadLog.getPath()))) {
+    Map<Integer, String> log = new HashMap<>();
+
+    private void initLogToAgent() {
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(loadLogFile.getPath()))) {
             String line = null;
+            br.readLine(); //ヘッダーを抜かす処理
             while ((line = br.readLine()) != null) {
-                String[] valueList = br.readLine().split(",", 0);
-                this.stateTag = valueList[1]; // tag
-                this.position = strToVector(valueList[2]); // position
-                this.velocity = strToVector(valueList[3]); // velocity
-                this.movePos = strToVector(valueList[4]); // movePos
-                this.goal = strToVector(valueList[5]); // goal
-                this.followAgent = env.getAgent(valueList[6]); //followAgent
-                this.followAgent.setFollower(this);
+                int step = Integer.valueOf(line.substring(0, line.indexOf(",")));
+                log.put(step, line);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private Vector2 strToVector(String str) {
-        //(-0.25262105:2.4872038) ログの形式例
-        String[] splitStr = str.substring(1, str.length() - 1).split(":", 0);
-        float x = Float.valueOf(splitStr[0]);
-        float y = Float.valueOf(splitStr[1]);
-        return new Vector2(x, y);
+    private void setLogToAgent(int step) {
+        String strValue = log.get(step);
+        if (strValue == null) {
+            return;
+        }
+        String[] valueList = log.get(step).split(",", 0);
+        int logStep = Integer.valueOf(valueList[0]);
+        this.stateTag = valueList[1]; // tag
+        this.position = UtilVector.strToVector(valueList[2], ID); // position
+        this.velocity = UtilVector.strToVector(valueList[3], ID); // velocity
+        this.movePos = UtilVector.strToVector(valueList[4], ID); // movePos
+        this.goal = UtilVector.strToVector(valueList[5], ID); // goal
+        if (!valueList[6].isEmpty()) {
+            System.out.println("valueList = " + valueList[6]);
+            this.followAgent = env.getAgent(valueList[6]); //followAgent
+            System.out.println("follow = " + followAgent);
+            this.followAgent.setFollower(this);
+        }
+        this.followers = strToAgentList(valueList[7]); //followers
+        this.perceptionAgentList = strToAgentList(valueList[9]);
+        this.perceptionFollowAgentList = strToAgentList(valueList[11]);
+        this.perceptionContinueStep = Float.valueOf(valueList[13]);
+        this.perceptionContinueDst = Float.valueOf(valueList[14]);
+        this.perceptionAllDst = Float.valueOf(valueList[15]);
+        this.uRandomWalk = Float.valueOf(valueList[16]);
+        this.uFollowAgent = Float.valueOf(valueList[17]);
+        this.uMoveGoal = Float.valueOf(valueList[18]);
+        this.alpha = Float.valueOf(valueList[19]);
+        this.beta = Float.valueOf(valueList[20]);
+        this.gamma = Float.valueOf(valueList[21]);
+        this.delta = Float.valueOf(valueList[22]);
+        this.epsilon = Float.valueOf(valueList[23]);
+        this.utilityRandomWalk = Float.valueOf(valueList[24]);
+        this.utilityFollow = Float.valueOf(valueList[25]);
+        this.utilityMoveGoal = Float.valueOf(valueList[26]);
+        this.perceptionBeforePos = this.position;
+        this.perceptionBeforeStateTag = this.stateTag;
+    }
+
+//        private void setLogToAgent ( int step){
+//            try (BufferedReader br = Files.newBufferedReader(Paths.get(loadLogFile.getPath()))) {
+//                String line = null;
+//                br.readLine();
+//                while ((line = br.readLine()) != null) {
+//                    String[] valueList = line.split(",", 0);
+//                    int logStep = Integer.valueOf(valueList[0]);
+//                    if (logStep == step) {
+//                        this.stateTag = valueList[1]; // tag
+//                        this.position = UtilVector.strToVector(valueList[2], ID); // position
+//                        this.velocity = UtilVector.strToVector(valueList[3], ID); // velocity
+//                        this.movePos = UtilVector.strToVector(valueList[4], ID); // movePos
+//                        this.goal = UtilVector.strToVector(valueList[5], ID); // goal
+//                        if (!valueList[6].isEmpty()) {
+//                            System.out.println("valueList = " + valueList[6]);
+//                            this.followAgent = env.getAgent(valueList[6]); //followAgent
+//                            System.out.println("followAgent = " + followAgent);
+//                            this.followAgent.setFollower(this);
+//                        }
+//                        this.followers = strToAgentList(valueList[7]); //followers
+//                        this.perceptionAgentList = strToAgentList(valueList[9]);
+//                        this.perceptionFollowAgentList = strToAgentList(valueList[11]);
+//                        this.perceptionContinueStep = Float.valueOf(valueList[13]);
+//                        this.perceptionContinueDst = Float.valueOf(valueList[14]);
+//                        this.perceptionAllDst = Float.valueOf(valueList[15]);
+//                        this.uRandomWalk = Float.valueOf(valueList[16]);
+//                        this.uFollowAgent = Float.valueOf(valueList[17]);
+//                        this.uMoveGoal = Float.valueOf(valueList[18]);
+//                        this.alpha = Float.valueOf(valueList[19]);
+//                        this.beta = Float.valueOf(valueList[20]);
+//                        this.gamma = Float.valueOf(valueList[21]);
+//                        this.delta = Float.valueOf(valueList[22]);
+//                        this.epsilon = Float.valueOf(valueList[23]);
+//                        this.utilityRandomWalk = Float.valueOf(valueList[24]);
+//                        this.utilityFollow = Float.valueOf(valueList[25]);
+//                        this.utilityMoveGoal = Float.valueOf(valueList[26]);
+//                        this.perceptionBeforePos = this.position;
+//                        this.perceptionBeforeStateTag = this.stateTag;
+//                        return;
+//                    }
+//                }
+//                perception();
+//                utilityFunction();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
+    private LinkedList<Agent> strToAgentList(String str) {
+        LinkedList<Agent> agentList = new LinkedList<>();
+        //例 [] or [agent4: agent7: agent8: agent20]
+        String tmpStr = str.replace("[", "").replace("]", "").replace(" ", "");
+        if (!tmpStr.isEmpty()) {
+            String[] splitStr = tmpStr.split(":", 0);
+        }
+        return agentList;
     }
 
     private void setPerceptionContinue() {
@@ -143,14 +236,14 @@ public class Agent {
     }
 
     private void setPerceptionAgent() {
-        perceptionAgentList = new ArrayList<>();
+        perceptionAgentList = new LinkedList<>();
         env.getAgentList().stream()
                 .filter(agent -> !agent.equals(this) && isInView(agent.getPosition()))
                 .forEach(agent -> perceptionAgentList.add(agent));
     }
 
     private void setPerceptionFollowAgent() {
-        perceptionFollowAgentList = new ArrayList<>();
+        perceptionFollowAgentList = new LinkedList<>();
         ArrayList<Agent> group = env.getCrowd().getMyGroup(this);
         perceptionAgentList.stream()
                 //.filter(agent -> !StateTag.follow.equals(agent.stateTag))
@@ -300,7 +393,7 @@ public class Agent {
     }
 
     private void move(Vector2 movePos) {
-        Vector2 direction = Vector.direction(position, movePos);
+        Vector2 direction = UtilVector.direction(position, movePos);
         setPotentialVector(direction);
         direction.nor();
         velocity = direction.scl(speed);
@@ -330,7 +423,6 @@ public class Agent {
         float Ug = getGoalKIMPotential(x, y);
         float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y);
         float U = (((1 / cg) * Uo) + 1) * Ug;
-        //System.out.println("U = " + U);
         return U;
     }
 
@@ -338,8 +430,7 @@ public class Agent {
         float cg = 200;
         float lg = 1000;
         Vector2 pos = new Vector2(x, y);
-        //Vector2 pos = new Vector2(movePos.x, movePos.y);
-        double len = pos.dst2(goal);
+        double len = pos.dst2(movePos);
         double potentialWeight = cg * (1 - Math.exp(-1 * (len / (lg * lg))));
         return (float) potentialWeight;
     }
@@ -399,7 +490,7 @@ public class Agent {
     }
 
     public void setFollower(Agent agent) {
-        if(agent.equals(this)){
+        if (agent.equals(this)) {
             throw new IllegalArgumentException();
         }
         followers.add(agent);
@@ -438,11 +529,11 @@ public class Agent {
     }
 
 
-    public ArrayList<Agent> getPerceptionAgentList() {
+    public LinkedList<Agent> getPerceptionAgentList() {
         return perceptionAgentList;
     }
 
-    public ArrayList<Agent> getPerceptionFollowAgentList() {
+    public LinkedList<Agent> getPerceptionFollowAgentList() {
         return perceptionFollowAgentList;
     }
 

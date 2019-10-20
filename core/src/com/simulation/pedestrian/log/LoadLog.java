@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class LoadLog {
-    private String strPath = "core/src/com/simulation/pedestrian/log/LoadMode/";
+    private String strPath = "core/src/com/simulation/pedestrian/log/2019-10-20_0904/";
     private ArrayList<File> agentFileList;
 
     public LoadLog() {
