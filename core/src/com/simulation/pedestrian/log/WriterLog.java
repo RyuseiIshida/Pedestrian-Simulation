@@ -2,7 +2,7 @@ package com.simulation.pedestrian.log;
 
 import com.simulation.pedestrian.agent.Agent;
 import com.simulation.pedestrian.agent.StateTag;
-import com.simulation.pedestrian.Environment;
+import com.simulation.pedestrian.environment.Environment;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;

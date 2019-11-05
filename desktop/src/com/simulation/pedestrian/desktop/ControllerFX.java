@@ -1,28 +1,28 @@
 package com.simulation.pedestrian.desktop;
-import com.simulation.pedestrian.Main;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.simulation.pedestrian.ControllerGDX;
 import com.simulation.pedestrian.Parameter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
-public class Controller implements Initializable {
+public class ControllerFX implements Initializable {
     @FXML
     private Button startButton;
     @FXML
     void startButton(ActionEvent event) {
-        Main.setPLAY(true);
+        ControllerGDX.setPLAY(true);
     }
 
     @FXML
     private Button stopButton;
     @FXML
     void stopButton(ActionEvent event) {
-        Main.setPLAY(false);
+        ControllerGDX.setPLAY(false);
     }
 
     @FXML
@@ -36,35 +36,35 @@ public class Controller implements Initializable {
     private Button InitButton;
     @FXML
     void InitButton(ActionEvent event) {
-        Main.getEnvironment().spawnInitAgents();
-        Main.getEnvironment().setStep(0);
+        ControllerGDX.getEnvironment().spawnInitAgents();
+        ControllerGDX.getEnvironment().setStep(0);
     }
 
     @FXML
     private Button deleteButton;
     @FXML
     void deleteButton(ActionEvent event) {
-        Main.getEnvironment().clearAgent();
+        ControllerGDX.getEnvironment().clearAgent();
     }
 
     @FXML
     private RadioButton selectAgentView;
     @FXML
     void selectAgentView(ActionEvent event) {
-        Main.setDrawView();
+        ControllerGDX.setDrawView();
     }
     @FXML
     private RadioButton selectFollowLine;
     @FXML
     void selectFollowLine(ActionEvent event) {
-        Main.setDrawFollowLine();
+        ControllerGDX.setDrawFollowLine();
     }
 
     @FXML
     private RadioButton selectGoalLine;
     @FXML
     void selectGoalLine(ActionEvent event) {
-        Main.setDrawGoalLine();
+        ControllerGDX.setDrawGoalLine();
     }
 
     @FXML private Button ENDSTEP_Button;

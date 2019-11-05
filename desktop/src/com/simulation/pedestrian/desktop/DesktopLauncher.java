@@ -2,9 +2,7 @@ package com.simulation.pedestrian.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.simulation.pedestrian.Main;
-
-import java.awt.*;
+import com.simulation.pedestrian.ControllerGDX;
 
 public class DesktopLauncher {
 	public DesktopLauncher() {
@@ -18,16 +16,16 @@ public class DesktopLauncher {
 		config.height = 900;
 		config.x = 500;
 		config.y = 0;
-		new LwjglApplication(new Main(), config);
+		new LwjglApplication(new ControllerGDX(), config);
 	}
 
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "Pedestrian Simulation";
-		config.width = 800;
-        config.height = 480;
+		config.width = 1000;
+        config.height = 1000;
         config.x = -1;
         config.y = -1;
-		new LwjglApplication(new Main(), config);
+		new LwjglApplication(new ControllerGDX(), config);
 	}
 }

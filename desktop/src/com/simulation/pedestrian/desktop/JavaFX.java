@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 public class JavaFX extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        String path = "desktop/src/com/simulation/pedestrian/desktop/Controller.fxml";
+        String path = "desktop/src/com/simulation/pedestrian/desktop/ControllerFX.fxml";
         Parent root = FXMLLoader.load(Paths.get(path).toUri().toURL());
         stage.setX(0);
         stage.setScene(new Scene(root));

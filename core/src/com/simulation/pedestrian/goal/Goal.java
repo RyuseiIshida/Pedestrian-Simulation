@@ -1,4 +1,4 @@
-package com.simulation.pedestrian;
+package com.simulation.pedestrian.goal;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -55,7 +55,7 @@ public class Goal {
 
     @Override
     public String toString() {
-        return "Goal = (x=" + position.x + ", y=" + position.y + ", w=" + width + ", h=" + height + ")";
+        return "goal = (x=" + position.x + ", y=" + position.y + ", w=" + width + ", h=" + height + ")";
     }
 
 }

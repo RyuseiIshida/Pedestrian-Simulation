@@ -1,6 +1,6 @@
 package com.simulation.pedestrian.agent;
 
-import com.simulation.pedestrian.Environment;
+import com.simulation.pedestrian.environment.Environment;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

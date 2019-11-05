@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -13,18 +14,24 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.simulation.pedestrian.agent.Agent;
 import com.simulation.pedestrian.agent.StateTag;
+import com.simulation.pedestrian.environment.Environment;
+import com.simulation.pedestrian.goal.Goal;
 import com.simulation.pedestrian.log.LoadLog;
+import com.simulation.pedestrian.mode.Mode;
 import com.simulation.pedestrian.obstacle.Obstacle;
 import com.simulation.pedestrian.potential.PotentialCell;
 
 import java.util.ArrayList;
 
-public class Main extends ApplicationAdapter {
+public class ControllerGDX extends ApplicationAdapter {
     //libGdx
     private OrthographicCamera camera;
     private SpriteBatch batch;
+    private Texture texture;
     private ShapeRenderer shapeRenderer;
     private BitmapFont bitmapFont;
+
+    private Mode mode;
 
     private static Environment environment;
 
@@ -43,41 +50,99 @@ public class Main extends ApplicationAdapter {
     private static boolean drawPVec = false;
     private static boolean drawConcentrationLevel = false;
     private static boolean drawCell = false;
-    private static boolean  drawView = false;
+    private static boolean drawView = false;
 
 
     @Override
     public void create() {
-        //createSubWindow();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Parameter.SCALE.x, Parameter.SCALE.y);
         batch = new SpriteBatch();
+        texture = new Texture("tressa-yokohama.png");
         shapeRenderer = new ShapeRenderer();
         bitmapFont = new BitmapFont();
         bitmapFont.setColor(Color.BLACK);
         bitmapFont.getData().setScale(5);
         environment = new Environment();
-    }
-
-    public void createSubWindow(){
-        ParameterWindow frame = new ParameterWindow("Sub Window");
-        frame.setVisible(true);
+        mode = new Mode();
     }
 
     @Override
     public void render() {
-        switch(Parameter.MODE){
-            case "Simulation":
-                simulationMode();
-                break;
-            case "LogSimulation":
-                simulationMode();
-                break;
-            case "DrawLogAgentLines":
-                logMode();
-                break;
-        }
+//        switch(Parameter.MODE){
+//            case "Simulation":
+//                simulationMode();
+//                break;
+//            case "LogSimulation":
+//                simulationMode();
+//                break;
+//            case "DrawLogAgentLines":
+//                logMode();
+//                break;
+//        }
+        createMap();
     }
+
+    private void createMap() {
+        Gdx.gl.glClearColor(255, 255, 255, 255);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        batch.draw(texture, 0, 0);
+        batch.end();
+        //mapInput();
+        //drawPoint();
+    }
+
+    private void eraser() {
+
+    }
+//
+//
+//    private Vector3 startPoint;
+//    private Vector3 endPoint;
+//
+//    private void mapInput() {
+//        if (Gdx.input.justTouched()) {
+//            Vector3 touchPos = new Vector3();
+//            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+//            camera.unproject(touchPos);
+//            setPoint(touchPos);
+//        }
+//    }
+//
+//    private void setPoint(Vector3 point) {
+//        if (startPoint == null) {
+//            startPoint = point;
+//        } else {
+//            startPoint = null;
+//            endPoint = point;
+//            createObstacleFromMouseActions();
+//        }
+//    }
+//
+//    ArrayList<float[]> obstacles = new ArrayList<>();
+//
+//    private void createObstacleFromMouseActions() {
+//        float[] point = new float[4];
+//        point[0] = startPoint.x;
+//        point[1] = startPoint.y;
+//        point[2] = endPoint.x;
+//        point[3] = endPoint.y;
+//        obstacles.add(point);
+//    }
+//
+//
+//    private void drawPoint() {
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//        shapeRenderer.setColor(Color.RED);
+//        for (float[] points : obstacles) {
+//            shapeRenderer.line(points[0],points[1],points[2],points[3]);
+//        }
+//        shapeRenderer.end();
+//    }
+
 
     private void simulationMode() {
         if (Parameter.ENDSTEP != 0 && Parameter.ENDSTEP + 1 == environment.getStep()) {
@@ -91,7 +156,7 @@ public class Main extends ApplicationAdapter {
         if (PLAY) {
             environment.update();
         }
-        if(environment.agentClearFlag) {
+        if (environment.agentClearFlag) {
             environment.getAgentList().clear();
             environment.agentClearFlag = false;
             environment.setStep(0);
@@ -104,6 +169,7 @@ public class Main extends ApplicationAdapter {
 
         //文字の描画
         batch.begin();
+        batch.draw(texture, 0, 0);
         bitmapFont.draw(batch,
                 "time " + environment.getStep() / 60
                         + "  " + "agentNum = " + String.format(String.valueOf(environment.getAgentList().size()))
@@ -142,7 +208,7 @@ public class Main extends ApplicationAdapter {
 
         //文字の描画
         batch.begin();
-        if(drawAllTrajectory) {
+        if (drawAllTrajectory) {
             bitmapFont.draw(batch, "agent all", 30, Parameter.SCALE.y - 10);
         } else {
             bitmapFont.draw(batch, "agent" + agentNumber, 30, Parameter.SCALE.y - 10);
@@ -153,11 +219,11 @@ public class Main extends ApplicationAdapter {
         renderGoal();
         //障害物
         renderObstacle();
-        //入力処理
+        /* 入力処理 */
         input();
 
         //軌跡
-        if(drawAllTrajectory) {
+        if (drawAllTrajectory) {
             trajectory();
         } else {
             trajectory(agentNumber);
@@ -168,7 +234,7 @@ public class Main extends ApplicationAdapter {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (Agent agent : environment.getAgentList()) {
-            if(agent.getPosition() == null) {
+            if (agent.getPosition() == null) {
                 shapeRenderer.end();
                 return;
             }
@@ -213,7 +279,7 @@ public class Main extends ApplicationAdapter {
     }
 
     private void renderGoalLine() {
-        if(drawGoalLine) {
+        if (drawGoalLine) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(Color.RED);
             for (Agent agent : environment.getAgentList()) {
@@ -226,7 +292,7 @@ public class Main extends ApplicationAdapter {
     }
 
     private void renderAgentFollowLine() {
-        if(drawFollowLine) {
+        if (drawFollowLine) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(Color.BLACK);
             for (Agent agent : environment.getAgentList()) {
@@ -364,7 +430,7 @@ public class Main extends ApplicationAdapter {
         shapeRenderer.setColor(Color.RED);
         Vector2 tmp = null;
         for (Vector2 vector2 : posList) {
-            if(tmp == null) {
+            if (tmp == null) {
                 tmp = vector2;
             } else {
                 shapeRenderer.line(tmp, vector2);
@@ -431,10 +497,10 @@ public class Main extends ApplicationAdapter {
     }
 
     public static void setEnvironment(Environment env) {
-        environment =  env;
+        environment = env;
     }
 
-    public static boolean getPLAY(){
+    public static boolean getPLAY() {
         return PLAY;
     }
 
@@ -446,7 +512,7 @@ public class Main extends ApplicationAdapter {
         drawGoalLine = drawGoalLine ? false : true;
     }
 
-    public static void  setDrawFollowLine() {
+    public static void setDrawFollowLine() {
         drawFollowLine = drawFollowLine ? false : true;
     }
 
@@ -458,7 +524,7 @@ public class Main extends ApplicationAdapter {
         drawPVec = drawPVec ? false : true;
     }
 
-    public static void setDrawConcentrationLevel(){
+    public static void setDrawConcentrationLevel() {
         drawConcentrationLevel = drawConcentrationLevel ? false : true;
     }
 
@@ -466,7 +532,7 @@ public class Main extends ApplicationAdapter {
         drawCell = drawCell ? false : true;
     }
 
-    public static void setDrawView()  {
+    public static void setDrawView() {
         drawView = drawView ? false : true;
     }
 

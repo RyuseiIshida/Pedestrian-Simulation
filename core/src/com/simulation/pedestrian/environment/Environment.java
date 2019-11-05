@@ -1,7 +1,9 @@
-package com.simulation.pedestrian;
+package com.simulation.pedestrian.environment;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.simulation.pedestrian.goal.Goal;
+import com.simulation.pedestrian.Parameter;
 import com.simulation.pedestrian.agent.Agent;
 import com.simulation.pedestrian.agent.Crowd;
 import com.simulation.pedestrian.log.LoadLog;
