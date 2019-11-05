@@ -8,51 +8,22 @@ import com.simulation.pedestrian.util.Tuple;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Obstacle {
-    private PotentialMap potentialMap;
-    private List<PotentialCell> obstacleCells;
-    private float x;
-    private float y;
-    private float width;
-    private float height;
-    private Tuple startIndex;
-    private Tuple endIndex;
+public abstract class Obstacle {
+    protected PotentialMap potentialMap;
+    protected List<PotentialCell> obstacleCells;
+    protected Vector2 startPoint;
+    protected Vector2 endPoint;
+    protected Tuple startIndex;
+    protected Tuple endIndex;
 
-    public Obstacle(float x, float y, float w, float h, PotentialMap potentialMap) {
+    public Obstacle(float x1, float y1, float x2, float y2, PotentialMap potentialMap) {
         this.potentialMap = potentialMap;
         this.obstacleCells = new ArrayList<>();
-        this.x = x;
-        this.y = y;
-        this.width = w;
-        this.height = h;
-        setShapeObstacle(x, y, w, h);
+        this.startPoint = new Vector2(x1, y1);
+        this.endPoint = new Vector2(x2, y2);
     }
 
-    public Obstacle(Vector2 position, float w, float h, PotentialMap potentialMap) {
-        this(position.x, position.y, w, h, potentialMap);
-    }
-
-    public Obstacle(Vector2 position, Vector2 WH, PotentialMap potentialMap) {
-        this(position.x, position.y, WH.x, WH.y, potentialMap);
-    }
-
-    public void setShapeObstacle(Vector2 position, float w, float h) {
-        PotentialCell startCell = potentialMap.getPotentialCell(position);
-        PotentialCell endCell = potentialMap.getPotentialCell(new Vector2(position.x + w, position.y + h));
-        startIndex = potentialMap.getIndex(startCell);
-        endIndex = potentialMap.getIndex(endCell);
-        ArrayList<ArrayList<PotentialCell>> matrixCell = potentialMap.getMatrixPotentialCells();
-        for (int i = startIndex.t1; i <= endIndex.t1; i++) {
-            for (int j = startIndex.t2; j <= endIndex.t2; j++) {
-                //matrixCell.get(i).get(j).setObstaclePotential(potential);
-                obstacleCells.add(matrixCell.get(i).get(j));
-            }
-        }
-    }
-
-    public void setShapeObstacle(float x, float y, float w, float h) {
-        setShapeObstacle(new Vector2(x, y), w, h);
-    }
+    abstract void setShapeObstacle();
 
     public List<PotentialCell> getObstacleCells() {
         return obstacleCells;
@@ -68,6 +39,6 @@ public class Obstacle {
 
     @Override
     public String toString() {
-        return "obstacle = (x=" + x + ", y=" + y + ", w=" + width + ", h=" + height + ")";
+        return "obstacle = (startPoint=" + startPoint + ", endPoint=" + endPoint + ")";
     }
 }

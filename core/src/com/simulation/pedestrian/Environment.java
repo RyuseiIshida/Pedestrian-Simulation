@@ -6,6 +6,7 @@ import com.simulation.pedestrian.agent.Agent;
 import com.simulation.pedestrian.agent.Crowd;
 import com.simulation.pedestrian.log.LoadLog;
 import com.simulation.pedestrian.log.WriterLog;
+import com.simulation.pedestrian.obstacle.Box;
 import com.simulation.pedestrian.obstacle.Obstacle;
 import com.simulation.pedestrian.potential.PotentialCell;
 import com.simulation.pedestrian.potential.PotentialMap;
@@ -158,8 +159,7 @@ public class Environment {
     }
 
     public void spawnObstacle(Vector2 pos) {
-        obstacles.add(new Obstacle(pos.x, pos.y, Parameter.CELL_INTERVAL, Parameter.CELL_INTERVAL, envPotentialMap));
-        setObstaclePotential();
+        obstacles.add(new Box(pos.x, pos.y, Parameter.CELL_INTERVAL, Parameter.CELL_INTERVAL, envPotentialMap));
     }
 
     public ArrayList<Obstacle> getObstacles() {
