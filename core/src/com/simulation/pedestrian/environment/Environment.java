@@ -9,12 +9,17 @@ import com.simulation.pedestrian.agent.Crowd;
 import com.simulation.pedestrian.log.LoadLog;
 import com.simulation.pedestrian.log.WriterLog;
 import com.simulation.pedestrian.obstacle.Box;
+import com.simulation.pedestrian.obstacle.Line;
 import com.simulation.pedestrian.obstacle.Obstacle;
 import com.simulation.pedestrian.potential.PotentialCell;
 import com.simulation.pedestrian.potential.PotentialMap;
 import com.simulation.pedestrian.util.Tuple;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -30,6 +35,8 @@ public class Environment {
 
     private LoadLog loadLog;
     private WriterLog writerLog;
+
+    private final String MAP_PATH = "core/assets/out/createMap/saveMap.txt";
 
     public Environment() {
         step = 0;
@@ -56,11 +63,6 @@ public class Environment {
                 .forEach(agent -> agent.action());
         ifAgentInGoal();
         step++;
-    }
-
-    public void clearAgent() {
-        agentClearFlag = true;
-        goalAgentNum = 0;
     }
 
     public void setStep(int step) {
@@ -94,70 +96,8 @@ public class Environment {
     }
 
     //potential
-
     public PotentialMap getEnvPotentialMap() {
         return envPotentialMap;
-    }
-
-    public void setAgentKimPotentialCell() {
-        float weightPotential;
-        float co = Parameter.AGENT_KIM_POTENTIAL_WEIGHT;
-        float lo = Parameter.AGENT_KIM_POTENTIAL_RANGE;
-        for (PotentialCell cell : envPotentialMap.getPotentialCells()) {
-            cell.setAgentPotential(0); //前ステップ時のポテンシャルセルを初期化
-            weightPotential = 0;
-            for (Agent agent : agentList) {
-                float kimPotential = (float) (co * Math.exp(-1 * (agent.getPosition().dst2(cell.getCenterPoint()) / (lo * lo))));
-                //float movePotential = (float) (Math.exp(-1 * ( /(lo*lo))));
-                weightPotential += kimPotential;
-            }
-            cell.setAgentPotential(weightPotential);
-        }
-    }
-
-
-    public Vector2 getAgentGrad(Vector2 targetPos) {
-        if (targetPos.x < 0 || targetPos.x > Parameter.SCALE.x
-                || targetPos.y < 0 || targetPos.y > Parameter.SCALE.y) {
-            return new Vector2(0, 0);
-        }
-        Vector2 gradVec = new Vector2();
-        float delta = Parameter.CELL_INTERVAL / 2;
-        PotentialCell targetCell = envPotentialMap.getPotentialCell(targetPos);
-        PotentialCell deltaXCell = envPotentialMap.getPotentialCell(targetPos.x + delta, targetPos.y);
-        PotentialCell deltaYCell = envPotentialMap.getPotentialCell(targetPos.x, targetPos.y + delta);
-        gradVec.x = -(deltaXCell.getAgentPotential() - targetCell.getAgentPotential() / delta);
-        gradVec.y = -(deltaYCell.getAgentPotential() - targetCell.getAgentPotential() / delta);
-        float v = (float) Math.sqrt(gradVec.x * gradVec.x + gradVec.y * gradVec.y);
-        //gradVec.x *= 5;
-        //gradVec.y *= 5;
-        gradVec.x /= v;
-        gradVec.y /= v;
-        return gradVec;
-    }
-
-    private void setObstaclePotential() {
-        ArrayList<Vector2> obstaclePosList = new ArrayList<>();
-        float co = Parameter.OBSTACLE_KIM_POTENTIAL_WEIGHT;
-        float lo = Parameter.OBSTACLE_KIM_POTENTIAL_RANGE;
-        obstacles.forEach(obstacle -> {
-            Tuple startIndex = obstacle.getStartIndex();
-            Tuple endIndex = obstacle.getEndIndex();
-            for (int i = startIndex.t1; i <= endIndex.t1; i++) {
-                for (int j = startIndex.t2; j <= endIndex.t2; j++) {
-                    obstaclePosList.add(envPotentialMap.getMatrixPotentialCell(i, j).getCenterPoint());
-                }
-            }
-        });
-        envPotentialMap.getPotentialCells().forEach(cell -> cell.setObstaclePotential(getKIMPotential(cell.getCenterPoint(), obstaclePosList, co, lo)));
-    }
-
-    private float getKIMPotential(Vector2 targetPos, ArrayList<Vector2> obstaclePosList, float c, float l) {
-        float weightPotential = 0;
-        for (Vector2 pos : obstaclePosList) {
-            weightPotential += (float) (c * Math.exp(-1 * (pos.dst2(targetPos) / (l * l))));
-        }
-        return weightPotential;
     }
 
     public void spawnObstacle(Vector2 pos) {
@@ -187,7 +127,7 @@ public class Environment {
         }
     }
 
-    public void spawnLogAgents() {
+    private void spawnLogAgents() {
         for (File AgentLogFile : loadLog.getAgentFileList()) {
             agentList.add(new Agent(AgentLogFile, this));
 
@@ -207,8 +147,8 @@ public class Environment {
     }
 
     public Agent getAgent(String ID) {
-        if(ID.contains("agent")){//if txt is "agentNN"
-            ID = ID.replace("agent","");
+        if (ID.contains("agent")) {//if txt is "agentNN"
+            ID = ID.replace("agent", "");
         }
         for (Agent agent : agentList) {
             if (agent.getID().equals(ID)) {
@@ -230,5 +170,22 @@ public class Environment {
         return crowd;
     }
 
+    public void loadMap() {
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(MAP_PATH))) {
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                String[] points = line.split(",");
+                obstacles.add(
+                        new Line(
+                                Float.valueOf(points[0]),
+                                Float.valueOf(points[1]),
+                                Float.valueOf(points[2]),
+                                Float.valueOf(points[3]),
+                                envPotentialMap));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

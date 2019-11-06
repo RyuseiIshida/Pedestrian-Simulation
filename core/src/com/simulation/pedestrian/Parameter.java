@@ -3,6 +3,7 @@ package com.simulation.pedestrian;
 
 import com.badlogic.gdx.math.Vector2;
 import com.simulation.pedestrian.goal.Goal;
+import com.simulation.pedestrian.obstacle.Box;
 import com.simulation.pedestrian.obstacle.Line;
 import com.simulation.pedestrian.obstacle.Obstacle;
 import com.simulation.pedestrian.potential.PotentialMap;
@@ -11,19 +12,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Parameter {
-    //Operation
-    // "DefaultSimulation" or "LogSimulation" or DrawLogAgentLines or CreateMap
-    public static String MODE = "CreateMap";
+    // "DefaultSimulation" or "LogSimulation" or "CreateMap"
+    public static String MODE = "DefaultSimulation";
     public static boolean ISWRITELOG = false; //ログを記録?
     public static float ENDSTEP = 0; //0は終わらない
     public static int ATTEMPTSNUM = 0; //試行回数
 
     //Environment
     public static Vector2 SCALE = new Vector2(1000 * 10f, 1000 * 10f);
-    public static ArrayList<Goal> GOALS = new ArrayList<>(Arrays.asList(new Goal(2300, 180, 120, 20), new Goal(900, 180, 120, 20)));
-    //            //new goal(SCALE.x-100, SCALE.y-150, 100, 150)));
-    //        new goal(3100, 2000, 20, 100)));
-    //public static final ArrayList<goal> GOALS = new ArrayList<>(Arrays.asList(new goal(3100, 2000, 20, 100)));
+    public static ArrayList<Goal> GOALS = new ArrayList<>(Arrays.asList(new Goal(1960, 1300, 120, 20)));
     public static float CELL_INTERVAL = 10;
 
     //potential
@@ -36,7 +33,6 @@ public class Parameter {
 
     //obstacle
     public static ArrayList<Obstacle> ALL_OBSTACLE = new ArrayList<>(Arrays.asList(
-
     ));
 
     //agent

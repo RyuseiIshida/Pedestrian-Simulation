@@ -56,7 +56,7 @@ public class DefaultSimulation extends ApplicationAdapter {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Parameter.SCALE.x, Parameter.SCALE.y);
         batch = new SpriteBatch();
-        texture = new Texture("tressa-yokohama.png");
+        texture = new Texture("core/assets/tressa-yokohama.png");
         shapeRenderer = new ShapeRenderer();
         bitmapFont = new BitmapFont();
         bitmapFont.setColor(Color.BLACK);
@@ -87,7 +87,6 @@ public class DefaultSimulation extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-
         //文字の描画
         batch.begin();
         batch.draw(texture, 0, 0);
@@ -99,24 +98,15 @@ public class DefaultSimulation extends ApplicationAdapter {
                 30, Parameter.SCALE.y - 10);
         batch.end();
 
-        //ポテンシャル
-        //renderPotential();
-        //agent
         renderAgent();
         renderAgentView();
         renderGoalLine();
         renderAgentFollowLine();
-        //出口
         renderGoal();
-        //障害物
         renderObstacle();
-        //ベクトル場
-        renderPotentialVec();
-        //密集度合い
         renderConcentrationLevel();
-        //セルの描画
         renderCell();
-        //入力処理
+
         input();
     }
 
@@ -204,7 +194,7 @@ public class DefaultSimulation extends ApplicationAdapter {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(Color.RED);
             for (Agent agent : environment.getAgentList()) {
-                if (agent.getStateTag() == StateTag.moveGoal) {
+                if (agent.getStateTag().equals(StateTag.moveGoal)) {
                     shapeRenderer.line(agent.getPosition(), agent.getGoal());
                 }
             }
@@ -239,7 +229,7 @@ public class DefaultSimulation extends ApplicationAdapter {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.FIREBRICK);
-        shapeRenderer.setColor(Color.DARK_GRAY);
+        shapeRenderer.setColor(Color.RED);
         for (Obstacle obstacle : environment.getObstacles()) {
             for (PotentialCell obstacleCell : obstacle.getObstacleCells()) {
                 shapeRenderer.rect(obstacleCell.getLeftBottomPoint().x,
@@ -253,29 +243,6 @@ public class DefaultSimulation extends ApplicationAdapter {
             }
         }
         shapeRenderer.end();
-    }
-
-    private void renderPotential() {
-        if (drawPotential) {
-            environment.setAgentKimPotentialCell();
-            Gdx.gl.glEnable(GL20.GL_BLEND);
-            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            for (PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
-                if (potentialCell.getPotential() != 0) {
-                    shapeRenderer.setColor(new Color(1, 0, 0, potentialCell.getPotential() * 1.5f));
-                    shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
-                            potentialCell.getLeftBottomPoint().y,
-                            potentialCell.getCellInterval(),
-                            potentialCell.getCellInterval());
-                    shapeRenderer.rect(potentialCell.getLeftBottomPoint().x,
-                            potentialCell.getLeftBottomPoint().y,
-                            potentialCell.getCellInterval(),
-                            potentialCell.getCellInterval());
-                }
-            }
-            shapeRenderer.end();
-        }
     }
 
     private void renderConcentrationLevel() {
@@ -303,22 +270,6 @@ public class DefaultSimulation extends ApplicationAdapter {
                             potentialCell.getLeftBottomPoint().y,
                             potentialCell.getCellInterval(),
                             potentialCell.getCellInterval());
-                }
-            }
-            shapeRenderer.end();
-        }
-    }
-
-    private void renderPotentialVec() {
-        if (drawPVec) {
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-            for (PotentialCell cell : environment.getEnvPotentialMap().getPotentialCells()) {
-                if (cell.getPotential() != 0) {
-                    shapeRenderer.setColor(Color.RED);
-                    Vector2 targetPos = new Vector2(cell.getCenterPoint().x + environment.getAgentGrad(cell.getCenterPoint()).x,
-                            cell.getCenterPoint().y + environment.getAgentGrad(cell.getCenterPoint()).y);
-                    shapeRenderer.line(cell.getCenterPoint(), targetPos);
-                    shapeRenderer.circle(targetPos.x, targetPos.y, 1.5f);
                 }
             }
             shapeRenderer.end();
@@ -411,7 +362,17 @@ public class DefaultSimulation extends ApplicationAdapter {
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
             drawAllTrajectory = drawAllTrajectory ? false : true;
         }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+            environment.loadMap();
+        }
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.B)){
+            System.out.println("environment = " + environment.getObstacles());
+        }
     }
+
+
 
     public static Environment getEnvironment() {
         return environment;
