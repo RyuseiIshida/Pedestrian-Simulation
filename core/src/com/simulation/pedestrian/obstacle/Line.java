@@ -12,9 +12,9 @@ public class Line extends Obstacle {
 
     @Override
     public void setShapeObstacle() {
-        Vector2 direction = UtilVector.direction(super.getStartPoint(),super.getEndPoint());
+        Vector2 direction = UtilVector.direction(super.getStartPoint(), super.getEndPoint());
         Vector2 setPointCell = new Vector2(super.getStartPoint());
-        while(setPointCell.x < super.getEndPoint().x || setPointCell.y < super.getEndPoint().y){
+        while ((int) setPointCell.dst(getEndPoint()) == 0) {
             super.getObstacleCells().add(super.getPotentialMap().getPotentialCell(setPointCell));
             setPointCell.add(direction);
         }
