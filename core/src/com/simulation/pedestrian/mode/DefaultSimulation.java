@@ -1,4 +1,4 @@
-package com.simulation.pedestrian;
+package com.simulation.pedestrian.mode;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -12,26 +12,24 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.simulation.pedestrian.Parameter;
 import com.simulation.pedestrian.agent.Agent;
 import com.simulation.pedestrian.agent.StateTag;
 import com.simulation.pedestrian.environment.Environment;
 import com.simulation.pedestrian.goal.Goal;
 import com.simulation.pedestrian.log.LoadLog;
-import com.simulation.pedestrian.mode.Mode;
 import com.simulation.pedestrian.obstacle.Obstacle;
 import com.simulation.pedestrian.potential.PotentialCell;
 
 import java.util.ArrayList;
 
-public class ControllerGDX extends ApplicationAdapter {
+public class DefaultSimulation extends ApplicationAdapter {
     //libGdx
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private Texture texture;
     private ShapeRenderer shapeRenderer;
     private BitmapFont bitmapFont;
-
-    private Mode mode;
 
     private static Environment environment;
 
@@ -64,87 +62,10 @@ public class ControllerGDX extends ApplicationAdapter {
         bitmapFont.setColor(Color.BLACK);
         bitmapFont.getData().setScale(5);
         environment = new Environment();
-        mode = new Mode();
     }
 
     @Override
     public void render() {
-//        switch(Parameter.MODE){
-//            case "Simulation":
-//                simulationMode();
-//                break;
-//            case "LogSimulation":
-//                simulationMode();
-//                break;
-//            case "DrawLogAgentLines":
-//                logMode();
-//                break;
-//        }
-        createMap();
-    }
-
-    private void createMap() {
-        Gdx.gl.glClearColor(255, 255, 255, 255);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        camera.update();
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        batch.draw(texture, 0, 0);
-        batch.end();
-        //mapInput();
-        //drawPoint();
-    }
-
-    private void eraser() {
-
-    }
-//
-//
-//    private Vector3 startPoint;
-//    private Vector3 endPoint;
-//
-//    private void mapInput() {
-//        if (Gdx.input.justTouched()) {
-//            Vector3 touchPos = new Vector3();
-//            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-//            camera.unproject(touchPos);
-//            setPoint(touchPos);
-//        }
-//    }
-//
-//    private void setPoint(Vector3 point) {
-//        if (startPoint == null) {
-//            startPoint = point;
-//        } else {
-//            startPoint = null;
-//            endPoint = point;
-//            createObstacleFromMouseActions();
-//        }
-//    }
-//
-//    ArrayList<float[]> obstacles = new ArrayList<>();
-//
-//    private void createObstacleFromMouseActions() {
-//        float[] point = new float[4];
-//        point[0] = startPoint.x;
-//        point[1] = startPoint.y;
-//        point[2] = endPoint.x;
-//        point[3] = endPoint.y;
-//        obstacles.add(point);
-//    }
-//
-//
-//    private void drawPoint() {
-//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-//        shapeRenderer.setColor(Color.RED);
-//        for (float[] points : obstacles) {
-//            shapeRenderer.line(points[0],points[1],points[2],points[3]);
-//        }
-//        shapeRenderer.end();
-//    }
-
-
-    private void simulationMode() {
         if (Parameter.ENDSTEP != 0 && Parameter.ENDSTEP + 1 == environment.getStep()) {
             environment = new Environment();
             attemptsNum++;
@@ -509,31 +430,31 @@ public class ControllerGDX extends ApplicationAdapter {
     }
 
     public static void setDrawGoalLine() {
-        drawGoalLine = drawGoalLine ? false : true;
+        drawGoalLine = !drawGoalLine;
     }
 
     public static void setDrawFollowLine() {
-        drawFollowLine = drawFollowLine ? false : true;
+        drawFollowLine = !drawFollowLine;
     }
 
     public static void setDrawPotential() {
-        drawPotential = drawPotential ? false : true;
+        drawPotential = !drawPotential;
     }
 
     public static void setDrawPVec() {
-        drawPVec = drawPVec ? false : true;
+        drawPVec = !drawPVec;
     }
 
     public static void setDrawConcentrationLevel() {
-        drawConcentrationLevel = drawConcentrationLevel ? false : true;
+        drawConcentrationLevel = !drawConcentrationLevel;
     }
 
     public static void setDrawCell() {
-        drawCell = drawCell ? false : true;
+        drawCell = !drawCell;
     }
 
     public static void setDrawView() {
-        drawView = drawView ? false : true;
+        drawView = !drawView;
     }
 
 

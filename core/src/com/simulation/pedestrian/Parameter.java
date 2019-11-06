@@ -12,8 +12,8 @@ import java.util.Arrays;
 
 public class Parameter {
     //Operation
-    // "Simulation" or "LogSimulation" or DrawLogAgentLines or createEnvironment
-    public static String MODE = "Simulation";
+    // "DefaultSimulation" or "LogSimulation" or DrawLogAgentLines or CreateMap
+    public static String MODE = "CreateMap";
     public static boolean ISWRITELOG = false; //ログを記録?
     public static float ENDSTEP = 0; //0は終わらない
     public static int ATTEMPTSNUM = 0; //試行回数
@@ -36,51 +36,12 @@ public class Parameter {
 
     //obstacle
     public static ArrayList<Obstacle> ALL_OBSTACLE = new ArrayList<>(Arrays.asList(
-            //leftLine描画
-//            new Obstacle(100, 100, 10, 2000, POTENTIALMAP),
-//            //rightLine
-//            //new obstacle(800, 100, 10, 1400, POTENTIALMAP),
-//            new Obstacle(3100, 100, 10, 1900, POTENTIALMAP),
-//            //bottomLine
-//            new Obstacle(100, 100, 3000, 10, POTENTIALMAP),
-//            //TopLine
-//            //new obstacle(800,1500,2300, 10, POTENTIALMAP),
-//            new Obstacle(100, 2100, 3000, 10, POTENTIALMAP)
 
-            //leftLine
-            //new Obstacle(900, 200, 1000, 1500, POTENTIALMAP),
-            //rightLine
-//            new Obstacle(900, 200, 10, 1500, POTENTIALMAP),
-//            //bottomLine
-//            new Obstacle(2400, 200, 10, 1500, POTENTIALMAP),
-//            //TopLine
-//            new Obstacle(1010, 200, 1290, 10, POTENTIALMAP),
-//            new Obstacle(900, 1700, 1500, 10, POTENTIALMAP)
-
-    //トレッサ横浜
-            //外枠
-            new Line(110, SCALE.y - 5800, 110, SCALE.y - 570, POTENTIALMAP),
-            new Line(110, SCALE.y - 5800, 2180, SCALE.y - 5800, POTENTIALMAP),
-            new Line(2180, SCALE.y - 6580, 2180, SCALE.y - 5800, POTENTIALMAP),
-            new Line(2025, SCALE.y - 6580, 2180, SCALE.y - 6580, POTENTIALMAP),
-            new Line(2025, SCALE.y - 6580, 2025, SCALE.y - 6150, POTENTIALMAP),
-            new Line(1500, SCALE.y - 6150, 2025, SCALE.y - 6150, POTENTIALMAP),
-            new Line(1500, SCALE.y - 6150, 1500, SCALE.y - 5950, POTENTIALMAP),
-            new Line(605, SCALE.y - 5950, 1500, SCALE.y - 5950, POTENTIALMAP),
-            new Line(605, SCALE.y - 7335, 605, SCALE.y - 5950, POTENTIALMAP),
-            new Line(110, SCALE.y - 7335, 605, SCALE.y - 7335, POTENTIALMAP),
-            new Line(110, SCALE.y - 8415, 110, SCALE.y - 7335, POTENTIALMAP),
-            new Line(110, SCALE.y - 8415, 110, SCALE.y - 7335, POTENTIALMAP)
-            //new Line(110, SCALE.y - 8415, 110, SCALE.y - 7335, POTENTIALMAP)
     ));
 
     //agent
     public static int INIT_AGENT_NUM = 20;
     public static int GOAL_AGENT_NUM = 20;
-    //    public static float INIT_RANDOM_X1 = 150;
-//    public static float INIT_RANDOM_X2 = 650;
-//    public static float INIT_RANDOM_Y1 = 200;
-//    public static float INIT_RANDOM_Y2 = 1500;
     public static float INIT_RANDOM_X1 = 950;
     public static float INIT_RANDOM_X2 = 2300;
     public static float INIT_RANDOM_Y1 = 1300;

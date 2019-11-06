@@ -16,7 +16,7 @@ public abstract class Obstacle {
     protected Tuple startIndex;
     protected Tuple endIndex;
 
-    public Obstacle(float x1, float y1, float x2, float y2, PotentialMap potentialMap) {
+    protected Obstacle(float x1, float y1, float x2, float y2, PotentialMap potentialMap) {
         this.potentialMap = potentialMap;
         this.obstacleCells = new ArrayList<>();
         this.startPoint = new Vector2(x1, y1);
