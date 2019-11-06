@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Obstacle {
-    protected PotentialMap potentialMap;
-    protected List<PotentialCell> obstacleCells;
-    protected Vector2 startPoint;
-    protected Vector2 endPoint;
-    protected Tuple startIndex;
-    protected Tuple endIndex;
+    private PotentialMap potentialMap;
+    private List<PotentialCell> obstacleCells;
+    private Vector2 startPoint;
+    private Vector2 endPoint;
+    private Tuple startIndex;
+    private Tuple endIndex;
 
     protected Obstacle(float x1, float y1, float x2, float y2, PotentialMap potentialMap) {
         this.potentialMap = potentialMap;
@@ -25,8 +25,20 @@ public abstract class Obstacle {
 
     abstract void setShapeObstacle();
 
+    public PotentialMap getPotentialMap() {
+        return potentialMap;
+    }
+
     public List<PotentialCell> getObstacleCells() {
         return obstacleCells;
+    }
+
+    public Vector2 getStartPoint() {
+        return startPoint;
+    }
+
+    public Vector2 getEndPoint() {
+        return endPoint;
     }
 
     public Tuple getStartIndex() {

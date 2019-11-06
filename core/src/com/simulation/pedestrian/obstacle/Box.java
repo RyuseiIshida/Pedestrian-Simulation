@@ -16,15 +16,14 @@ public class Box extends Obstacle {
 
     @Override
     public void setShapeObstacle() {
-        PotentialCell startCell = potentialMap.getPotentialCell(startPoint);
-        PotentialCell endCell = potentialMap.getPotentialCell(endPoint);
-        startIndex = potentialMap.getIndex(startCell);
-        endIndex = potentialMap.getIndex(endCell);
-        ArrayList<ArrayList<PotentialCell>> matrixCell = potentialMap.getMatrixPotentialCells();
+        PotentialCell startCell = super.getPotentialMap().getPotentialCell(super.getStartPoint());
+        PotentialCell endCell = super.getPotentialMap().getPotentialCell(super.getEndPoint());
+        startIndex = super.getPotentialMap().getIndex(startCell);
+        endIndex = super.getPotentialMap().getIndex(endCell);
+        ArrayList<ArrayList<PotentialCell>> matrixCell = super.getPotentialMap().getMatrixPotentialCells();
         for (int i = startIndex.t1; i <= endIndex.t1; i++) {
             for (int j = startIndex.t2; j <= endIndex.t2; j++) {
-                //matrixCell.get(i).get(j).setObstaclePotential(potential);
-                obstacleCells.add(matrixCell.get(i).get(j));
+                super.getObstacleCells().add(matrixCell.get(i).get(j));
             }
         }
     }
