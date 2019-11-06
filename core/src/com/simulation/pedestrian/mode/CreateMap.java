@@ -12,6 +12,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.simulation.pedestrian.Parameter;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class CreateMap extends ApplicationAdapter {
@@ -25,12 +29,14 @@ public class CreateMap extends ApplicationAdapter {
     private Vector3 startPoint;
     private Vector3 endPoint;
 
+    private String strPath = "core/assets/out/createMap/saveMap.txt";
+
     @Override
     public void create() {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Parameter.SCALE.x, Parameter.SCALE.y);
         batch = new SpriteBatch();
-        texture = new Texture("tressa-yokohama.png");
+        texture = new Texture("core/assets/tressa-yokohama.png");
         shapeRenderer = new ShapeRenderer();
     }
 
@@ -52,11 +58,12 @@ public class CreateMap extends ApplicationAdapter {
     private void mapInput() {
         redoCommand();
         setObstaclesLine();
+        saveLines();
     }
 
     private void redoCommand() {
-        if(Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
-            lines.remove(lines.size()-1);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
+            lines.remove(lines.size() - 1);
         }
     }
 
@@ -90,7 +97,7 @@ public class CreateMap extends ApplicationAdapter {
     }
 
     private void drawTmpLine() {
-        if(startPoint != null) {
+        if (startPoint != null) {
             Vector3 touchPos = new Vector3();
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
@@ -107,10 +114,29 @@ public class CreateMap extends ApplicationAdapter {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.RED);
         for (float[] points : lines) {
-            shapeRenderer.line(points[0],points[1],points[2],points[3]);
+            shapeRenderer.line(points[0], points[1], points[2], points[3]);
         }
-        shapeRenderer.line(10,10,100,100);
         shapeRenderer.end();
+    }
+
+    private void saveLines() {
+        if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            writeFile();
+        }
+    }
+
+    private void writeFile() {
+        try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(strPath))) {
+            for (float[] line : lines) {
+                bw.append(line[0] + "f,");
+                bw.append(line[1] + "f,");
+                bw.append(line[2] + "f,");
+                bw.append(line[3] + "f");
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
