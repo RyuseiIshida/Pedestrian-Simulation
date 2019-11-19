@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Group {
-
     /**
      * returns a list of agents by following
      * フォローによってできたエージェントのグループリストを返す
