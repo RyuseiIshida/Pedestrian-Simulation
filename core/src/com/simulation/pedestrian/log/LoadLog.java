@@ -9,6 +9,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class LoadLog {
     private String strPath = "core/src/com/simulation/pedestrian/log/2019-10-20_0904/";
@@ -21,9 +23,7 @@ public class LoadLog {
     private void setAgentFileList() {
         agentFileList = new ArrayList<>();
         File agentFileList = new File(strPath + "Agents");
-        for (File listFile : agentFileList.listFiles()) {
-            this.agentFileList.add(listFile);
-        }
+        this.agentFileList.addAll(Arrays.asList(Objects.requireNonNull(agentFileList.listFiles())));
     }
 
     public ArrayList<File> getAgentFileList() {
@@ -49,8 +49,8 @@ public class LoadLog {
             CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
             for (CSVRecord csvRecord : csvParser) {
                 if (!csvRecord.get(2).equals("position")) {
-                    String pos[] = csvRecord.get(2).replace("(", "").replace(")", "").split(":");
-                    posList.add(new Vector2(Float.valueOf(pos[0]), Float.valueOf(pos[1])));
+                    String[] pos = csvRecord.get(2).replace("(", "").replace(")", "").split(":");
+                    posList.add(new Vector2(Float.parseFloat(pos[0]), Float.parseFloat(pos[1])));
                 }
             }
         } catch (IOException e) {

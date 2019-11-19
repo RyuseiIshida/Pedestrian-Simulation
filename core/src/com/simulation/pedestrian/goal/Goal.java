@@ -13,10 +13,6 @@ public class Goal {
         this.height = height;
     }
 
-    public Vector2 getPosition() {
-        return position;
-    }
-
     public float getPositionX() {
         return position.x;
     }
@@ -37,7 +33,7 @@ public class Goal {
         return new Vector2(position).add(width / 2, height / 2);
     }
 
-    public Vector2 getLeftButtom() {
+    public Vector2 getLeftBottom() {
         return position;
     }
 
@@ -45,7 +41,7 @@ public class Goal {
         return new Vector2(getPositionX(), getPositionY() + height);
     }
 
-    public Vector2 getRightButtom() {
+    public Vector2 getRightBottom() {
         return new Vector2(getPositionX() + width, getPositionY());
     }
 

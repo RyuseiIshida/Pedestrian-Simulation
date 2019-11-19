@@ -2,18 +2,16 @@ package com.simulation.pedestrian.environment;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.simulation.pedestrian.cell.Cell;
+import com.simulation.pedestrian.cell.CellsMap;
 import com.simulation.pedestrian.goal.Goal;
 import com.simulation.pedestrian.Parameter;
 import com.simulation.pedestrian.agent.Agent;
-import com.simulation.pedestrian.agent.Crowd;
 import com.simulation.pedestrian.log.LoadLog;
 import com.simulation.pedestrian.log.WriterLog;
 import com.simulation.pedestrian.obstacle.Box;
 import com.simulation.pedestrian.obstacle.Line;
 import com.simulation.pedestrian.obstacle.Obstacle;
-import com.simulation.pedestrian.potential.PotentialCell;
-import com.simulation.pedestrian.potential.PotentialMap;
-import com.simulation.pedestrian.util.Tuple;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,24 +23,22 @@ import java.util.Iterator;
 
 public class Environment {
     private int step;
-    private PotentialMap envPotentialMap = Parameter.POTENTIALMAP;
+    private CellsMap envCellsMap = new CellsMap(Parameter.SCALE, Parameter.CELL_INTERVAL);
     private ArrayList<Goal> goals = new ArrayList<>(Parameter.GOALS);
     private ArrayList<Obstacle> obstacles = Parameter.ALL_OBSTACLE;
     private ArrayList<Agent> agentList;
-    private Crowd crowd;
     private int goalAgentNum;
     public boolean agentClearFlag = false;
 
     private LoadLog loadLog;
     private WriterLog writerLog;
 
-    private final String MAP_PATH = "core/assets/out/createMap/saveMap.txt";
+    private final String MAP_PATH = "core/assets/saveMap.txt";
 
     public Environment() {
         step = 0;
         agentList = new ArrayList<>();
-        crowd = new Crowd(this);
-        if (Parameter.MODE == "LogSimulation") {
+        if (Parameter.MODE.equals("LogSimulation")) {
             loadLog = new LoadLog();
             spawnLogAgents();
         } else {
@@ -60,7 +56,7 @@ public class Environment {
         }
         agentList.stream()
                 .parallel()
-                .forEach(agent -> agent.action());
+                .forEach(Agent::action);
         ifAgentInGoal();
         step++;
     }
@@ -96,18 +92,27 @@ public class Environment {
     }
 
     //potential
-    public PotentialMap getEnvPotentialMap() {
-        return envPotentialMap;
+    public CellsMap getEnvCellsMap() {
+        return envCellsMap;
     }
 
     public void spawnObstacle(Vector2 pos) {
-        obstacles.add(new Box(pos.x, pos.y, Parameter.CELL_INTERVAL, Parameter.CELL_INTERVAL, envPotentialMap));
+        obstacles.add(new Box(pos.x, pos.y, Parameter.CELL_INTERVAL, Parameter.CELL_INTERVAL, envCellsMap));
     }
 
     public ArrayList<Obstacle> getObstacles() {
         return obstacles;
     }
 
+    public ArrayList<Vector2> getObstaclesPosition() {
+        ArrayList<Vector2> positionList = new ArrayList<>();
+        for (Obstacle obstacle : obstacles) {
+            for (Cell obstacleCell : obstacle.getObstacleCells()) {
+                positionList.add(obstacleCell.getCenterPoint());
+            }
+        }
+        return positionList;
+    }
 
     //agent
     public void spawnInitAgents() {
@@ -146,6 +151,16 @@ public class Environment {
         return agentList;
     }
 
+    public ArrayList<Agent> getAgentList(Agent targetAgent) {
+        ArrayList<Agent> aAgentList = new ArrayList<>();
+        for (Agent agent : agentList) {
+            if (!agent.equals(targetAgent)) {
+                aAgentList.add(agent);
+            }
+        }
+        return aAgentList;
+    }
+
     public Agent getAgent(String ID) {
         if (ID.contains("agent")) {//if txt is "agentNN"
             ID = ID.replace("agent", "");
@@ -158,6 +173,22 @@ public class Environment {
         return null;
     }
 
+    public ArrayList<Vector2> getAgentsPosition() {
+        ArrayList<Vector2> agentVectorList = new ArrayList<>();
+        for (Agent agent : agentList) {
+            agentVectorList.add(agent.getPosition());
+        }
+        return agentVectorList;
+    }
+
+    public ArrayList<Vector2> getAgentsPosition(Agent targetAgent) {
+        ArrayList<Vector2> agentVectorList = new ArrayList<>();
+        for (Agent agent : getAgentList(targetAgent)) {
+            agentVectorList.add(agent.getPosition());
+        }
+        return agentVectorList;
+    }
+
     public int getGoalAgentNum() {
         return goalAgentNum;
     }
@@ -166,22 +197,18 @@ public class Environment {
         this.goalAgentNum = num;
     }
 
-    public Crowd getCrowd() {
-        return crowd;
-    }
-
     public void loadMap() {
         try (BufferedReader br = Files.newBufferedReader(Paths.get(MAP_PATH))) {
-            String line = null;
+            String line;
             while ((line = br.readLine()) != null) {
                 String[] points = line.split(",");
                 obstacles.add(
                         new Line(
-                                Float.valueOf(points[0]),
-                                Float.valueOf(points[1]),
-                                Float.valueOf(points[2]),
-                                Float.valueOf(points[3]),
-                                envPotentialMap));
+                                Float.parseFloat(points[0]),
+                                Float.parseFloat(points[1]),
+                                Float.parseFloat(points[2]),
+                                Float.parseFloat(points[3]),
+                                envCellsMap));
             }
         } catch (IOException e) {
             e.printStackTrace();

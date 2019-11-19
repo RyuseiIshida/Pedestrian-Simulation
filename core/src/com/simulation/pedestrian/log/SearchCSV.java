@@ -71,7 +71,7 @@ public class SearchCSV {
         }
     }
 
-    public void write(Path path, Path out) {
+    private void write(Path path, Path out) {
         ArrayList<String> strList = new ArrayList<>();
         try (Reader reader = Files.newBufferedReader(path)) {
             CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);

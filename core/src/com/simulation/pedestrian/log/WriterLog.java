@@ -1,6 +1,7 @@
 package com.simulation.pedestrian.log;
 
 import com.simulation.pedestrian.agent.Agent;
+import com.simulation.pedestrian.agent.Group;
 import com.simulation.pedestrian.agent.StateTag;
 import com.simulation.pedestrian.environment.Environment;
 import org.apache.commons.csv.CSVFormat;
@@ -19,9 +20,9 @@ import java.util.Calendar;
 import java.util.List;
 
 public class WriterLog {
-    String path;
-    Environment env;
-    ArrayList<Agent> agents;
+    private String path;
+    private Environment env;
+    private ArrayList<Agent> agents;
 
     public WriterLog(Environment env) {
         this.env = env;
@@ -34,7 +35,7 @@ public class WriterLog {
         writeSourceCode(path);
     }
 
-    public void writeSourceCode(String path) {
+    private void writeSourceCode(String path) {
         path += "/SourceCode";
         new File(path).mkdir();
         writeSourceCodeToParameter(path);
@@ -47,7 +48,7 @@ public class WriterLog {
         Path out = Paths.get(outPath + "/Parameter.txt");
         List<String> readList = new ArrayList<>();
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            String line = null;
+            String line;
             while ((line = reader.readLine()) != null) {
                 readList.add(line);
             }
@@ -70,7 +71,7 @@ public class WriterLog {
         Path out = Paths.get(outPath + "/Envionment.txt");
         List<String> readList = new ArrayList<>();
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            String line = null;
+            String line;
             while ((line = reader.readLine()) != null) {
                 readList.add(line);
             }
@@ -93,7 +94,7 @@ public class WriterLog {
         Path out = Paths.get(outPath + "/Agent.txt");
         List<String> readList = new ArrayList<>();
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            String line = null;
+            String line;
             while ((line = reader.readLine()) != null) {
                 readList.add(line);
             }
@@ -145,8 +146,8 @@ public class WriterLog {
                         agent.getFollowAgent(), //6
                         agent.getFollowers().toString().replace(",", ":"), //7
                         agent.getFollowers().size(), //8
-                        agent.getPerceptionAgentList().toString().replace(",", ":"), //9
-                        agent.getPerceptionAgentList().size(), //10
+                        agent.getPerceptionInViewAgentList().toString().replace(",", ":"), //9
+                        agent.getPerceptionInViewAgentList().size(), //10
                         agent.getPerceptionFollowAgentList().toString().replace(",", ":"), //11
                         agent.getPerceptionFollowAgentList().size(), //12
                         agent.getPerceptionContinueStep(), //13
@@ -155,11 +156,11 @@ public class WriterLog {
                         agent.getURandomWalk(), //16
                         agent.getUFollowAgent(), //17
                         agent.getUMoveGoal(), //18
-                        agent.getAlpha(), //19
-                        agent.getBeta(), //20
-                        agent.getGamma(), //21
-                        agent.getDelta(), //22
-                        agent.getEpsilon(), //23
+                        agent.getUTILITY_ALPHA(), //19
+                        agent.getUTILITY_BETA(), //20
+                        agent.getUTILITY_GAMMA(), //21
+                        agent.getUTILITY_DELTA(), //22
+                        agent.getUTILITY_EPSILON(), //23
                         agent.getUtilityRandomWalk(), //24
                         agent.getUtilityFollow(), //25
                         agent.getUtilityMoveGoal()); //26
@@ -234,7 +235,7 @@ public class WriterLog {
             printer.printRecord(
                     env.getStep(), //0
                     env.getGoalAgentNum(), //1
-                    env.getCrowd().getCrowdNum(), //2
+                    Group.getGroupNum(env.getAgentList()), //2
                     follow //3
             );
             printer.close();

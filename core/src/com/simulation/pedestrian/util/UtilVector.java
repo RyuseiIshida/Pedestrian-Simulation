@@ -19,8 +19,8 @@ public final class UtilVector extends Vector2 {
             return null;
         }
         String[] splitStr = str.substring(1, str.length() - 1).split(":", 0);
-        float x = Float.valueOf(splitStr[0]);
-        float y = Float.valueOf(splitStr[1]);
+        float x = Float.parseFloat(splitStr[0]);
+        float y = Float.parseFloat(splitStr[1]);
         return new Vector2(x, y);
     }
 }

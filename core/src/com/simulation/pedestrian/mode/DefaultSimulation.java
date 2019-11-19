@@ -14,12 +14,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.simulation.pedestrian.Parameter;
 import com.simulation.pedestrian.agent.Agent;
+import com.simulation.pedestrian.agent.Group;
 import com.simulation.pedestrian.agent.StateTag;
+import com.simulation.pedestrian.cell.Cell;
 import com.simulation.pedestrian.environment.Environment;
 import com.simulation.pedestrian.goal.Goal;
 import com.simulation.pedestrian.log.LoadLog;
 import com.simulation.pedestrian.obstacle.Obstacle;
-import com.simulation.pedestrian.potential.PotentialCell;
 
 import java.util.ArrayList;
 
@@ -30,7 +31,6 @@ public class DefaultSimulation extends ApplicationAdapter {
     private Texture texture;
     private ShapeRenderer shapeRenderer;
     private BitmapFont bitmapFont;
-
     private static Environment environment;
 
     //Operation
@@ -91,9 +91,9 @@ public class DefaultSimulation extends ApplicationAdapter {
         batch.begin();
         batch.draw(texture, 0, 0);
         bitmapFont.draw(batch,
-                "time " + environment.getStep() / 60
+                "time " + environment.getStep()
                         + "  " + "agentNum = " + String.format(String.valueOf(environment.getAgentList().size()))
-                        + "  " + "groupNum= " + String.format(String.valueOf(environment.getCrowd().getCrowdNum()))
+                        + "  " + "groupNum= " + String.format(String.valueOf(Group.getGroupNum(environment.getAgentList())))
                         + "  " + "goalNum= " + String.format(String.valueOf(environment.getGoalAgentNum())),
                 30, Parameter.SCALE.y - 10);
         batch.end();
@@ -165,9 +165,6 @@ public class DefaultSimulation extends ApplicationAdapter {
                     shapeRenderer.setColor(Color.BLACK);
                     shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.AGENT_RADIUS * range);
                     break;
-                case StateTag.moveGroupPosition:
-                    shapeRenderer.setColor(Color.BLUE);
-                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.AGENT_RADIUS * range);
             }
         }
         shapeRenderer.end();
@@ -182,7 +179,7 @@ public class DefaultSimulation extends ApplicationAdapter {
             for (Agent agent : environment.getAgentList()) {
                 float moveDegree = agent.getDirectionDegree();
                 moveDegree -= Parameter.VIEW_DEGREE / 2;
-                shapeRenderer.arc(agent.getPosition().x, agent.getPosition().y, Parameter.VIEW_RADIUS, moveDegree, Parameter.VIEW_DEGREE);
+                shapeRenderer.arc(agent.getPosition().x, agent.getPosition().y, Parameter.VIEW_RADIUS_LENGTH, moveDegree, Parameter.VIEW_DEGREE);
             }
             shapeRenderer.end();
             Gdx.gl.glDisable(GL20.GL_BLEND);
@@ -231,7 +228,7 @@ public class DefaultSimulation extends ApplicationAdapter {
         shapeRenderer.setColor(Color.FIREBRICK);
         shapeRenderer.setColor(Color.RED);
         for (Obstacle obstacle : environment.getObstacles()) {
-            for (PotentialCell obstacleCell : obstacle.getObstacleCells()) {
+            for (Cell obstacleCell : obstacle.getObstacleCells()) {
                 shapeRenderer.rect(obstacleCell.getLeftBottomPoint().x,
                         obstacleCell.getLeftBottomPoint().y,
                         obstacleCell.getCellInterval(),
@@ -250,7 +247,7 @@ public class DefaultSimulation extends ApplicationAdapter {
             Gdx.gl.glEnable(GL20.GL_BLEND);
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            for (PotentialCell potentialCell : environment.getEnvPotentialMap().getPotentialCells()) {
+            for (Cell potentialCell : environment.getEnvCellsMap().getCells()) {
                 float concentrationLevel = 0;
                 float agentCounter = 0;
                 for (Agent agent : environment.getAgentList()) {
@@ -280,7 +277,7 @@ public class DefaultSimulation extends ApplicationAdapter {
         if (drawCell) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(Color.BLACK);
-            for (PotentialCell cell : environment.getEnvPotentialMap().getPotentialCells()) {
+            for (Cell cell : environment.getEnvCellsMap().getCells()) {
                 shapeRenderer.line(cell.getRightBottomPoint(), cell.getRightTopPoint());
                 shapeRenderer.line(cell.getLeftTopPoint(), cell.getRightTopPoint());
             }
@@ -363,15 +360,14 @@ public class DefaultSimulation extends ApplicationAdapter {
             drawAllTrajectory = drawAllTrajectory ? false : true;
         }
 
-        if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             environment.loadMap();
         }
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.B)){
+        if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
             System.out.println("environment = " + environment.getObstacles());
         }
     }
-
 
 
     public static Environment getEnvironment() {
