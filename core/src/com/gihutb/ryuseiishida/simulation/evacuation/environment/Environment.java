@@ -28,7 +28,7 @@ public class Environment {
     private CellsMap envCellsMap = new CellsMap(Parameter.SCALE, Parameter.CELL_INTERVAL);
     private ArrayList<Goal> goals = new ArrayList<>(Parameter.GOALS);
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
-    private Fire fire = new Fire(Parameter.FIRE_POINT);
+    private Fire fire = new Fire(Parameter.FIRE_POINT, 1000);
     private ArrayList<Agent> agentList;
     private int goalAgentNum;
     public boolean agentClearFlag = false;
@@ -63,8 +63,10 @@ public class Environment {
                 .parallel()
                 .forEach(Agent::action);
         ifAgentInGoal();
+        ifAgentInFire();
         step++;
         timeMeasurement.stop();
+        fire.spreadFire();
     }
 
     public void setStep(int step) {
@@ -80,21 +82,13 @@ public class Environment {
     }
 
     private void ifAgentInGoal() {
-        Iterator<Agent> iterator = agentList.iterator();
-        while (iterator.hasNext()) {
-            Agent agent = iterator.next();
-            for (Goal goal : goals) {
-                float aPosX = agent.getPosition().x;
-                float aPosY = agent.getPosition().y;
-                if (aPosX > goal.getPositionX()
-                        && aPosY > goal.getPositionY()
-                        && aPosX < goal.getRightTop().x
-                        && aPosY < goal.getRightTop().y) {
-                    iterator.remove();
-                    goalAgentNum++;
-                }
-            }
+        for (Goal goal : goals) {
+            agentList.removeIf(goal::isAgentInGoal);
         }
+    }
+
+    private void ifAgentInFire() {
+        agentList.removeIf(agent -> fire.dstFireEdge(agent) < 0);
     }
 
     //potential
@@ -153,6 +147,10 @@ public class Environment {
         agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos, goals.get(goalIndex)));
     }
 
+    public void spawnFire(Vector2 pos) {
+        fire = new Fire(pos);
+    }
+
     public ArrayList<Agent> getAgentList() {
         return agentList;
     }
@@ -203,7 +201,7 @@ public class Environment {
         this.goalAgentNum = num;
     }
 
-    public Fire getFire(){
+    public Fire getFire() {
         return this.fire;
     }
 

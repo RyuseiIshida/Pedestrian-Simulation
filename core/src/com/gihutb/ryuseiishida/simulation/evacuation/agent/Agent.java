@@ -468,6 +468,7 @@ public class Agent {
         float cg = 200;
         float Ug = getGoalKIMPotential(x, y);
         //float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y);
+        //float Uo = getAgentKIMPotential(x, y) + getFastObstacleKIMPotential(x, y);
         float Uo = getAgentKIMPotential(x, y) + getFastObstacleKIMPotential(x, y) + getFastFireKIMPotential(x, y);
         float U = (((1 / cg) * Uo) + 1) * Ug;
         return U;
@@ -539,9 +540,9 @@ public class Agent {
     private float getFastFireKIMPotential(float x, float y) {
         Vector2 pos = new Vector2(x, y);
         float potentialWeight = 0;
-        float co = 1000;
-        float lo = 20 + env.getFire().getSpreadFireRange();
-        double value = -1 * (pos.dst2(env.getFire().getBurningPoint()) / (lo * lo));
+        float co = 200;
+        float lo = env.getFire().getSpreadFireRange();
+        double value = -1 * (pos.dst2(env.getFire().getFirePoint()) / (lo * lo));
         potentialWeight += co * new Exp().value(value);
         return potentialWeight;
     }

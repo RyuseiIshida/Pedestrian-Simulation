@@ -20,6 +20,7 @@ import com.gihutb.ryuseiishida.simulation.evacuation.cell.Cell;
 import com.gihutb.ryuseiishida.simulation.evacuation.environment.Environment;
 import com.gihutb.ryuseiishida.simulation.evacuation.goal.Goal;
 import com.gihutb.ryuseiishida.simulation.evacuation.log.LoadLog;
+import com.gihutb.ryuseiishida.simulation.evacuation.obstacle.Fire;
 import com.gihutb.ryuseiishida.simulation.evacuation.obstacle.Obstacle;
 
 import java.util.ArrayList;
@@ -104,6 +105,7 @@ public class DefaultSimulation extends ApplicationAdapter {
         renderAgentFollowLine();
         renderGoal();
         renderObstacle();
+        renderFire();
         renderConcentrationLevel();
         renderCell();
 
@@ -242,6 +244,16 @@ public class DefaultSimulation extends ApplicationAdapter {
         shapeRenderer.end();
     }
 
+    private void renderFire() {
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.FIREBRICK);
+        shapeRenderer.setColor(Color.RED);
+        Fire fire = environment.getFire();
+        shapeRenderer.circle(fire.getFirePoint().x, fire.getFirePoint().y, fire.getSpreadFireRange());
+        shapeRenderer.end();
+    }
+
     private void renderConcentrationLevel() {
         if (drawConcentrationLevel) {
             Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -332,6 +344,8 @@ public class DefaultSimulation extends ApplicationAdapter {
                     environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), 3);
                 } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_5)) {
                     environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), 4);
+                } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_0)) {
+                    environment.spawnFire(new Vector2(touchPos.x, touchPos.y));
                 }
             }
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
