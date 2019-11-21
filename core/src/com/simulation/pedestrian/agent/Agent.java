@@ -2,11 +2,14 @@ package com.simulation.pedestrian.agent;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.simulation.pedestrian.cell.Cell;
 import com.simulation.pedestrian.environment.Environment;
 import com.simulation.pedestrian.goal.Goal;
 import com.simulation.pedestrian.Parameter;
+import com.simulation.pedestrian.obstacle.Obstacle;
 import com.simulation.pedestrian.potential.KimPotentialModel;
 import com.simulation.pedestrian.util.UtilVector;
+import org.apache.commons.math3.analysis.function.Exp;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -126,6 +129,7 @@ public class Agent {
         this.movePos = position;
         this.velocity = new Vector2(0, 0);
         this.followers = new LinkedList<>();
+        setObstaclePositionList();
     }
 
     public Agent(String id, Environment env, Vector2 position, Goal goal) {
@@ -140,6 +144,7 @@ public class Agent {
         this.movePos = goal.getCenter();
         this.velocity = new Vector2(0, 0);
         this.followers = new LinkedList<>();
+        setObstaclePositionList();
     }
 
     public Agent(File logFile, Environment env) {
@@ -286,7 +291,7 @@ public class Agent {
      */
     private void setPerceptionFollowAgent() {
         perceptionFollowAgentList = new LinkedList<>();
-        ArrayList<Agent> group = Group.getMyGroupAgents(this,env.getAgentList());
+        ArrayList<Agent> group = Group.getMyGroupAgents(this, env.getAgentList());
         perceptionInViewAgentList.stream()
                 .filter(agent -> group == null)
                 .forEach(agent -> perceptionFollowAgentList.add(agent));
@@ -428,7 +433,8 @@ public class Agent {
      */
     private void move(Vector2 movePos) {
         Vector2 direction = UtilVector.direction(position, movePos);
-        setPotentialVector(direction);
+        //setPotentialVector(direction);
+        setFastPotentialVector(direction);
         direction.nor();
         velocity = direction.scl(speed);
         Vector2 tmpPos = new Vector2(position);
@@ -446,6 +452,102 @@ public class Agent {
      */
     private void setPotentialVector(Vector2 direction) {
         direction.set(potentialModel.getMoveDirection());
+    }
+
+
+    private void setFastPotentialVector(Vector2 direction) {
+        Vector2 pVector = new Vector2();
+        float delta = 1f;
+        pVector.x = -1 * (getPotential(position.x + delta, position.y) - getPotential(position.x, position.y)) / delta;
+        pVector.y = -1 * (getPotential(position.x, position.y + delta) - getPotential(position.x, position.y)) / delta;
+        pVector.nor();
+        direction.set(pVector);
+    }
+
+    private float getPotential(float x, float y) {
+        float cg = 200;
+        float Ug = getGoalKIMPotential(x, y);
+        //float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y);
+        float Uo = getAgentKIMPotential(x, y) + getFastObstacleKIMPotential(x, y) + getFastFireKIMPotential(x, y);
+        float U = (((1 / cg) * Uo) + 1) * Ug;
+        return U;
+    }
+
+    private float getGoalKIMPotential(float x, float y) {
+        float cg = 200;
+        float lg = 1000;
+        Vector2 pos = new Vector2(x, y);
+        double len = pos.dst2(movePos);
+        double potentialWeight = cg * (1 - new Exp().value(-1 * (len / (lg * lg))));
+        return (float) potentialWeight;
+    }
+
+    private float getAgentKIMPotential(float x, float y) {
+        float potentialWight = 0;
+        float co = 700;
+        float lo = 20;
+        Vector2 pos = new Vector2(x, y);
+        for (Agent agent : env.getAgentList()) {
+            if (!agent.equals(this)) {
+                potentialWight += co * new Exp().value(-1 * (pos.dst2(agent.position) / (lo * lo)));
+            }
+        }
+        return potentialWight;
+    }
+
+    private float getObstacleKIMPotential(float x, float y) {
+        Vector2 pos = new Vector2(x, y);
+        float potentialWeight = 0;
+        float co = 1000;
+        float lo = 20;
+        for (Obstacle obstacle : env.getObstacles()) {
+            for (Cell obstacleCell : obstacle.getObstacleCells()) {
+                double value = -1 * (pos.dst2(obstacleCell.getCenterPoint()) / (lo * lo));
+                potentialWeight += co * new Exp().value(value);
+            }
+        }
+        return potentialWeight;
+    }
+
+    private LinkedList<Vector2> obstaclePositionList;
+
+    private void setObstaclePositionList() {
+        obstaclePositionList = new LinkedList<>();
+        for (Obstacle obstacle : env.getObstacles()) {
+            for (Cell obstacleCell : obstacle.getObstacleCells()) {
+                obstaclePositionList.add(obstacleCell.getCenterPoint());
+            }
+        }
+    }
+
+    private float getFastObstacleKIMPotential(float x, float y) {
+        Vector2 pos = new Vector2(x, y);
+        float potentialWeight = 0;
+        float co = 1000;
+        float lo = 20;
+        for (Vector2 obstaclePos : obstaclePositionList) {
+            double value = -1 * (pos.dst2(obstaclePos) / (lo * lo));
+            potentialWeight += co * new Exp().value(value);
+        }
+        return potentialWeight;
+    }
+
+    private float getObstacleKIMPotential(Vector2 vec) {
+        return getObstacleKIMPotential(vec.x, vec.y);
+    }
+
+    private float getFastFireKIMPotential(float x, float y) {
+        Vector2 pos = new Vector2(x, y);
+        float potentialWeight = 0;
+        float co = 1000;
+        float lo = 20 + env.getFire().getSpreadFireRange();
+        double value = -1 * (pos.dst2(env.getFire().getBurningPoint()) / (lo * lo));
+        potentialWeight += co * new Exp().value(value);
+        return potentialWeight;
+    }
+
+    private float getFireKIMPotential(Vector2 vec) {
+        return getObstacleKIMPotential(vec.x, vec.y);
     }
 
     /**

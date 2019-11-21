@@ -4,22 +4,32 @@ package com.simulation.pedestrian;
 import com.badlogic.gdx.math.Vector2;
 import com.simulation.pedestrian.cell.CellsMap;
 import com.simulation.pedestrian.goal.Goal;
+import com.simulation.pedestrian.obstacle.Line;
 import com.simulation.pedestrian.obstacle.Obstacle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Parameter {
-    // "DefaultSimulation" or "LogSimulation" or "CreateMap"
+    /** "DefaultSimulation" or "LogSimulation" or "CreateMap" */
     public static String MODE = "DefaultSimulation";
-    public static boolean ISWRITELOG = false; //ログを記録
-    public static float ENDSTEP = 0; //0は終わらない
-    public static int ATTEMPTSNUM = 0; //試行回数
+
+    /** ログの記録 */
+    public static boolean ISWRITELOG = false;
+
+    /** シミュレーションの打ち切りステップ */
+    public static float ENDSTEP = 0;
+
+    /** シミュレーション試行回数 */
+    public static int ATTEMPTSNUM = 0;
 
     //Environment
     public static Vector2 SCALE = new Vector2(1000 * 10f, 1000 * 10f);
     public static ArrayList<Goal> GOALS = new ArrayList<>(Arrays.asList(new Goal(1960, 1300, 120, 20)));
     public static int CELL_INTERVAL = 10;
+
+    //Fire
+    public static Vector2 FIRE_POINT = new Vector2();
 
     //potential
     public static float AGENT_KIM_POTENTIAL_WEIGHT = 200;
@@ -27,9 +37,6 @@ public class Parameter {
     public static float OBSTACLE_KIM_POTENTIAL_WEIGHT = 700;
     public static float OBSTACLE_KIM_POTENTIAL_RANGE = 20;
     public static float POTENTIAL_DELTA = 1f;
-
-    //obstacle
-    public static ArrayList<Obstacle> ALL_OBSTACLE = new ArrayList<>(Arrays.asList());
 
     //agent
     public static int INIT_AGENT_NUM = 100;
