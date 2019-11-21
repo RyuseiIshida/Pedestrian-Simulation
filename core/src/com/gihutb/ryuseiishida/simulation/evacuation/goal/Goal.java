@@ -1,6 +1,7 @@
 package com.gihutb.ryuseiishida.simulation.evacuation.goal;
 
 import com.badlogic.gdx.math.Vector2;
+import com.gihutb.ryuseiishida.simulation.evacuation.agent.Agent;
 
 public class Goal {
     private Vector2 position;
@@ -49,6 +50,17 @@ public class Goal {
         return new Vector2(getPositionX() + width, getPositionY() + height);
     }
 
+    public boolean isAgentInGoal(Agent agent) {
+            float aPosX = agent.getPosition().x;
+            float aPosY = agent.getPosition().y;
+            if (aPosX > position.x
+                    && aPosY > position.y
+                    && aPosX < getRightTop().x
+                    && aPosY < getRightTop().y) {
+                return true;
+            }
+        return false;
+    }
     @Override
     public String toString() {
         return "goal = (x=" + position.x + ", y=" + position.y + ", w=" + width + ", h=" + height + ")";
