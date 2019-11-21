@@ -10,8 +10,10 @@ import com.simulation.pedestrian.agent.Agent;
 import com.simulation.pedestrian.log.LoadLog;
 import com.simulation.pedestrian.log.WriterLog;
 import com.simulation.pedestrian.obstacle.Box;
+import com.simulation.pedestrian.obstacle.Fire;
 import com.simulation.pedestrian.obstacle.Line;
 import com.simulation.pedestrian.obstacle.Obstacle;
+import com.simulation.pedestrian.util.TimeMeasurement;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,7 +27,8 @@ public class Environment {
     private int step;
     private CellsMap envCellsMap = new CellsMap(Parameter.SCALE, Parameter.CELL_INTERVAL);
     private ArrayList<Goal> goals = new ArrayList<>(Parameter.GOALS);
-    private ArrayList<Obstacle> obstacles = Parameter.ALL_OBSTACLE;
+    private ArrayList<Obstacle> obstacles = new ArrayList<>();
+    private Fire fire = new Fire(Parameter.FIRE_POINT);
     private ArrayList<Agent> agentList;
     private int goalAgentNum;
     public boolean agentClearFlag = false;
@@ -50,6 +53,8 @@ public class Environment {
     }
 
     public void update() {
+        TimeMeasurement timeMeasurement = new TimeMeasurement();
+        timeMeasurement.start();
         if (Parameter.ISWRITELOG) {
             writerLog.writeAgentLog();
             writerLog.writeMacroLog();
@@ -59,6 +64,7 @@ public class Environment {
                 .forEach(Agent::action);
         ifAgentInGoal();
         step++;
+        timeMeasurement.stop();
     }
 
     public void setStep(int step) {
@@ -195,6 +201,10 @@ public class Environment {
 
     public void setGoalAgentNum(int num) {
         this.goalAgentNum = num;
+    }
+
+    public Fire getFire(){
+        return this.fire;
     }
 
     public void loadMap() {
