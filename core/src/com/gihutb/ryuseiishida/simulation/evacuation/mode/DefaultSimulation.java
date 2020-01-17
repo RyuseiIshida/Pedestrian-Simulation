@@ -14,8 +14,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.gihutb.ryuseiishida.simulation.evacuation.Parameter;
 import com.gihutb.ryuseiishida.simulation.evacuation.agent.Agent;
-import com.gihutb.ryuseiishida.simulation.evacuation.agent.Group;
 import com.gihutb.ryuseiishida.simulation.evacuation.agent.StateTag;
+import com.gihutb.ryuseiishida.simulation.evacuation.analysis.LDA.Visualization;
 import com.gihutb.ryuseiishida.simulation.evacuation.cell.Cell;
 import com.gihutb.ryuseiishida.simulation.evacuation.environment.Environment;
 import com.gihutb.ryuseiishida.simulation.evacuation.goal.Goal;
@@ -61,7 +61,7 @@ public class DefaultSimulation extends ApplicationAdapter {
         shapeRenderer = new ShapeRenderer();
         bitmapFont = new BitmapFont();
         bitmapFont.setColor(Color.BLACK);
-        bitmapFont.getData().setScale(5);
+        bitmapFont.getData().setScale(10);
         environment = new Environment();
     }
 
@@ -90,25 +90,24 @@ public class DefaultSimulation extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);
         //文字の描画
         batch.begin();
-        batch.draw(texture, 0, 0);
+        //batch.draw(texture, 0, 0);
         bitmapFont.draw(batch,
                 "time " + environment.getStep()
-                        + "  " + "agentNum = " + String.format(String.valueOf(environment.getAgentList().size()))
-                        + "  " + "groupNum= " + String.format(String.valueOf(Group.getGroupNum(environment.getAgentList())))
-                        + "  " + "goalNum= " + String.format(String.valueOf(environment.getGoalAgentNum())),
+                        + "  " + "agentNum = " + String.format(String.valueOf(environment.getAgentList().size())),
+//                        + "  " + "groupNum= " + String.format(String.valueOf(Group.getGroupNum(environment.getAgentList())))
+//                        + "  " + "goalNum= " + String.format(String.valueOf(environment.getGoalAgentNum())),
                 30, Parameter.SCALE.y - 10);
         batch.end();
-
+        Visualization.renderCellIndex(batch,bitmapFont);
         renderAgent();
         renderAgentView();
-        renderGoalLine();
+        //renderGoalLine();
         renderAgentFollowLine();
         renderGoal();
         renderObstacle();
         renderFire();
         renderConcentrationLevel();
         renderCell();
-
         input();
     }
 
@@ -151,7 +150,7 @@ public class DefaultSimulation extends ApplicationAdapter {
                 shapeRenderer.end();
                 return;
             }
-            shapeRenderer.setColor(Color.GRAY);
+            shapeRenderer.setColor(Color.BLACK);
             shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.AGENT_RADIUS);
             float range = 0.7f;
             switch (agent.getStateTag()) {
@@ -228,7 +227,7 @@ public class DefaultSimulation extends ApplicationAdapter {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.FIREBRICK);
-        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.setColor(Color.BLUE);
         for (Obstacle obstacle : environment.getObstacles()) {
             for (Cell obstacleCell : obstacle.getObstacleCells()) {
                 shapeRenderer.rect(obstacleCell.getLeftBottomPoint().x,
@@ -297,6 +296,16 @@ public class DefaultSimulation extends ApplicationAdapter {
         shapeRenderer.end();
     }
 
+    private void renderEntropy() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.GREEN);
+        for (Cell cell : environment.cellsMapEntropy.getCells()) {
+            shapeRenderer.line(cell.getRightBottomPoint(), cell.getRightTopPoint());
+            shapeRenderer.line(cell.getLeftTopPoint(), cell.getRightTopPoint());
+        }
+        shapeRenderer.end();
+    }
+
     private void trajectory() {
         LoadLog loadLog = new LoadLog();
         for (int i = 1; i <= loadLog.getAgentNum(); i++) {
@@ -331,7 +340,8 @@ public class DefaultSimulation extends ApplicationAdapter {
             } else if (Gdx.input.justTouched()) {
                 touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
                 camera.unproject(touchPos);
-                System.out.println("touchPos = " + touchPos);
+                //System.out.println("touchPos = " + touchPos);
+                //new LDA().getDeleteCellIndex(new Vector2(touchPos.x, touchPos.y));
                 if (Gdx.input.isKeyPressed(Input.Keys.F)) {
                     environment.spawnAgent(new Vector2(touchPos.x, touchPos.y));
                 } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) {
@@ -355,31 +365,40 @@ public class DefaultSimulation extends ApplicationAdapter {
         } else if (Gdx.input.isKeyJustPressed((Input.Keys.S))) {
             environment.spawnInitAgents();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            PLAY = PLAY ? false : true;
+            PLAY = !PLAY;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
-            drawPotential = drawPotential ? false : true;
+            drawPotential = !drawPotential;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
-            drawPVec = drawPVec ? false : true;
+            drawPVec = !drawPVec;
         } else if (Gdx.input.isKeyJustPressed((Input.Keys.M))) {
-            drawConcentrationLevel = drawConcentrationLevel ? false : true;
+            drawConcentrationLevel = !drawConcentrationLevel;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
-            drawCell = drawCell ? false : true;
+            drawCell = !drawCell;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.V)) {
-            drawView = drawView ? false : true;
+            drawView = !drawView;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             agentNumber++;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
             agentNumber--;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-            drawAllTrajectory = drawAllTrajectory ? false : true;
+            drawAllTrajectory = !drawAllTrajectory;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             environment.loadMap();
         }
 
+        if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+            environment.spawnInitLogAgent();
+        }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
             System.out.println("environment = " + environment.getObstacles());
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
+            environment.writeExperiment();
+            System.out.println("savedLog");
         }
     }
 

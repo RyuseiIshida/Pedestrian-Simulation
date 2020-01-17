@@ -29,7 +29,7 @@ public class CreateMap extends ApplicationAdapter {
     private Vector3 startPoint;
     private Vector3 endPoint;
 
-    private String strPath = "core/assets/out/createMap/saveMap.txt";
+    private String strPath = "core/assets/saveMap.txt";
 
     @Override
     public void create() {
@@ -46,7 +46,7 @@ public class CreateMap extends ApplicationAdapter {
         Gdx.gl.glClearColor(255, 255, 255, 255);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
-        batch.setProjectionMatrix(camera.combined);
+        //batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.draw(texture, 0, 0);
         batch.end();
@@ -134,6 +134,7 @@ public class CreateMap extends ApplicationAdapter {
                 bw.append(String.valueOf(line[3])).append("f,");
                 bw.newLine();
             }
+            System.out.println("save complete");
         } catch (IOException e) {
             e.printStackTrace();
         }

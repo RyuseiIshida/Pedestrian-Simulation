@@ -5,7 +5,7 @@ import com.gihutb.ryuseiishida.simulation.evacuation.agent.Agent;
 
 public class Fire {
     private Vector2 firePoint;
-    private float fireSpeed = 1f;
+    private float fireSpeed = 0f;
     private float spreadFireRange;
 
     public Fire(Vector2 firePoint) {

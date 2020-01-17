@@ -1,5 +1,6 @@
 package com.gihutb.ryuseiishida.simulation.evacuation.agent;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -20,6 +21,52 @@ public class Group {
         return groups;
     }
 
+    private static ArrayList<ArrayList<Agent>> groupList;
+
+    public static ArrayList<ArrayList<Agent>> getGroups2(ArrayList<Agent> agentList) {
+        groupList = new ArrayList<>();
+        for (Agent agent : agentList) {
+            if (!searchGroup(agent.getPerceptionInViewAgentList())) {
+                groupList.add(agent.getPerceptionInViewAgentList());
+            }
+        }
+        return groupList;
+    }
+
+    public static ArrayList<ArrayList<Agent>> getGroup3(ArrayList<Agent> agentList) {
+        groupList = new ArrayList<>();
+        for (Agent agent : agentList) {
+            ArrayList<Agent> nearAgentList = new ArrayList<>(searchLengthAgent(agent, agentList));
+            if (!searchGroup(nearAgentList)){
+                groupList.add(nearAgentList);
+            }
+        }
+        return groupList;
+    }
+
+    private static ArrayList<Agent> searchLengthAgent(Agent targetAgent, ArrayList<Agent> agentList) {
+        //距離閾値
+        float value = 20 * 100;
+        ArrayList<Agent> group = new ArrayList<>();
+        for (Agent agent : agentList) {
+            if(targetAgent.getPosition().dst(agent.getPosition()) <= value){
+                group.add(agent);
+            }
+        }
+        return group;
+    }
+
+    private static boolean searchGroup(ArrayList<Agent> agentList) {
+        for (ArrayList<Agent> group : groupList) {
+            for (Agent agent : group) {
+                if (agentList.contains(agent)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private static ArrayList<Agent> depthFirstSearch(Agent leader) {
         ArrayList<Agent> group = new ArrayList<>();
         LinkedList<Agent> stack = new LinkedList<>();
@@ -27,7 +74,7 @@ public class Group {
         while (!stack.isEmpty()) {
             LinkedList<Agent> down = (LinkedList<Agent>) stack.getLast().getFollowers().clone();
             removeSearchedAgent(down, group);
-            updateStack(stack,down,group);
+            updateStack(stack, down, group);
         }
         return group;
     }
@@ -38,7 +85,7 @@ public class Group {
         }
     }
 
-    private static void updateStack(LinkedList<Agent> stack, LinkedList<Agent> down,ArrayList<Agent> group){
+    private static void updateStack(LinkedList<Agent> stack, LinkedList<Agent> down, ArrayList<Agent> group) {
         if (down.isEmpty()) {
             group.add(stack.removeLast());
         } else {

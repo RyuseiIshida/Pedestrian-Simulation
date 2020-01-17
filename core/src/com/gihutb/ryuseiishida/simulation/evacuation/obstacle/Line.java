@@ -10,6 +10,10 @@ public class Line extends Obstacle {
         setShapeObstacle();
     }
 
+    public Line(Vector2 startPoint, Vector2 endPoint, CellsMap cellsMap) {
+        super(startPoint.x, startPoint.y, endPoint.x, endPoint.y, cellsMap);
+    }
+
     @Override
     public void setShapeObstacle() {
         Vector2 direction = UtilVector.direction(super.getStartPoint(), super.getEndPoint());

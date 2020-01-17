@@ -3,6 +3,10 @@ package com.gihutb.ryuseiishida.simulation.evacuation.environment;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.gihutb.ryuseiishida.simulation.evacuation.Parameter;
+import com.gihutb.ryuseiishida.simulation.evacuation.agent.Group;
+import com.gihutb.ryuseiishida.simulation.evacuation.analysis.Entropy;
+import com.gihutb.ryuseiishida.simulation.evacuation.analysis.LDA.LDA;
+import com.gihutb.ryuseiishida.simulation.evacuation.analysis.oldLDA;
 import com.gihutb.ryuseiishida.simulation.evacuation.cell.Cell;
 import com.gihutb.ryuseiishida.simulation.evacuation.goal.Goal;
 import com.gihutb.ryuseiishida.simulation.evacuation.log.LoadLog;
@@ -21,20 +25,21 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class Environment {
     private int step;
-    private CellsMap envCellsMap = new CellsMap(Parameter.SCALE, Parameter.CELL_INTERVAL);
+    //private CellsMap envCellsMap = new CellsMap(Parameter.SCALE, Parameter.CELL_INTERVAL);
+    private CellsMap envCellsMap = Parameter.cellsMap;
     private ArrayList<Goal> goals = new ArrayList<>(Parameter.GOALS);
-    private ArrayList<Obstacle> obstacles = new ArrayList<>();
-    private Fire fire = new Fire(Parameter.FIRE_POINT, 1000);
+    //private ArrayList<Obstacle> obstacles = new ArrayList<>();
+    private ArrayList<Obstacle> obstacles = Parameter.OBSTACLES;
+    private Fire fire = new Fire(Parameter.FIRE_POINT, 0);
     private ArrayList<Agent> agentList;
     private int goalAgentNum;
     public boolean agentClearFlag = false;
 
     private LoadLog loadLog;
-    private WriterLog writerLog;
+    private WriterLog writerLog = new WriterLog();
 
     private final String MAP_PATH = "core/assets/saveMap.txt";
 
@@ -64,9 +69,33 @@ public class Environment {
                 .forEach(Agent::action);
         ifAgentInGoal();
         ifAgentInFire();
-        step++;
-        timeMeasurement.stop();
+        LDA.record(step, agentList);
+        //LDA.record2(agentList);
+        LDA.record3(step, agentList);
+        //System.out.println("LDA record");
+        if (step == 1000) {
+            LDA.outPrint();
+        }
+
+        //timeMeasurement.stop();
         fire.spreadFire();
+        //System.out.println("Group.getGroups2(agentList).size() = " + Group.getGroups2(agentList).size());
+        logGroup.add(String.valueOf(Group.getGroups2(agentList).size()));
+        //System.out.println("Entropy.calcEntropy(agentList, cellsMapEntropy) = " + Entropy.calcEntropy(agentList, cellsMapEntropy));
+        logEntropy.add(String.valueOf(Entropy.calcEntropy(agentList, cellsMapEntropy)));
+        step++;
+
+        //System.out.println("group size = "+Group.getGroup3(agentList).size());
+    }
+
+    public CellsMap cellsMapEntropy = new CellsMap(Parameter.SCALE, 1000);
+    private ArrayList<String> logEntropy = new ArrayList<>();
+    private ArrayList<String> logGroup = new ArrayList<>();
+
+
+    public void writeExperiment() {
+        writerLog.writeEntropy(logEntropy);
+        writerLog.writeGroup(logGroup);
     }
 
     public void setStep(int step) {
@@ -117,8 +146,8 @@ public class Environment {
     //agent
     public void spawnInitAgents() {
         for (int i = 0; i < Parameter.INIT_AGENT_NUM; i++) {
-            float x = MathUtils.random(Parameter.INIT_RANDOM_X1, Parameter.INIT_RANDOM_X2);
-            float y = MathUtils.random(Parameter.INIT_RANDOM_Y1, Parameter.INIT_RANDOM_Y2);
+            float x = MathUtils.random(Parameter.INIT_RANDOM_X.valueA, Parameter.INIT_RANDOM_X.valueB);
+            float y = MathUtils.random(Parameter.INIT_RANDOM_Y.valueA, Parameter.INIT_RANDOM_Y.valueB);
             Vector2 position = new Vector2(x, y);
             if (i < Parameter.GOAL_AGENT_NUM) {
                 if (i < Parameter.GOAL_AGENT_NUM / 2) {
@@ -128,6 +157,33 @@ public class Environment {
                 }
             } else {
                 agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position));
+            }
+        }
+    }
+
+
+    public void spawnInitLogAgent() {
+        String str = "core/assets/agentList.txt";
+        ArrayList<Vector2> position = new ArrayList<>();
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(str))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] pos = line.split(",");
+                position.add(new Vector2(Float.parseFloat(pos[0]), Float.parseFloat(pos[1])));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (int i = 0; i < Parameter.INIT_AGENT_NUM; i++) {
+            if (i < Parameter.GOAL_AGENT_NUM) {
+                if (i < Parameter.GOAL_AGENT_NUM / 2) {
+                    agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position.get(i), goals.get(0)));
+                } else {
+                    agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position.get(i), goals.get(0)));
+                }
+            } else {
+                agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position.get(i)));
             }
         }
     }

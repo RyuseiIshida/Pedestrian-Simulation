@@ -10,8 +10,10 @@ public class DesktopLauncher {
     public void startGDX() {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.title = "Pedestrian Simulation";
-        config.width = 1000;
-        config.height = 1000;
+        //config.width = 1000;//600
+        config.width = 900;
+        //config.height = 1000;//900
+        config.height = 600;
         config.x = -1;
         config.y = -1;
         switch (Parameter.MODE) {
