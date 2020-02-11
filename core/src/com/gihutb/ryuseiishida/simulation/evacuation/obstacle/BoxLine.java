@@ -8,12 +8,12 @@ import com.gihutb.ryuseiishida.simulation.evacuation.util.Tuple;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class GhostBox {
+public class BoxLine {
     private Vector2 startPoint;
     private Vector2 endPoint;
     private CellsMap cellsMap;
 
-    public GhostBox(float x1, float y1, float x2, float y2, CellsMap cellsMap) {
+    public BoxLine(float x1, float y1, float x2, float y2, CellsMap cellsMap) {
         startPoint = new Vector2(x1, y1);
         endPoint = new Vector2(x2, y2);
         this.cellsMap = cellsMap;

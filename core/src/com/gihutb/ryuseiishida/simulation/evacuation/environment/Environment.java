@@ -28,7 +28,7 @@ public class Environment {
     private CellsMap envCellsMap = Parameter.cellsMap;
     private ArrayList<Goal> goals = new ArrayList<>(Parameter.GOALS);
     //private ArrayList<Obstacle> obstacles = new ArrayList<>();
-    private ArrayList<GhostBox> boxes = Parameter.Boxes;
+    private ArrayList<BoxLine> boxes = Parameter.Boxes;
     private ArrayList<Obstacle> obstacles = Parameter.OBSTACLES;
 
     private Fire fire = new Fire(Parameter.FIRE_POINT, 0);
@@ -44,7 +44,7 @@ public class Environment {
     public Environment() {
         step = 0;
         agentList = new ArrayList<>();
-        for (GhostBox box : boxes) {
+        for (BoxLine box : boxes) {
             obstacles.addAll(box.getLines());
         }
         if (Parameter.MODE.equals("LogSimulation")) {
@@ -187,7 +187,7 @@ public class Environment {
     }
 
     public Boolean checkInBoxes(float x, float y) {
-        for (GhostBox box : boxes) {
+        for (BoxLine box : boxes) {
             if(box.isPositionInBox(x, y)){
                 return true;
             }

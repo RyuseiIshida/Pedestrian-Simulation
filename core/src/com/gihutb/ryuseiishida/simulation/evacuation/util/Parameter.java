@@ -4,11 +4,9 @@ package com.gihutb.ryuseiishida.simulation.evacuation.util;
 import com.badlogic.gdx.math.Vector2;
 import com.gihutb.ryuseiishida.simulation.evacuation.cell.CellsMap;
 import com.gihutb.ryuseiishida.simulation.evacuation.goal.Goal;
-import com.gihutb.ryuseiishida.simulation.evacuation.obstacle.Box;
-import com.gihutb.ryuseiishida.simulation.evacuation.obstacle.GhostBox;
+import com.gihutb.ryuseiishida.simulation.evacuation.obstacle.BoxLine;
 import com.gihutb.ryuseiishida.simulation.evacuation.obstacle.Line;
 import com.gihutb.ryuseiishida.simulation.evacuation.obstacle.Obstacle;
-import com.gihutb.ryuseiishida.simulation.evacuation.util.Tuple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +35,6 @@ public class Parameter {
     //Environment
     //1 pixel = 1 cm
     private static float METER = 100f;
-    //public static Vector2 SCALE = new Vector2(120 * METER, 120 * METER);
     public static Vector2 SCALE = new Vector2(100 * METER, 100 * METER);
     public static ArrayList<Goal> GOALS = new ArrayList<>(Arrays.asList(
             new Goal(0, 200, 200, 200 + 200)
@@ -54,19 +51,19 @@ public class Parameter {
     //Obstacles
     public static CellsMap cellsMap = new CellsMap(SCALE, CELL_INTERVAL);
 
-    public static ArrayList<GhostBox> Boxes = new ArrayList<>(Arrays.asList(
+    public static ArrayList<BoxLine> Boxes = new ArrayList<>(Arrays.asList(
             // 左上
-            new GhostBox(1200, 6200, 4500, 8000, cellsMap),
+            new BoxLine(1200, 6200, 4500, 8000, cellsMap),
             //右上
-            new GhostBox(5700, 6200, 9000, 8000, cellsMap),
+            new BoxLine(5700, 6200, 9000, 8000, cellsMap),
             // 左下
-            new GhostBox(1200, 1200, 4500, 3000, cellsMap),
+            new BoxLine(1200, 1200, 4500, 3000, cellsMap),
             //右下
-            new GhostBox(5700, 1200, 9000, 3000, cellsMap),
+            new BoxLine(5700, 1200, 9000, 3000, cellsMap),
             //中央左
-            new GhostBox(1200, 3700, 4500, 5500, cellsMap),
+            new BoxLine(1200, 3700, 4500, 5500, cellsMap),
             //中央右
-            new GhostBox(5700, 3700, 9000, 5500, cellsMap)
+            new BoxLine(5700, 3700, 9000, 5500, cellsMap)
 
     ));
 

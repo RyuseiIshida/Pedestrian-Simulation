@@ -8,8 +8,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.gihutb.ryuseiishida.simulation.evacuation.util.Parameter;
 import com.gihutb.ryuseiishida.simulation.evacuation.environment.Environment;
 
-public class RenderFont {
-    public RenderFont(Batch batch, BitmapFont bitmapFont, Camera camera, Environment environment) {
+public class Font {
+    public Font(Batch batch, BitmapFont bitmapFont, Camera camera, Environment environment) {
         renderFont(batch, bitmapFont, camera, environment);
     }
 

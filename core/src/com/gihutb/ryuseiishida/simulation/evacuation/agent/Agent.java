@@ -1086,10 +1086,6 @@ public class Agent {
         }
     }
 
-    public static void main(String[] args) {
-        createAgentList(Parameter.INIT_AGENT_NUM);
-    }
-
     private static void createAgentList(int agentNum) {
         String path = "core/assets/agentList.txt";
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path))) {

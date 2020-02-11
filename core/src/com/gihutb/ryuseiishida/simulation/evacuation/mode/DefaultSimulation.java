@@ -47,7 +47,7 @@ public class DefaultSimulation extends ApplicationAdapter {
             environment.setStep(0);
             PLAY = false;
         }
-        new RenderFont(batch, bitmapFont, camera, environment);
+        new Font(batch, bitmapFont, camera, environment);
         new RenderAgent(shapeRenderer, camera, environment);
         new RenderCell(shapeRenderer, camera, environment);
         new RenderFire(shapeRenderer, camera, environment);

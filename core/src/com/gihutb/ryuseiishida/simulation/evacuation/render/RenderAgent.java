@@ -13,13 +13,13 @@ import com.gihutb.ryuseiishida.simulation.evacuation.environment.Environment;
 public class RenderAgent {
 
     public RenderAgent(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
-        agent(shapeRenderer, camera, environment);
-        view(shapeRenderer, camera, environment);
-        goalLine(shapeRenderer, camera, environment);
-        followLine(shapeRenderer, camera, environment);
+        renderBody(shapeRenderer, camera, environment);
+        renderView(shapeRenderer, camera, environment);
+        renderMoveGoalLine(shapeRenderer, camera, environment);
+        renderFollowLine(shapeRenderer, camera, environment);
     }
 
-    public static void agent(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+    public static void renderBody(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (Agent agent : environment.getAgentList()) {
@@ -48,7 +48,7 @@ public class RenderAgent {
         shapeRenderer.end();
     }
 
-    public static void view(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+    public static void renderView(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -63,7 +63,7 @@ public class RenderAgent {
         Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
-    public static void goalLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+    public static void renderMoveGoalLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.RED);
@@ -76,7 +76,7 @@ public class RenderAgent {
     }
 
 
-    public static void followLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+    public static void renderFollowLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.BLACK);

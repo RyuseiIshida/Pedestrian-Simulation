@@ -20,11 +20,11 @@ import java.util.ArrayList;
 public class RenderLDA {
 
     public RenderLDA(Batch batch, BitmapFont bitmapFont, ShapeRenderer shapeRenderer, Camera camera) {
-        renderCellIndex(shapeRenderer, camera, batch, bitmapFont);
-        renderTopic(shapeRenderer, camera);
+        cellIndex(shapeRenderer, camera, batch, bitmapFont);
+        renderTopicRegion(shapeRenderer, camera);
     }
 
-    public static void renderCell(ShapeRenderer shapeRenderer, Camera camera) {
+    public static void cell(ShapeRenderer shapeRenderer, Camera camera) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.GREEN);
@@ -44,7 +44,7 @@ public class RenderLDA {
         shapeRenderer.end();
     }
 
-    public static void renderCellIndex(ShapeRenderer shapeRenderer, Camera camera, Batch batch, BitmapFont bitmapFont) {
+    public static void cellIndex(ShapeRenderer shapeRenderer, Camera camera, Batch batch, BitmapFont bitmapFont) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         batch.begin();
         //batch.draw(texture, 0, 0);
@@ -67,7 +67,7 @@ public class RenderLDA {
         return topic;
     }
 
-    public static void renderTopic(ShapeRenderer shapeRenderer, Camera camera) {
+    public static void renderTopicRegion(ShapeRenderer shapeRenderer, Camera camera) {
         for (String s : getTopic()) {
             shapeRenderer.setProjectionMatrix(camera.combined);
             Gdx.gl.glEnable(GL20.GL_BLEND);

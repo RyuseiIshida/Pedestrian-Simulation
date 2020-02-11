@@ -8,10 +8,10 @@ import com.gihutb.ryuseiishida.simulation.evacuation.obstacle.Fire;
 
 public class RenderFire {
     public RenderFire(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
-        fire(shapeRenderer, camera, environment);
+        renderFireRegion(shapeRenderer, camera, environment);
     }
 
-    public static void fire(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+    public static void renderFireRegion(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.FIREBRICK);
