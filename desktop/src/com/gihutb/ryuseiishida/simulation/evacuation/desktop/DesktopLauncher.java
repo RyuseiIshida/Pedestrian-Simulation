@@ -2,7 +2,7 @@ package com.gihutb.ryuseiishida.simulation.evacuation.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.gihutb.ryuseiishida.simulation.evacuation.Parameter;
+import com.gihutb.ryuseiishida.simulation.evacuation.util.Parameter;
 import com.gihutb.ryuseiishida.simulation.evacuation.mode.CreateMap;
 import com.gihutb.ryuseiishida.simulation.evacuation.mode.DefaultSimulation;
 

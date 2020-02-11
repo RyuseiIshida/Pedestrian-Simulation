@@ -33,12 +33,9 @@ public class GhostBox {
     }
 
     public boolean isPositionInBox(float targetX, float targetY) {
-        if (targetX > startPoint.x
+        return targetX > startPoint.x
                 && targetY > startPoint.y
                 && targetX < endPoint.x
-                && targetY < endPoint.y) {
-            return true;
-        }
-        return false;
+                && targetY < endPoint.y;
     }
 }

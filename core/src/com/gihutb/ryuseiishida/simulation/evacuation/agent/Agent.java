@@ -2,8 +2,7 @@ package com.gihutb.ryuseiishida.simulation.evacuation.agent;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.gihutb.ryuseiishida.simulation.evacuation.Parameter;
-import com.gihutb.ryuseiishida.simulation.evacuation.analysis.LDA.LDA;
+import com.gihutb.ryuseiishida.simulation.evacuation.util.Parameter;
 import com.gihutb.ryuseiishida.simulation.evacuation.cell.Cell;
 import com.gihutb.ryuseiishida.simulation.evacuation.environment.Environment;
 import com.gihutb.ryuseiishida.simulation.evacuation.goal.Goal;

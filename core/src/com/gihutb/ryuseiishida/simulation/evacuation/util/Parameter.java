@@ -1,4 +1,4 @@
-package com.gihutb.ryuseiishida.simulation.evacuation;
+package com.gihutb.ryuseiishida.simulation.evacuation.util;
 
 
 import com.badlogic.gdx.math.Vector2;
@@ -159,12 +159,8 @@ public class Parameter {
     //agent
     public static int INIT_AGENT_NUM = 100;
     public static int GOAL_AGENT_NUM = 30;
-    //public static Tuple<Float> INIT_RANDOM_X = new Tuple<>(50f, 19f * METER);
     public static Tuple<Float> INIT_RANDOM_X = new Tuple<>(200f, SCALE.x - 300);
-    //public static Tuple<Float> INIT_RANDOM_X = new Tuple<>(300f, SCALE.x - 300f);
-    //public static Tuple<Float> INIT_RANDOM_Y = new Tuple<>(50f,19f * METER);
     public static Tuple<Float> INIT_RANDOM_Y = new Tuple<>(200f, SCALE.y - 1100);
-    //public static Tuple<Float> INIT_RANDOM_Y = new Tuple<>(300f, SCALE.y - 300f);
     //ゴールを知っているエージェントのゴール番号 or "random"
     public static String GOAL_AGENT_DESTINATION = "1";
     private static int AGENT_ACTION_INTERVAL = 10; //1秒あたり何回行動できるか

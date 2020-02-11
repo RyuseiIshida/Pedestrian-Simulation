@@ -1,14 +1,14 @@
-package com.gihutb.ryuseiishida.simulation.evacuation.analysis.LDA;
+package com.gihutb.ryuseiishida.simulation.evacuation.render;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.gihutb.ryuseiishida.simulation.evacuation.Parameter;
-import com.gihutb.ryuseiishida.simulation.evacuation.agent.Agent;
 import com.gihutb.ryuseiishida.simulation.evacuation.agent.StateTag;
+import com.gihutb.ryuseiishida.simulation.evacuation.analysis.LDA;
 import com.gihutb.ryuseiishida.simulation.evacuation.cell.Cell;
 
 import java.io.BufferedReader;
@@ -16,10 +16,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class Visualization {
-    public static void renderCell(ShapeRenderer shapeRenderer) {
+public class RenderLDA {
+
+    public RenderLDA(Batch batch, BitmapFont bitmapFont, ShapeRenderer shapeRenderer, Camera camera) {
+        renderCellIndex(shapeRenderer, camera, batch, bitmapFont);
+        renderTopic(shapeRenderer, camera);
+    }
+
+    public static void renderCell(ShapeRenderer shapeRenderer, Camera camera) {
+        shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.GREEN);
         for (Cell cell : LDA.getPositionMap().getCells()) {
@@ -38,7 +44,8 @@ public class Visualization {
         shapeRenderer.end();
     }
 
-    public static void renderCellIndex(Batch batch, BitmapFont bitmapFont) {
+    public static void renderCellIndex(ShapeRenderer shapeRenderer, Camera camera, Batch batch, BitmapFont bitmapFont) {
+        shapeRenderer.setProjectionMatrix(camera.combined);
         batch.begin();
         //batch.draw(texture, 0, 0);
         for (Cell cell : LDA.getPositionMap().getCells()) {
@@ -60,8 +67,9 @@ public class Visualization {
         return topic;
     }
 
-    public static void renderTopic(ShapeRenderer shapeRenderer) {
+    public static void renderTopic(ShapeRenderer shapeRenderer, Camera camera) {
         for (String s : getTopic()) {
+            shapeRenderer.setProjectionMatrix(camera.combined);
             Gdx.gl.glEnable(GL20.GL_BLEND);
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -74,11 +82,12 @@ public class Visualization {
             String tag = s.split(",")[0].split("d")[1].substring(1);
             shapeRenderer.circle(x, y, 500);
             shapeRenderer.end();
-            renderTopicLine(shapeRenderer, x, y, dir, tag);
+            renderTopicLine(shapeRenderer, camera, x, y, dir, tag);
         }
     }
 
-    public static void renderTopicLine(ShapeRenderer shapeRenderer, float x, float y, int direction, String tag) {
+    public static void renderTopicLine(ShapeRenderer shapeRenderer, Camera camera, float x, float y, int direction, String tag) {
+        shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.BLACK);
         if (StateTag.follow.equals(tag)) {

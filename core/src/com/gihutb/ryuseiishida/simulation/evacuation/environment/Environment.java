@@ -2,11 +2,10 @@ package com.gihutb.ryuseiishida.simulation.evacuation.environment;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.gihutb.ryuseiishida.simulation.evacuation.Parameter;
+import com.gihutb.ryuseiishida.simulation.evacuation.util.Parameter;
 import com.gihutb.ryuseiishida.simulation.evacuation.agent.Group;
-import com.gihutb.ryuseiishida.simulation.evacuation.analysis.Entropy;
-import com.gihutb.ryuseiishida.simulation.evacuation.analysis.LDA.LDA;
-import com.gihutb.ryuseiishida.simulation.evacuation.analysis.LDA.LDA2;
+import com.gihutb.ryuseiishida.simulation.evacuation.analysis.LDA;
+import com.gihutb.ryuseiishida.simulation.evacuation.analysis.LDA2;
 import com.gihutb.ryuseiishida.simulation.evacuation.cell.Cell;
 import com.gihutb.ryuseiishida.simulation.evacuation.goal.Goal;
 import com.gihutb.ryuseiishida.simulation.evacuation.log.LoadLog;
@@ -95,13 +94,8 @@ public class Environment {
 
         //timeMeasurement.stop();
         fire.spreadFire();
-        //System.out.println("Group.getGroups2(agentList).size() = " + Group.getGroups2(agentList).size());
         logGroup.add(String.valueOf(Group.getGroups2(agentList).size()));
-        //System.out.println("Entropy.calcEntropy(agentList, cellsMapEntropy) = " + Entropy.calcEntropy(agentList, cellsMapEntropy));
-        logEntropy.add(String.valueOf(Entropy.calcEntropy(agentList, cellsMapEntropy)));
         step++;
-
-        //System.out.println("group size = "+Group.getGroup3(agentList).size());
     }
 
     public CellsMap cellsMapEntropy = new CellsMap(Parameter.SCALE, 1000);

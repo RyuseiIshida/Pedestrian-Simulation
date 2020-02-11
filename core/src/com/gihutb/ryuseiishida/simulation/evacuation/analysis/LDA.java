@@ -1,6 +1,6 @@
-package com.gihutb.ryuseiishida.simulation.evacuation.analysis.LDA;
+package com.gihutb.ryuseiishida.simulation.evacuation.analysis;
 
-import com.gihutb.ryuseiishida.simulation.evacuation.Parameter;
+import com.gihutb.ryuseiishida.simulation.evacuation.util.Parameter;
 import com.gihutb.ryuseiishida.simulation.evacuation.agent.Agent;
 import com.gihutb.ryuseiishida.simulation.evacuation.agent.Group;
 import com.gihutb.ryuseiishida.simulation.evacuation.cell.CellsMap;
@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-public class LDA2 {
+public class LDA {
     private static CellsMap positionMap = new CellsMap(Parameter.SCALE, 1000);
     private static ArrayList<ArrayList<String>> dataList = new ArrayList<>();
     private static ArrayList<ArrayList<String>> dataList3 = new ArrayList<>();
@@ -22,6 +22,26 @@ public class LDA2 {
             setAgent(agentList);
         }
     }
+
+    // group sizeで文書を区切る
+    private static int perceptionGroupSize = 0;
+
+    public static void record2(ArrayList<Agent> agentList) {
+        ArrayList<ArrayList<Agent>> AgentGroups = Group.getGroup3(agentList);
+        if (AgentGroups.size() != perceptionGroupSize) {
+            setAgent(agentList);
+        }
+        perceptionGroupSize = AgentGroups.size();
+    }
+
+    // agentごと
+    public static void record3(int step, ArrayList<Agent> agentList)  {
+        if (step == 0 || step % splitStep == 0) {
+            setAgent2(agentList);
+        }
+    }
+
+    // シミュレーションごと
 
     private static void setAgent(ArrayList<Agent> agentList) {
         ArrayList<String> data = new ArrayList<>();
@@ -34,9 +54,23 @@ public class LDA2 {
         dataList.add(data);
     }
 
+    private static void setAgent2(ArrayList<Agent> agentList) {
+        if(dataList3.isEmpty()){
+            for (Agent agent : agentList) {
+                dataList3.add(new ArrayList<String>());
+            }
+        }
+        for (Agent agent : agentList) {
+            String pos = String.valueOf(positionMap.getCells().indexOf(positionMap.getCell(agent.getPosition())));
+            String dir = String.valueOf(getAgentDirection(agent));
+            String state = agent.getStateTag();
+            dataList3.get(Integer.parseInt(agent.getID())-1).add("p" + pos + "d" + dir + state);
+        }
+    }
+
     public static int getAgentDirection(Agent agent) {
-        int direction = (int) agent.getDirectionDegree();
-        if (direction < 0) {
+        int direction = (int)agent.getDirectionDegree();
+        if(direction < 0) {
             direction += 360;
         }
         if (direction >= 0 && direction <= 45) {
@@ -67,7 +101,7 @@ public class LDA2 {
     }
 
     public static void outPrint() {
-        String path = "core/assets/corpus_step.txt";
+        String path = "core/assets/corpus.txt";
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path))) {
             for (ArrayList<String> data : dataList) {
                 for (String s : data) {
@@ -82,6 +116,27 @@ public class LDA2 {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        outPrint3();
+    }
+    public static void outPrint3() {
+        String path = "core/assets/corpus3.txt";
+        try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path))) {
+            for (ArrayList<String> data : dataList3) {
+                for (String s : data) {
+                    bw.append(s);
+                    if (s != data.get(data.size() - 1)) {
+                        bw.append(",");
+                    }
+                }
+                bw.newLine();
+            }
+            System.out.println("save corpus data");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
+    public static CellsMap getPositionMap() {
+        return positionMap;
+    }
 }

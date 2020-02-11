@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
-import com.gihutb.ryuseiishida.simulation.evacuation.Parameter;
+import com.gihutb.ryuseiishida.simulation.evacuation.util.Parameter;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
