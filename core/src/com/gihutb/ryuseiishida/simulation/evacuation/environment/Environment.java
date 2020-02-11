@@ -6,17 +6,14 @@ import com.gihutb.ryuseiishida.simulation.evacuation.Parameter;
 import com.gihutb.ryuseiishida.simulation.evacuation.agent.Group;
 import com.gihutb.ryuseiishida.simulation.evacuation.analysis.Entropy;
 import com.gihutb.ryuseiishida.simulation.evacuation.analysis.LDA.LDA;
-import com.gihutb.ryuseiishida.simulation.evacuation.analysis.oldLDA;
+import com.gihutb.ryuseiishida.simulation.evacuation.analysis.LDA.LDA2;
 import com.gihutb.ryuseiishida.simulation.evacuation.cell.Cell;
 import com.gihutb.ryuseiishida.simulation.evacuation.goal.Goal;
 import com.gihutb.ryuseiishida.simulation.evacuation.log.LoadLog;
 import com.gihutb.ryuseiishida.simulation.evacuation.log.WriterLog;
 import com.gihutb.ryuseiishida.simulation.evacuation.cell.CellsMap;
 import com.gihutb.ryuseiishida.simulation.evacuation.agent.Agent;
-import com.gihutb.ryuseiishida.simulation.evacuation.obstacle.Box;
-import com.gihutb.ryuseiishida.simulation.evacuation.obstacle.Fire;
-import com.gihutb.ryuseiishida.simulation.evacuation.obstacle.Line;
-import com.gihutb.ryuseiishida.simulation.evacuation.obstacle.Obstacle;
+import com.gihutb.ryuseiishida.simulation.evacuation.obstacle.*;
 import com.gihutb.ryuseiishida.simulation.evacuation.util.TimeMeasurement;
 
 import java.io.BufferedReader;
@@ -32,7 +29,9 @@ public class Environment {
     private CellsMap envCellsMap = Parameter.cellsMap;
     private ArrayList<Goal> goals = new ArrayList<>(Parameter.GOALS);
     //private ArrayList<Obstacle> obstacles = new ArrayList<>();
+    private ArrayList<GhostBox> boxes = Parameter.Boxes;
     private ArrayList<Obstacle> obstacles = Parameter.OBSTACLES;
+
     private Fire fire = new Fire(Parameter.FIRE_POINT, 0);
     private ArrayList<Agent> agentList;
     private int goalAgentNum;
@@ -46,6 +45,9 @@ public class Environment {
     public Environment() {
         step = 0;
         agentList = new ArrayList<>();
+        for (GhostBox box : boxes) {
+            obstacles.addAll(box.getLines());
+        }
         if (Parameter.MODE.equals("LogSimulation")) {
             loadLog = new LoadLog();
             spawnLogAgents();
@@ -55,6 +57,7 @@ public class Environment {
         if (Parameter.ISWRITELOG) {
             writerLog = new WriterLog(this);
         }
+
     }
 
     public void update() {
@@ -69,13 +72,26 @@ public class Environment {
                 .forEach(Agent::action);
         ifAgentInGoal();
         ifAgentInFire();
-        LDA.record(step, agentList);
-        //LDA.record2(agentList);
-        LDA.record3(step, agentList);
+        LDA2.record(step, agentList);
+        LDA.record2(agentList);
+        //LDA.record3(step, agentList);
         //System.out.println("LDA record");
         if (step == 1000) {
             LDA.outPrint();
+            LDA2.outPrint();
         }
+
+//        boolean tag = true;
+//        for (Agent agent : agentList) {
+//            if (agent.getStateTag().equals(StateTag.moveGoal)) {
+//                tag = false;
+//                break;
+//            }
+//        }
+//        if(tag) {
+//            LDA.outPrint();
+//            System.exit(0);
+//        }
 
         //timeMeasurement.stop();
         fire.spreadFire();
@@ -148,7 +164,7 @@ public class Environment {
         for (int i = 0; i < Parameter.INIT_AGENT_NUM; i++) {
             float x = MathUtils.random(Parameter.INIT_RANDOM_X.valueA, Parameter.INIT_RANDOM_X.valueB);
             float y = MathUtils.random(Parameter.INIT_RANDOM_Y.valueA, Parameter.INIT_RANDOM_Y.valueB);
-            Vector2 position = new Vector2(x, y);
+            Vector2 position = getRandomPosition();
             if (i < Parameter.GOAL_AGENT_NUM) {
                 if (i < Parameter.GOAL_AGENT_NUM / 2) {
                     agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position, goals.get(0)));
@@ -159,8 +175,31 @@ public class Environment {
                 agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position));
             }
         }
+
     }
 
+    public Vector2 getRandomPosition() {
+        float x;
+        float y;
+        while(true){
+            x = MathUtils.random(Parameter.INIT_RANDOM_X.valueA, Parameter.INIT_RANDOM_X.valueB);
+            y = MathUtils.random(Parameter.INIT_RANDOM_Y.valueA, Parameter.INIT_RANDOM_Y.valueB);
+            if(checkInBoxes(x,y)) {
+                continue;
+            }
+            break;
+        }
+        return new Vector2(x, y);
+    }
+
+    public Boolean checkInBoxes(float x, float y) {
+        for (GhostBox box : boxes) {
+            if(box.isPositionInBox(x, y)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void spawnInitLogAgent() {
         String str = "core/assets/agentList.txt";

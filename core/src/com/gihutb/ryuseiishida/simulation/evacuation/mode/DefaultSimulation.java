@@ -99,6 +99,7 @@ public class DefaultSimulation extends ApplicationAdapter {
                 30, Parameter.SCALE.y - 10);
         batch.end();
         Visualization.renderCellIndex(batch,bitmapFont);
+        Visualization.renderTopic(shapeRenderer);
         renderAgent();
         renderAgentView();
         //renderGoalLine();

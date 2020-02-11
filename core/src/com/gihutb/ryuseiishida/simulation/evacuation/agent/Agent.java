@@ -239,25 +239,15 @@ public class Agent {
             setLogToAgent(env.getStep());
         } else {
             perception();
-            //utilityFunction();
-            //moveFollow();
-//            if (!StateTag.randomWalk.equals(stateTag)) {
+//            if(env.getStep() == 0) {
 //                initRandomWalk();
-//            } else {
-//                randomWalk();
 //            }
-
-
-
-
-            if(env.getStep() == 0) {
-                initRandomWalk();
-            }
             if (goal != null) {
                 moveGoal();
             } else {
-                moveFollow();
+                ex();
             }
+
         }
     }
 
@@ -271,6 +261,45 @@ public class Agent {
         setPerceptionFollowAgent(); //視野内にいる追従できそうなエージェント
         resetPerceptionFollowAgent(); //追従を辞めた時の後処理
         setPerceptionGoal();
+    }
+
+    private void ex() {
+        //if (perceptionInViewAgentList.size() >= 3 && isRandomWalkAgent()) {
+        if(isRandomWalkAgent()) {
+            //|| potentialModel.repulsivePotential(position, env.getObstaclesPosition()) < 0){
+            //&& !isFollowNearGroup(perceptionInViewAgentList)) {
+            moveFollow();
+        } else {
+            randomWalk();
+        }
+    }
+
+    private boolean isRandomWalkAgent() {
+        for (Agent agent : perceptionInViewAgentList) {
+            return !agent.getStateTag().equals(StateTag.follow);
+        }
+        return false;
+    }
+
+    private boolean isFollowNearGroup(ArrayList<Agent> tmpFollowAgents) {
+        ArrayList<Agent> isGroup = new ArrayList<>();
+        for (ArrayList<Agent> group : Group.getGroup3(env.getAgentList())) {
+            for (Agent agent : group) {
+                if (this.equals(agent)) {
+                    isGroup = group;
+                }
+            }
+        }
+        System.out.println("isGroup.containsAll(tmpFollowAgents) = " + isGroup.containsAll(tmpFollowAgents));
+
+        for (Agent tmpFollowAgent : tmpFollowAgents) {
+            if (tmpFollowAgent.getStateTag().equals(StateTag.follow)) {
+                if (isGroup.contains(tmpFollowAgent)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private Map<Integer, String> log = new HashMap<>();
@@ -464,6 +493,7 @@ public class Agent {
      */
     private void moveGoal() {
         stateTag = StateTag.moveGoal;
+        movePos = goal;
         move(goal);
     }
 
@@ -479,8 +509,9 @@ public class Agent {
     }
 
     private void randomWalk() {
-        //if (getObstacleKIMPotential(position) > 0) {
-//        if (potentialModel.repulsivePotential(position, potentialModel.getNearObstaclePotentialCells())> 0) {
+        if (!stateTag.equals(StateTag.randomWalk)) {
+            initRandomWalk();
+        }
         if (potentialModel.repulsivePotential(position, env.getObstaclesPosition()) > 0) {
             initRandomWalk();
             return;
@@ -536,15 +567,67 @@ public class Agent {
         }
     }
 
+    ArrayList<Agent> beforeFollowAgent;
+//    private void moveFollow() {
+//        stateTag = StateTag.follow;
+//        beforeFollowAgent = perceptionInViewAgentList;
+//        ///setMentalPotential();
+//        Vector2 direction = UtilVector.direction(position, movePos);
+//        setFastFollowPotentialVector(direction);
+//        direction.nor();
+//        velocity = direction.scl(speed);
+//        Vector2 tmpPos = new Vector2(position);
+//        tmpPos.add(velocity);
+//        if (tmpPos.x >= 0 + Parameter.AGENT_RADIUS && tmpPos.x <= Parameter.SCALE.x - Parameter.AGENT_RADIUS) {
+//            position.x = tmpPos.x;
+//        }
+//        if (tmpPos.y >= 0 + Parameter.AGENT_RADIUS && tmpPos.y <= Parameter.SCALE.y - Parameter.AGENT_RADIUS) {
+//            position.y = tmpPos.y;
+//        }
+//    }
+
+
+//    private void moveFollow() {
+//        stateTag = StateTag.follow;
+//        beforeFollowAgent = perceptionInViewAgentList;
+//        ///setMentalPotential();
+//        Vector2 direction = UtilVector.direction(position, movePos);
+//        setFastFollowPotentialVector(direction);
+//        velocity = direction.scl(speed);
+//        Vector2 tmpPos = new Vector2(position);
+//        tmpPos.add(velocity);
+//        if (tmpPos.x >= 0 + Parameter.AGENT_RADIUS && tmpPos.x <= Parameter.SCALE.x - Parameter.AGENT_RADIUS) {
+//            position.x = tmpPos.x;
+//        }
+//        if (tmpPos.y >= 0 + Parameter.AGENT_RADIUS && tmpPos.y <= Parameter.SCALE.y - Parameter.AGENT_RADIUS) {
+//            position.y = tmpPos.y;
+//        }
+//    }
+
+
+    private void velocityFollow(Vector2 direction) {
+        Vector2 pVector = new Vector2();
+        float delta = 1f;
+        pVector.x = -1 * (getFollowPotentialVelocity(position.x + delta, position.y) - getFollowPotentialVelocity(position.x, position.y)) / delta;
+        pVector.y = -1 * (getFollowPotentialVelocity(position.x, position.y + delta) - getFollowPotentialVelocity(position.x, position.y)) / delta;
+        pVector.nor();
+        direction.set(pVector);
+    }
+
+    private float getFollowPotentialVelocity(float x, float y) {
+        return getFollowKimPotential(x, y);
+    }
+
+
     private void moveFollow() {
+        velocityFollow(velocity);
         stateTag = StateTag.follow;
+        beforeFollowAgent = perceptionInViewAgentList;
         ///setMentalPotential();
         Vector2 direction = UtilVector.direction(position, movePos);
         setFastFollowPotentialVector(direction);
-        direction.nor();
-        velocity = direction.scl(speed);
         Vector2 tmpPos = new Vector2(position);
-        tmpPos.add(velocity);
+        tmpPos.add(direction.scl(speed));
         if (tmpPos.x >= 0 + Parameter.AGENT_RADIUS && tmpPos.x <= Parameter.SCALE.x - Parameter.AGENT_RADIUS) {
             position.x = tmpPos.x;
         }
@@ -576,6 +659,8 @@ public class Agent {
         float Ug = getGoalKIMPotential(x, y);
         //float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y);
         //float Uo = getAgentKIMPotential(x, y) + getFastObstacleKIMPotential(x, y);
+
+
         float Uo = getAgentKIMPotential(x, y) + getFastObstacleKIMPotential(x, y) + getFastFireKIMPotential(x, y);
         //float U = (((1 / cg) * Uo) + 1) * Ug;
         float U = Ug + Uo;
@@ -600,6 +685,21 @@ public class Agent {
         Vector2 pos = new Vector2(x, y);
         for (Agent agent : env.getAgentList()) {
             if (!agent.equals(this)) {
+                potentialWight += co * new Exp().value(-1 * (pos.dst2(agent.position) / (lo * lo)));
+            }
+        }
+        return potentialWight;
+    }
+
+    private float getAgentKIMPotential2(float x, float y) {
+        float potentialWight = 0;
+        float co = 1000;
+        float lo = Parameter.AGENT_RADIUS + mentalAgentWeight;
+        //float lo = Parameter.AGENT_RADIUS;
+        //System.out.println("lo = " + lo);
+        Vector2 pos = new Vector2(x, y);
+        for (Agent agent : env.getAgentList()) {
+            if (!agent.equals(this) && !StateTag.follow.equals(agent.getStateTag())) {
                 potentialWight += co * new Exp().value(-1 * (pos.dst2(agent.position) / (lo * lo)));
             }
         }
@@ -658,8 +758,10 @@ public class Agent {
     private boolean isInView(Vector2 targetPos) {
         float targetDistance = position.dst(targetPos);
         float targetRadian = (float) Math.atan2(targetPos.x - position.x, targetPos.y - position.y);
+        //ここで自分から見てターゲット何度にあるかがわかる
         float targetDegree = (float) Math.toDegrees(targetRadian);
-        return targetDistance < viewRadiusLength && getDirectionDegree() - targetDegree < viewDegree;
+        float differentDegree = Math.abs(getDirectionDegree() - targetDegree);
+        return targetDistance < viewRadiusLength && differentDegree < viewDegree;
     }
 
     /**
@@ -873,7 +975,7 @@ public class Agent {
         float delta = 1f;
         pVector.x = -1 * (getFollowPotential(position.x + delta, position.y) - getFollowPotential(position.x, position.y)) / delta;
         pVector.y = -1 * (getFollowPotential(position.x, position.y + delta) - getFollowPotential(position.x, position.y)) / delta;
-        //pVector.nor();
+        pVector.nor();
         direction.set(pVector);
     }
 
@@ -882,8 +984,8 @@ public class Agent {
         //float Ug = getGoalKIMPotential(x, y) + getFollowKimPotential(x, y);
         float Ug = getFollowKimPotential(x, y);
         float Uo = getAgentKIMPotential(x, y) + getFastObstacleKIMPotential(x, y) + getFastFireKIMPotential(x, y);
-        float U = (((1 / cg) * Uo) + 1) * Ug;
-        //float U = Ug + Uo;
+        //float U = (((1 / cg) * Uo) + 1) * Ug;
+        float U = Ug + Uo;
         return U;
     }
 
@@ -972,7 +1074,7 @@ public class Agent {
         float alpha = 0.1f;
         if (mentalDst < 10) {
             mentalAgentWeight += alpha;
-            setMentalObstaclePotential();
+            //setMentalObstaclePotential();
         }
         return mentalAgentWeight;
     }

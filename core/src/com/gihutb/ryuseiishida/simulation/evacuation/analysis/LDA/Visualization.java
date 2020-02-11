@@ -1,11 +1,20 @@
 package com.gihutb.ryuseiishida.simulation.evacuation.analysis.LDA;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.gihutb.ryuseiishida.simulation.evacuation.Parameter;
+import com.gihutb.ryuseiishida.simulation.evacuation.agent.Agent;
+import com.gihutb.ryuseiishida.simulation.evacuation.agent.StateTag;
 import com.gihutb.ryuseiishida.simulation.evacuation.cell.Cell;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -38,15 +47,71 @@ public class Visualization {
         batch.end();
     }
 
-    public static void renderTopic(ShapeRenderer shapeRenderer, ArrayList<String> list) {
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.BLUE);
-        for (String s : list) {
-            int pos = Integer.parseInt(s.substring(0,2));
-            int dir = Integer.parseInt(s.substring(2,4));
+    public static ArrayList<String> getTopic() {
+        ArrayList<String> topic = new ArrayList<>();
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get("core/assets/topic.txt"))) {
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                topic.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return topic;
+    }
+
+    public static void renderTopic(ShapeRenderer shapeRenderer) {
+        for (String s : getTopic()) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(new Color(0, 1, 0, Float.parseFloat(s.split(",")[1]) * 10 * 2));
+            //shapeRenderer.setColor(new Color(0, 1, 0, 0.1f));
+            int pos = Integer.parseInt(s.split("d")[0].replace("p", ""));
+            int dir = Integer.parseInt(s.split("d")[1].substring(0, 1));
             float x = LDA.getPositionMap().getCells().get(pos).getCenterPoint().x;
             float y = LDA.getPositionMap().getCells().get(pos).getCenterPoint().y;
-            shapeRenderer.circle(x,y, 100);
+            String tag = s.split(",")[0].split("d")[1].substring(1);
+            shapeRenderer.circle(x, y, 500);
+            shapeRenderer.end();
+            renderTopicLine(shapeRenderer, x, y, dir, tag);
+        }
+    }
+
+    public static void renderTopicLine(ShapeRenderer shapeRenderer, float x, float y, int direction, String tag) {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.BLACK);
+        if (StateTag.follow.equals(tag)) {
+            shapeRenderer.setColor(Color.BLUE);
+        }
+        if (StateTag.moveGoal.equals(tag)) {
+            shapeRenderer.setColor(Color.RED);
+        }
+        switch (direction) {
+            case 1:
+                shapeRenderer.arc(x, y, 500, 22.5f, 5);
+                break;
+            case 2:
+                shapeRenderer.arc(x, y, 500, 67.5f, 5);
+                break;
+            case 3:
+                shapeRenderer.arc(x, y, 500, 112.5f, 5);
+                break;
+            case 4:
+                shapeRenderer.arc(x, y, 500, 157.5f, 5);
+                break;
+            case 5:
+                shapeRenderer.arc(x, y, 500, 200.5f, 5);
+                break;
+            case 6:
+                shapeRenderer.arc(x, y, 500, 247.5f, 5);
+                break;
+            case 7:
+                shapeRenderer.arc(x, y, 500, 292.5f, 5);
+                break;
+            case 8:
+                shapeRenderer.arc(x, y, 500, 337.5f, 5);
+                break;
         }
         shapeRenderer.end();
     }
