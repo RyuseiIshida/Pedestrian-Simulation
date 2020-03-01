@@ -20,14 +20,13 @@ public class KimPotentialModel {
     private Environment env;
     private Agent agent;
 
-    public KimPotentialModel(Environment env,Agent agent) {
+    public KimPotentialModel(Environment env, Agent agent) {
         this.env = env;
         this.agent = agent;
     }
 
     public float attractivePotential(Vector2 targetPosition, Vector2 goalPosition) {
         float len = targetPosition.dst2(goalPosition);
-        //double potentialWeight = cg * (1 - Math.exp(-1 * (len / (lg * lg))));
         double potentialWeight = cg * (1 - new Exp().value(-1 * (len / (lg * lg))));
         return (float) potentialWeight;
     }
@@ -35,7 +34,6 @@ public class KimPotentialModel {
     public float repulsivePotential(Vector2 targetPosition, ArrayList<Vector2> ObstaclePositionList) {
         float potentialWeight = 0f;
         for (Vector2 vec : ObstaclePositionList) {
-            //potentialWeight += co * Math.exp(-1 * (targetPosition.dst2(vec) / (lo * lo)));
             potentialWeight += co * new Exp().value(-1 * (targetPosition.dst2(vec) / (lo * lo)));
         }
         return potentialWeight;
@@ -61,15 +59,14 @@ public class KimPotentialModel {
 
     private float getPotential(Vector2 targetPosition) {
         float Ug = attractivePotential(targetPosition, agent.getMovePos());
-        //float Uo = repulsivePotential(targetPosition, env.getAgentsPosition(agent)) + repulsivePotential(agent.getPosition(), getNearObstaclePotentialCells());
         float Uo = repulsivePotential(targetPosition, env.getAgentsPosition(agent)) + repulsivePotential(agent.getPosition(), env.getObstaclesPosition());
         return Composition(Ug, Uo);
     }
 
     public ArrayList<Vector2> getNearObstaclePotentialCells() {
         ArrayList<Obstacle> nearObstacles = new ArrayList<>();
-        for(Obstacle obstacle : env.getObstacles()) {
-            if(agent.getPosition().dst2(obstacle.getMinPoint()) < 2000
+        for (Obstacle obstacle : env.getObstacles()) {
+            if (agent.getPosition().dst2(obstacle.getMinPoint()) < 2000
                     && agent.getPosition().dst2(obstacle.getMaxPoint()) < 2000) {
                 nearObstacles.add(obstacle);
             }
