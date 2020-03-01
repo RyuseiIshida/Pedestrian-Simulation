@@ -126,61 +126,6 @@ public class Agent {
     private float perceptionAllDst = 0;
 
     /**
-     * ランダムウォーク効用関数の選好度
-     */
-    private float UTILITY_PERFORMANCE_RANDOM_WALK = Parameter.U_RANDOM_WALK;
-
-    /**
-     * 追従行動効用関数の選好度
-     */
-    private float UTILITY_PERFORMANCE_FOLLOW_AGENT = Parameter.U_FOLLOW_AGENT;
-
-    /**
-     * ゴール移動効用関数の選好度
-     */
-    private float UTILITY_PERFORMANCE_MOVE_GOAL = Parameter.U_MOVE_GOAL;
-
-    /**
-     * 効用関数の重み <i>alpha</i>
-     */
-    private float UTILITY_ALPHA = Parameter.ALPHA;
-
-    /**
-     * 効用関数の重み <i>beta</i>
-     */
-    private float UTILITY_BETA = Parameter.BETA;
-
-    /**
-     * 効用関数の重み <i>gamma</i>
-     */
-    private float UTILITY_GAMMA = Parameter.GAMMA;
-
-    /**
-     * 効用関数の重み <i>delta</i>
-     */
-    private float UTILITY_DELTA = Parameter.DELTA;
-
-    /**
-     * 効用関数の重み <i>epsilon</i>
-     */
-    private float UTILITY_EPSILON = Parameter.EPSILON;
-
-    /**
-     * ランダム行動を発火する効用変数
-     **/
-    private float utilityRandomWalk = 0;
-
-    /**
-     * 追従行動を発火する効用変数
-     **/
-    private float utilityFollow = 0;
-
-    /**
-     * 出口に向かう行動を発火する効用変数
-     **/
-    private float utilityMoveGoal = 0;
-
-    /**
      * シミュレーションログファイル
      **/
     private File loadLogFile;
@@ -254,7 +199,6 @@ public class Agent {
      * 環境認識
      */
     private void perception() {
-        setMentalDst();
         setPerceptionContinue(); //同じルールをどれくらい継続しているのか
         setPerceptionAgent(); //視界にいるエージェント
         setPerceptionFollowAgent(); //視野内にいる追従できそうなエージェント
@@ -343,17 +287,6 @@ public class Agent {
         this.perceptionContinueStep = Float.parseFloat(valueList[13]);
         this.perceptionContinueDst = Float.parseFloat(valueList[14]);
         this.perceptionAllDst = Float.parseFloat(valueList[15]);
-        this.UTILITY_PERFORMANCE_RANDOM_WALK = Float.parseFloat(valueList[16]);
-        this.UTILITY_PERFORMANCE_FOLLOW_AGENT = Float.parseFloat(valueList[17]);
-        this.UTILITY_PERFORMANCE_MOVE_GOAL = Float.parseFloat(valueList[18]);
-        this.UTILITY_ALPHA = Float.parseFloat(valueList[19]);
-        this.UTILITY_BETA = Float.parseFloat(valueList[20]);
-        this.UTILITY_GAMMA = Float.parseFloat(valueList[21]);
-        this.UTILITY_DELTA = Float.parseFloat(valueList[22]);
-        this.UTILITY_EPSILON = Float.parseFloat(valueList[23]);
-        this.utilityRandomWalk = Float.parseFloat(valueList[24]);
-        this.utilityFollow = Float.parseFloat(valueList[25]);
-        this.utilityMoveGoal = Float.parseFloat(valueList[26]);
         this.perceptionBeforePos = this.position;
         this.perceptionBeforeStateTag = this.stateTag;
     }
@@ -445,49 +378,6 @@ public class Agent {
     }
 
     /**
-     * どのAgentルールが発火するのかを決める効用関数
-     * {@link #randomWalk()}, {@link #followAgent}, {@link #moveGoal()}の三つの行動ルールがある
-     */
-    private void utilityFunction() {
-        utilityRandomWalk = StateTag.randomWalk.equals(stateTag)
-                ? UTILITY_PERFORMANCE_RANDOM_WALK - perceptionContinueStep * UTILITY_GAMMA
-                : UTILITY_PERFORMANCE_RANDOM_WALK;
-        utilityRandomWalk = Math.max(utilityRandomWalk, 0.01f); //follow回避
-
-        utilityFollow = StateTag.follow.equals(stateTag)
-                ? perceptionInViewAgentList.size() * UTILITY_BETA
-                : perceptionFollowAgentList.size() * UTILITY_BETA;
-        utilityFollow = Math.min(utilityFollow, 0.8f);
-
-        utilityMoveGoal = StateTag.moveGoal.equals(stateTag)
-                ? 1 - perceptionContinueDst * UTILITY_EPSILON
-                : (goal != null ? 1 : -1);
-
-        Map<String, Float> actionMap = new TreeMap<>();
-        ArrayList<String> actionList = new ArrayList<>();
-        actionMap.put(StateTag.randomWalk, utilityRandomWalk);
-        actionMap.put(StateTag.follow, utilityFollow);
-        actionMap.put(StateTag.moveGoal, utilityMoveGoal);
-        actionMap.entrySet().stream()
-                .sorted(Collections.reverseOrder(java.util.Map.Entry.comparingByValue()))
-                .forEach(action -> actionList.add(action.getKey()));
-        if (StateTag.randomWalk.equals(actionList.get(0))) {
-            //System.out.println("utilityRandomWalk = " + utilityRandomWalk);
-            if (!StateTag.randomWalk.equals(stateTag)) {
-                initRandomWalk();
-            } else {
-                randomWalk();
-            }
-        } else if (StateTag.follow.equals(actionList.get(0))) {
-            stateTag = StateTag.follow;
-            moveFollow();
-        } else if (StateTag.moveGoal.equals(actionList.get(0))) {
-            //System.out.println("utilityMoveGoal = " + utilityMoveGoal);
-            moveGoal();
-        }
-    }
-
-    /**
      * {@link #goal}に向かって移動する
      */
     private void moveGoal() {
@@ -519,38 +409,12 @@ public class Agent {
         move(movePos);
     }
 
-    private void initFollowAgent() {
-        Optional<Agent> closestAgent = perceptionFollowAgentList.stream()
-                .min((a, b) -> Float.compare(position.dst(a.position), position.dst(b.position)));
-        followAgent = closestAgent.get();
-        if (perceptionFollowAgentList.size() != 0) {
-            followAgent.setFollower(this);
-            stateTag = StateTag.follow;
-        } else {
-            throw new NullPointerException();
-        }
-    }
-
-    private void followAgent() {
-        movePos = new Vector2(followAgent.getPosition()).sub(followAgent.getVelocity().scl(2f));
-        float distance = position.dst(followAgent.getPosition());
-        if (distance > viewRadiusLength || followers.contains(followAgent)) {
-            followAgent.followers.remove(this);
-            followAgent = null;
-            initRandomWalk();
-            return;
-        }
-        move(movePos);
-        stateTag = StateTag.follow;
-    }
-
     /**
      * {@link #movePos}の位置に向かって移動する
      *
      * @param movePos 移動座標
      */
     private void move(Vector2 movePos) {
-        setMentalPotential();
         Vector2 direction = UtilVector.direction(position, movePos);
         //setPotentialVector(direction);
         setFastPotentialVector(direction);
@@ -567,42 +431,6 @@ public class Agent {
     }
 
     ArrayList<Agent> beforeFollowAgent;
-//    private void moveFollow() {
-//        stateTag = StateTag.follow;
-//        beforeFollowAgent = perceptionInViewAgentList;
-//        ///setMentalPotential();
-//        Vector2 direction = UtilVector.direction(position, movePos);
-//        setFastFollowPotentialVector(direction);
-//        direction.nor();
-//        velocity = direction.scl(speed);
-//        Vector2 tmpPos = new Vector2(position);
-//        tmpPos.add(velocity);
-//        if (tmpPos.x >= 0 + Parameter.AGENT_RADIUS && tmpPos.x <= Parameter.SCALE.x - Parameter.AGENT_RADIUS) {
-//            position.x = tmpPos.x;
-//        }
-//        if (tmpPos.y >= 0 + Parameter.AGENT_RADIUS && tmpPos.y <= Parameter.SCALE.y - Parameter.AGENT_RADIUS) {
-//            position.y = tmpPos.y;
-//        }
-//    }
-
-
-//    private void moveFollow() {
-//        stateTag = StateTag.follow;
-//        beforeFollowAgent = perceptionInViewAgentList;
-//        ///setMentalPotential();
-//        Vector2 direction = UtilVector.direction(position, movePos);
-//        setFastFollowPotentialVector(direction);
-//        velocity = direction.scl(speed);
-//        Vector2 tmpPos = new Vector2(position);
-//        tmpPos.add(velocity);
-//        if (tmpPos.x >= 0 + Parameter.AGENT_RADIUS && tmpPos.x <= Parameter.SCALE.x - Parameter.AGENT_RADIUS) {
-//            position.x = tmpPos.x;
-//        }
-//        if (tmpPos.y >= 0 + Parameter.AGENT_RADIUS && tmpPos.y <= Parameter.SCALE.y - Parameter.AGENT_RADIUS) {
-//            position.y = tmpPos.y;
-//        }
-//    }
-
 
     private void velocityFollow(Vector2 direction) {
         Vector2 pVector = new Vector2();
@@ -622,7 +450,6 @@ public class Agent {
         velocityFollow(velocity);
         stateTag = StateTag.follow;
         beforeFollowAgent = perceptionInViewAgentList;
-        ///setMentalPotential();
         Vector2 direction = UtilVector.direction(position, movePos);
         setFastFollowPotentialVector(direction);
         Vector2 tmpPos = new Vector2(position);
@@ -678,7 +505,7 @@ public class Agent {
     private float getAgentKIMPotential(float x, float y) {
         float potentialWight = 0;
         float co = 1000;
-        float lo = Parameter.AGENT_RADIUS + mentalAgentWeight;
+        float lo = Parameter.AGENT_RADIUS;
         //float lo = Parameter.AGENT_RADIUS;
         //System.out.println("lo = " + lo);
         Vector2 pos = new Vector2(x, y);
@@ -693,7 +520,7 @@ public class Agent {
     private float getAgentKIMPotential2(float x, float y) {
         float potentialWight = 0;
         float co = 1000;
-        float lo = Parameter.AGENT_RADIUS + mentalAgentWeight;
+        float lo = Parameter.AGENT_RADIUS;
         //float lo = Parameter.AGENT_RADIUS;
         //System.out.println("lo = " + lo);
         Vector2 pos = new Vector2(x, y);
@@ -710,7 +537,7 @@ public class Agent {
         Vector2 pos = new Vector2(x, y);
         float potentialWeight = 0;
         float co = 1200;
-        float lo = Parameter.AGENT_RADIUS + mentalAgentWeight;
+        float lo = Parameter.AGENT_RADIUS;
         System.out.println("lo = " + lo);
         for (Obstacle obstacle : env.getObstacles()) {
             for (Cell obstacleCell : obstacle.getObstacleCells()) {
@@ -884,84 +711,6 @@ public class Agent {
     }
 
     /**
-     * @return {@link #UTILITY_PERFORMANCE_RANDOM_WALK}
-     */
-    public float getURandomWalk() {
-        return UTILITY_PERFORMANCE_RANDOM_WALK;
-    }
-
-    /**
-     * @return {@link #UTILITY_PERFORMANCE_FOLLOW_AGENT}
-     */
-    public float getUFollowAgent() {
-        return UTILITY_PERFORMANCE_FOLLOW_AGENT;
-    }
-
-    /**
-     * @return {@link #UTILITY_PERFORMANCE_MOVE_GOAL}
-     */
-    public float getUMoveGoal() {
-        return UTILITY_PERFORMANCE_MOVE_GOAL;
-    }
-
-    /**
-     * @return {@link #UTILITY_ALPHA}
-     */
-    public float getUTILITY_ALPHA() {
-        return UTILITY_ALPHA;
-    }
-
-    /**
-     * @return {@link #UTILITY_BETA}
-     */
-    public float getUTILITY_BETA() {
-        return UTILITY_BETA;
-    }
-
-    /**
-     * @return {@link #UTILITY_GAMMA}
-     */
-    public float getUTILITY_GAMMA() {
-        return UTILITY_GAMMA;
-    }
-
-    /**
-     * @return {@link #UTILITY_DELTA}
-     */
-    public float getUTILITY_DELTA() {
-        return UTILITY_DELTA;
-    }
-
-    /**
-     * @return {@link #UTILITY_EPSILON}
-     */
-    public float getUTILITY_EPSILON() {
-        return UTILITY_EPSILON;
-    }
-
-    /**
-     * @return {@link #utilityRandomWalk}
-     */
-    public float getUtilityRandomWalk() {
-        return utilityRandomWalk;
-    }
-
-    /**
-     * @return {@link #utilityFollow}
-     */
-    public float getUtilityFollow() {
-        return utilityFollow;
-    }
-
-
-    /**
-     * @return {@link #utilityMoveGoal}
-     */
-    public float getUtilityMoveGoal() {
-        return utilityMoveGoal;
-    }
-
-    /**
      * @return {@link #ID}
      */
     @Override
@@ -994,7 +743,6 @@ public class Agent {
         float lg = Parameter.VIEW_RADIUS_LENGTH * 2;
         Vector2 pos = new Vector2(x, y);
         for (Agent agent : perceptionInViewAgentList) {
-            //potentialWeight = (float) (cg * (1 - new Exp().value(-1 * (pos.dst2(agent.getPosition()) / (lg * lg)))));
             Vector2 followVelocity = UtilVector.direction(agent.getPosition(), agent.getMovePos());
             Vector2 followVector = new Vector2(agent.getPosition()).add(followVelocity);
             potentialWeight = (float) (cg * (1 - new Exp().value(-1 * (pos.dst2(followVector) / (lg * lg)))));
@@ -1006,15 +754,6 @@ public class Agent {
     private LinkedHashMap<Vector2, Float> obstaclePositionMap;
     private float obstacleLo = radius;
 
-    //    private void setObstaclePositionList() {
-//        obstaclePositionList = new LinkedList<>();
-//        for (Obstacle obstacle : env.getObstacles()) {
-//            for (Cell obstacleCell : obstacle.getObstacleCells()) {
-//                obstaclePositionList.add(obstacleCell.getCenterPoint());
-//            }
-//        }
-//    }
-//
     private void setObstaclePositionMap2() {
         setObstaclePositionMap();
         for (Cell obstacleCell : Parameter.experienceOLINE.getObstacleCells()) {
@@ -1032,71 +771,16 @@ public class Agent {
         }
     }
 
-//    private float getFastObstacleKIMPotential(float x, float y) {
-//        Vector2 pos = new Vector2(x, y);
-//        float potentialWeight = 0;
-//        float co = 1200;
-//        float lo = Parameter.AGENT_RADIUS + mentalWeight;
-//        System.out.println("lo = " + lo);
-//        for (Vector2 obstaclePos : obstaclePositionList) {
-//            double value = -1 * (pos.dst2(obstaclePos) / (lo * lo));
-//            potentialWeight += co * new Exp().value(value);
-//        }
-//        return potentialWeight;
-//    }
-
     private float getFastObstacleKIMPotential(float x, float y) {
         Vector2 pos = new Vector2(x, y);
         float potentialWeight = 0;
         float co = 1200;
         float lo;
         for (Map.Entry<Vector2, Float> entry : obstaclePositionMap.entrySet()) {
-            lo = entry.getValue() + mentalAgentWeight;
+            lo = entry.getValue();
             double value = -1 * (pos.dst2(entry.getKey()) / (lo * lo));
             potentialWeight += co * new Exp().value(value);
         }
         return potentialWeight;
-    }
-
-
-    private float mentalAgentWeight = 1;
-    private float mentalDst = 0;
-
-
-    private float setMentalDst() {
-        mentalDst = perceptionBeforePos.dst(position);
-        return mentalDst;
-    }
-
-    private float setMentalPotential() {
-        //mentalDst = setMentalDst();
-        float alpha = 0.1f;
-        if (mentalDst < 10) {
-            mentalAgentWeight += alpha;
-            //setMentalObstaclePotential();
-        }
-        return mentalAgentWeight;
-    }
-
-    private void setMentalObstaclePotential() {
-        for (Map.Entry<Vector2, Float> entry : obstaclePositionMap.entrySet()) {
-            if (isInView(entry.getKey())) {
-                entry.setValue(entry.getValue() + 1);
-            }
-        }
-    }
-
-    private static void createAgentList(int agentNum) {
-        String path = "core/assets/agentList.txt";
-        try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path))) {
-            for (int i = 0; i < agentNum; i++) {
-                float x = MathUtils.random(Parameter.INIT_RANDOM_X.valueA, Parameter.INIT_RANDOM_X.valueB);
-                float y = MathUtils.random(Parameter.INIT_RANDOM_Y.valueA, Parameter.INIT_RANDOM_Y.valueB);
-                bw.append(x + "," + y);
-                bw.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

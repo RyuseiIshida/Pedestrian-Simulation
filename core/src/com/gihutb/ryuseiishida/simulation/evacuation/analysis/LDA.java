@@ -102,7 +102,7 @@ public class LDA {
             for (ArrayList<String> data : dataList) {
                 for (String s : data) {
                     bw.append(s);
-                    if (s != data.get(data.size() - 1)) {
+                    if (!s.equals(data.get(data.size() - 1))) {
                         bw.append(",");
                     }
                 }

@@ -15,7 +15,7 @@ public class RenderObstacle {
     public static void renderObstacleRegion(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.BLUE);
+        shapeRenderer.setColor(Color.BLACK);
         for (Obstacle obstacle : environment.getObstacles()) {
             for (Cell obstacleCell : obstacle.getObstacleCells()) {
                 shapeRenderer.rect(obstacleCell.getLeftBottomPoint().x,

@@ -7,8 +7,16 @@ import com.gihutb.ryuseiishida.simulation.evacuation.environment.Environment;
 import com.gihutb.ryuseiishida.simulation.evacuation.obstacle.Fire;
 
 public class RenderFire {
+    private static boolean renderFireFlag = true;
+
     public RenderFire(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
-        renderFireRegion(shapeRenderer, camera, environment);
+        isRenderFireRegion(shapeRenderer, camera, environment);
+    }
+
+    public static void isRenderFireRegion(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+        if (renderFireFlag) {
+            renderFireRegion(shapeRenderer, camera, environment);
+        }
     }
 
     public static void renderFireRegion(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
@@ -19,5 +27,9 @@ public class RenderFire {
         Fire fire = environment.getFire();
         shapeRenderer.circle(fire.getFirePoint().x, fire.getFirePoint().y, fire.getSpreadFireRange());
         shapeRenderer.end();
+    }
+
+    public static void setRenderFlag() {
+        renderFireFlag = !renderFireFlag;
     }
 }

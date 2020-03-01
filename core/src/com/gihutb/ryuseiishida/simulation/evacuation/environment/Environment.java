@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.gihutb.ryuseiishida.simulation.evacuation.util.Parameter;
 import com.gihutb.ryuseiishida.simulation.evacuation.agent.Group;
 import com.gihutb.ryuseiishida.simulation.evacuation.analysis.LDA;
-import com.gihutb.ryuseiishida.simulation.evacuation.analysis.LDA2;
 import com.gihutb.ryuseiishida.simulation.evacuation.cell.Cell;
 import com.gihutb.ryuseiishida.simulation.evacuation.goal.Goal;
 import com.gihutb.ryuseiishida.simulation.evacuation.log.LoadLog;
@@ -24,17 +23,17 @@ import java.util.ArrayList;
 
 public class Environment {
     private int step;
-    //private CellsMap envCellsMap = new CellsMap(Parameter.SCALE, Parameter.CELL_INTERVAL);
+    private boolean updateFlag = false;
     private CellsMap envCellsMap = Parameter.cellsMap;
     private ArrayList<Goal> goals = new ArrayList<>(Parameter.GOALS);
-    //private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private ArrayList<BoxLine> boxes = Parameter.Boxes;
     private ArrayList<Obstacle> obstacles = Parameter.OBSTACLES;
-
     private Fire fire = new Fire(Parameter.FIRE_POINT, 0);
     private ArrayList<Agent> agentList;
     private int goalAgentNum;
-    public boolean agentClearFlag = false;
+
+    private LDA ldaStepSplit;
+    private LDA ldaGroupSizeSplit;
 
     private LoadLog loadLog;
     private WriterLog writerLog = new WriterLog();
@@ -53,49 +52,32 @@ public class Environment {
         } else {
             spawnInitAgents();
         }
-        if (Parameter.ISWRITELOG) {
+        if (Parameter.IS_WRITE_LOG) {
             writerLog = new WriterLog(this);
         }
-
+        ldaStepSplit = new LDA(agentList, 100);
+        ldaGroupSizeSplit = new LDA(agentList, 100);
     }
 
     public void update() {
-        TimeMeasurement timeMeasurement = new TimeMeasurement();
-        timeMeasurement.start();
-        if (Parameter.ISWRITELOG) {
-            writerLog.writeAgentLog();
-            writerLog.writeMacroLog();
+        if (updateFlag) {
+            TimeMeasurement timeMeasurement = new TimeMeasurement();
+            timeMeasurement.start();
+            if (Parameter.IS_WRITE_LOG) {
+                writerLog.writeAgentLog();
+                writerLog.writeMacroLog();
+            }
+            agentList.stream()
+                    .parallel()
+                    .forEach(Agent::action);
+            ifAgentInGoal();
+            ifAgentInFire();
+            ldaStepSplit.recordStepSplit(step);
+            ldaGroupSizeSplit.recordGroupSizeSplit(step);
+            fire.spreadFire();
+            logGroup.add(String.valueOf(Group.getGroups2(agentList).size()));
+            step++;
         }
-        agentList.stream()
-                .parallel()
-                .forEach(Agent::action);
-        ifAgentInGoal();
-        ifAgentInFire();
-        LDA2.record(step, agentList);
-        LDA.record2(agentList);
-        //LDA.record3(step, agentList);
-        //System.out.println("LDA record");
-        if (step == 1000) {
-            LDA.outPrint();
-            LDA2.outPrint();
-        }
-
-//        boolean tag = true;
-//        for (Agent agent : agentList) {
-//            if (agent.getStateTag().equals(StateTag.moveGoal)) {
-//                tag = false;
-//                break;
-//            }
-//        }
-//        if(tag) {
-//            LDA.outPrint();
-//            System.exit(0);
-//        }
-
-        //timeMeasurement.stop();
-        fire.spreadFire();
-        logGroup.add(String.valueOf(Group.getGroups2(agentList).size()));
-        step++;
     }
 
     public CellsMap cellsMapEntropy = new CellsMap(Parameter.SCALE, 1000);
@@ -175,10 +157,10 @@ public class Environment {
     public Vector2 getRandomPosition() {
         float x;
         float y;
-        while(true){
+        while (true) {
             x = MathUtils.random(Parameter.INIT_RANDOM_X.valueA, Parameter.INIT_RANDOM_X.valueB);
             y = MathUtils.random(Parameter.INIT_RANDOM_Y.valueA, Parameter.INIT_RANDOM_Y.valueB);
-            if(checkInBoxes(x,y)) {
+            if (checkInBoxes(x, y)) {
                 continue;
             }
             break;
@@ -188,7 +170,7 @@ public class Environment {
 
     public Boolean checkInBoxes(float x, float y) {
         for (BoxLine box : boxes) {
-            if(box.isPositionInBox(x, y)){
+            if (box.isPositionInBox(x, y)) {
                 return true;
             }
         }
@@ -287,7 +269,11 @@ public class Environment {
     }
 
     public void setGoalAgentNum(int num) {
-        this.goalAgentNum = num;
+        goalAgentNum = num;
+    }
+
+    public void switchUpdateFlag() {
+        updateFlag = !updateFlag;
     }
 
     public Fire getFire() {

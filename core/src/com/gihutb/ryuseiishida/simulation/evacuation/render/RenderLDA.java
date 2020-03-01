@@ -18,11 +18,19 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class RenderLDA {
+    private static boolean renderFlag = false;
 
     public RenderLDA(Batch batch, BitmapFont bitmapFont, ShapeRenderer shapeRenderer, Camera camera) {
-        cellIndex(shapeRenderer, camera, batch, bitmapFont);
-        renderTopicRegion(shapeRenderer, camera);
+        if (renderFlag) {
+            //renderTopicRegion(shapeRenderer, camera);
+            cellIndex(shapeRenderer, camera, batch, bitmapFont);
+        }
     }
+
+    public static void switchRenderFlag() {
+        renderFlag = !renderFlag;
+    }
+
 
     public static void cell(ShapeRenderer shapeRenderer, Camera camera) {
         shapeRenderer.setProjectionMatrix(camera.combined);

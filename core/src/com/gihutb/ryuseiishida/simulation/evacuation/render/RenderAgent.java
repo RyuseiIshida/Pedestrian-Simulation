@@ -11,12 +11,15 @@ import com.gihutb.ryuseiishida.simulation.evacuation.agent.StateTag;
 import com.gihutb.ryuseiishida.simulation.evacuation.environment.Environment;
 
 public class RenderAgent {
+    private static boolean renderViewFlag = false;
+    private static boolean renderMoveGoalLineFlag = false;
+    private static boolean renderFollowLineFlag = false;
 
     public RenderAgent(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         renderBody(shapeRenderer, camera, environment);
-        renderView(shapeRenderer, camera, environment);
-        renderMoveGoalLine(shapeRenderer, camera, environment);
-        renderFollowLine(shapeRenderer, camera, environment);
+        isRenderView(shapeRenderer, camera, environment);
+        isRenderMoveGoalLine(shapeRenderer, camera, environment);
+        isRenderFollowLine(shapeRenderer, camera, environment);
     }
 
     public static void renderBody(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
@@ -29,23 +32,28 @@ public class RenderAgent {
             }
             shapeRenderer.setColor(Color.BLACK);
             shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.AGENT_RADIUS);
-            float range = 0.7f;
             switch (agent.getStateTag()) {
                 case StateTag.moveGoal:
                     shapeRenderer.setColor(Color.RED);
-                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.AGENT_RADIUS * range);
+                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.AGENT_RADIUS);
                     break;
                 case StateTag.follow:
                     shapeRenderer.setColor(Color.GREEN);
-                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.AGENT_RADIUS * range);
+                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.AGENT_RADIUS);
                     break;
                 case StateTag.randomWalk:
                     shapeRenderer.setColor(Color.BLACK);
-                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.AGENT_RADIUS * range);
+                    shapeRenderer.circle(agent.getPosition().x, agent.getPosition().y, Parameter.AGENT_RADIUS);
                     break;
             }
         }
         shapeRenderer.end();
+    }
+
+    public static void isRenderView(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+        if (renderViewFlag) {
+            renderView(shapeRenderer, camera, environment);
+        }
     }
 
     public static void renderView(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
@@ -63,6 +71,12 @@ public class RenderAgent {
         Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
+    public static void isRenderMoveGoalLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+        if (renderMoveGoalLineFlag) {
+            renderMoveGoalLine(shapeRenderer, camera, environment);
+        }
+    }
+
     public static void renderMoveGoalLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -75,6 +89,11 @@ public class RenderAgent {
         shapeRenderer.end();
     }
 
+    public static void isRenderFollowLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+        if (renderFollowLineFlag) {
+            renderFollowLine(shapeRenderer, camera, environment);
+        }
+    }
 
     public static void renderFollowLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -88,5 +107,15 @@ public class RenderAgent {
         shapeRenderer.end();
     }
 
+    public static void setRenderViewFlag() {
+        renderViewFlag = !renderViewFlag;
+    }
 
+    public static void setRenderMoveGoalLineFlag() {
+        renderMoveGoalLineFlag = !renderMoveGoalLineFlag;
+    }
+
+    public static void setRenderFollowLineFlag() {
+        renderFollowLineFlag = !renderFollowLineFlag;
+    }
 }

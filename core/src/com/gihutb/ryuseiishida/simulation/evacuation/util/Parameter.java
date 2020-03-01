@@ -20,17 +20,7 @@ public class Parameter {
     /**
      * ログの記録
      */
-    public static boolean ISWRITELOG = false;
-
-    /**
-     * シミュレーションの打ち切りステップ
-     */
-    public static float ENDSTEP = 0;
-
-    /**
-     * シミュレーション試行回数
-     */
-    public static int ATTEMPTSNUM = 0;
+    public static boolean IS_WRITE_LOG = false;
 
     //Environment
     //1 pixel = 1 cm
@@ -38,10 +28,10 @@ public class Parameter {
     public static Vector2 SCALE = new Vector2(100 * METER, 100 * METER);
     public static ArrayList<Goal> GOALS = new ArrayList<>(Arrays.asList(
             new Goal(0, 200, 200, 200 + 200)
-            //new Goal(8900, 4000, 100, 2000)
-            //new Goal(-1000, -4000, 0, 0)
-            //new Goal(9000 + 200, SCALE.y / 2 + 3000, 0, 0)
-            //new Goal(9000 + 200, SCALE.y / 2 - 5000, 100, 2000)
+//            new Goal(8900, 4000, 100, 2000)
+//            new Goal(-1000, -4000, 0, 0)
+//            new Goal(9000 + 200, SCALE.y / 2 + 3000, 0, 0)
+//            new Goal(9000 + 200, SCALE.y / 2 - 5000, 100, 2000)
     ));
     public static int CELL_INTERVAL = 10;
 
@@ -52,19 +42,18 @@ public class Parameter {
     public static CellsMap cellsMap = new CellsMap(SCALE, CELL_INTERVAL);
 
     public static ArrayList<BoxLine> Boxes = new ArrayList<>(Arrays.asList(
-            // 左上
-            new BoxLine(1200, 6200, 4500, 8000, cellsMap),
-            //右上
-            new BoxLine(5700, 6200, 9000, 8000, cellsMap),
-            // 左下
-            new BoxLine(1200, 1200, 4500, 3000, cellsMap),
-            //右下
-            new BoxLine(5700, 1200, 9000, 3000, cellsMap),
-            //中央左
-            new BoxLine(1200, 3700, 4500, 5500, cellsMap),
-            //中央右
-            new BoxLine(5700, 3700, 9000, 5500, cellsMap)
-
+//            // 左上
+//            new BoxLine(1200, 6200, 4500, 8000, cellsMap),
+//            //右上
+//            new BoxLine(5700, 6200, 9000, 8000, cellsMap),
+//            // 左下
+//            new BoxLine(1200, 1200, 4500, 3000, cellsMap),
+//            //右下
+//            new BoxLine(5700, 1200, 9000, 3000, cellsMap),
+//            //中央左
+//            new BoxLine(1200, 3700, 4500, 5500, cellsMap),
+//            //中央右
+//            new BoxLine(5700, 3700, 9000, 5500, cellsMap)
     ));
 
     public static ArrayList<Obstacle> OBSTACLES = new ArrayList<>(Arrays.asList(

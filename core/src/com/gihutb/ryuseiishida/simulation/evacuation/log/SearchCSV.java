@@ -31,17 +31,6 @@ public class SearchCSV {
     private final int p_ContinueStep = 13;
     private final int p_ContinueDst = 14;
     private final int p_AllDst = 15;
-    private final int u_utilityRandomWalk = 16;
-    private final int u_utilityFollow = 17;
-    private final int u_utilityMoveGoal = 18;
-    private final int alpha = 18;
-    private final int beta = 20;
-    private final int gamma = 21;
-    private final int delta = 22;
-    private final int epsiolon = 23;
-    private final int utilityRandomWalk = 24;
-    private final int utilityFollow = 25;
-    private final int utilityMoveGoal = 26;
 
     public void printColumn() {
         int i = -1;
@@ -53,21 +42,8 @@ public class SearchCSV {
                 }
                 i++;
             }
-//            csvParser.getRecords().forEach(record -> {
-//                System.out.println(record.get(1));
-//                //System.out.printf("%s", record.get(goal));
-//            });
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    public void writers() {
-        String path ="SimLog/beta=0.1/";
-        String out ="SimLog/out";
-        for (int i = 10; i < 50; i++) {
-            System.out.println(path + "agent" + i + "txt");
-            write(Paths.get(path + "agent" + i + ".txt"), Paths.get(out + i + ".txt"));
         }
     }
 
@@ -91,7 +67,6 @@ public class SearchCSV {
             e.printStackTrace();
         }
     }
-
 
     public static void main(String[] args) {
         SearchCSV searchCSV = new SearchCSV();

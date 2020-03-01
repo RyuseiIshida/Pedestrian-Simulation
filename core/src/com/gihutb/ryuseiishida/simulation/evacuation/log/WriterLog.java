@@ -24,8 +24,7 @@ public class WriterLog {
     private Environment env;
     private ArrayList<Agent> agents;
 
-    public WriterLog(){
-
+    public WriterLog() {
     }
 
     public WriterLog(Environment env) {
@@ -35,7 +34,7 @@ public class WriterLog {
         String time = format.format(Calendar.getInstance().getTime());
         path = Paths.get("SimLog/" + time).toString();
         new File(path).mkdir();
-        new File(path+"/Agents").mkdir();
+        new File(path + "/Agents").mkdir();
         writeSourceCode(path);
     }
 
@@ -136,7 +135,7 @@ public class WriterLog {
                 //書き込み
                 CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
                 for (CSVRecord csvRecord : csvRecords) {
-                    printer.printRecord(csvRecord.get(0), csvRecord.get(1), csvRecord.get(2), csvRecord.get(3), csvRecord.get(4), csvRecord.get(5), csvRecord.get(6), csvRecord.get(7), csvRecord.get(8), csvRecord.get(9), csvRecord.get(10), csvRecord.get(11), csvRecord.get(12), csvRecord.get(13), csvRecord.get(14), csvRecord.get(15), csvRecord.get(16), csvRecord.get(17), csvRecord.get(18), csvRecord.get(19), csvRecord.get(20), csvRecord.get(21), csvRecord.get(22), csvRecord.get(23), csvRecord.get(24), csvRecord.get(25), csvRecord.get(26));
+                    printer.printRecord(csvRecord.get(0), csvRecord.get(1), csvRecord.get(2), csvRecord.get(3), csvRecord.get(4), csvRecord.get(5), csvRecord.get(6), csvRecord.get(7), csvRecord.get(8), csvRecord.get(9), csvRecord.get(10), csvRecord.get(11), csvRecord.get(12), csvRecord.get(13), csvRecord.get(14), csvRecord.get(15));
                 }
 
                 String wgoal = agent.getGoal() == null ? "null" : agent.getGoal().toString().replace("\"", "").replace(",", ":");
@@ -156,18 +155,7 @@ public class WriterLog {
                         agent.getPerceptionFollowAgentList().size(), //12
                         agent.getPerceptionContinueStep(), //13
                         agent.getPerceptionContinueDst(), //14
-                        agent.getPerceptionAllDst(), //15
-                        agent.getURandomWalk(), //16
-                        agent.getUFollowAgent(), //17
-                        agent.getUMoveGoal(), //18
-                        agent.getUTILITY_ALPHA(), //19
-                        agent.getUTILITY_BETA(), //20
-                        agent.getUTILITY_GAMMA(), //21
-                        agent.getUTILITY_DELTA(), //22
-                        agent.getUTILITY_EPSILON(), //23
-                        agent.getUtilityRandomWalk(), //24
-                        agent.getUtilityFollow(), //25
-                        agent.getUtilityMoveGoal()); //26
+                        agent.getPerceptionAllDst()); //15
                 printer.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -194,12 +182,7 @@ public class WriterLog {
                     "p_followAgentSize",
                     "p_ContinueStep",
                     "p_ContinueDst",
-                    "p_AllDst",
-                    "u_utilityRandomWalk",
-                    "u_utilityFollow",
-                    "u_utilityMoveGoal",
-                    "alpha", "beta", "gamma", "delta", "epsilon",
-                    "utilityRandomWalk", "utilityFollow", "utilityMoveGoal");
+                    "p_AllDst");
             printer.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -251,7 +234,7 @@ public class WriterLog {
 
     public void writeEntropy(ArrayList<String> logText) {
         String path = "core/assets/entropy.txt";
-        try(BufferedWriter br = Files.newBufferedWriter(Paths.get(path))){
+        try (BufferedWriter br = Files.newBufferedWriter(Paths.get(path))) {
             for (String str : logText) {
                 br.append(str);
                 br.newLine();
@@ -263,7 +246,7 @@ public class WriterLog {
 
     public void writeGroup(ArrayList<String> logText) {
         String path = "core/assets/group.txt";
-        try(BufferedWriter br = Files.newBufferedWriter(Paths.get(path))){
+        try (BufferedWriter br = Files.newBufferedWriter(Paths.get(path))) {
             for (String str : logText) {
                 br.append(str);
                 br.newLine();

@@ -7,7 +7,7 @@ import com.gihutb.ryuseiishida.simulation.evacuation.environment.Environment;
 import com.gihutb.ryuseiishida.simulation.evacuation.goal.Goal;
 
 public class RenderGoal {
-    public RenderGoal(ShapeRenderer shapeRenderer, Camera camera, Environment environment){
+    public RenderGoal(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         renderGoalRegion(shapeRenderer, camera, environment);
     }
 

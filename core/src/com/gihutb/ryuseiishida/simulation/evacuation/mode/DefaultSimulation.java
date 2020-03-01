@@ -19,10 +19,6 @@ public class DefaultSimulation extends ApplicationAdapter {
     private BitmapFont bitmapFont;
     private static Environment environment;
 
-    //Operation
-    private static boolean PLAY = false;
-    private int attemptsNum = 0;
-
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -37,16 +33,7 @@ public class DefaultSimulation extends ApplicationAdapter {
 
     @Override
     public void render() {
-        if (PLAY) {
-            environment.update();
-        }
-
-        if (environment.agentClearFlag) {
-            environment.getAgentList().clear();
-            environment.agentClearFlag = false;
-            environment.setStep(0);
-            PLAY = false;
-        }
+        environment.update();
         new Font(batch, bitmapFont, camera, environment);
         new RenderAgent(shapeRenderer, camera, environment);
         new RenderCell(shapeRenderer, camera, environment);
