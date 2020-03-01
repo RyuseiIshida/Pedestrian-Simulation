@@ -13,37 +13,54 @@ import java.util.ArrayList;
 
 public class LDA {
     private static CellsMap positionMap = new CellsMap(Parameter.SCALE, 1000);
-    private static ArrayList<ArrayList<String>> dataList = new ArrayList<>();
-    private static ArrayList<ArrayList<String>> dataList3 = new ArrayList<>();
-    private static int splitStep = 60;
+    // group sizeで文書を区切る
+    private int perceptionGroupSize = 0;
+    private ArrayList<Agent> agentList;
+    private Integer outPrintStep;
+    private ArrayList<ArrayList<String>> dataList = new ArrayList<>();
 
-    public static void record(int step, ArrayList<Agent> agentList) {
+    public LDA(ArrayList<Agent> agentList) {
+        this.agentList = agentList;
+    }
+
+    public LDA(ArrayList<Agent> agentList, int outPrintStep) {
+        this.agentList = agentList;
+        this.outPrintStep = outPrintStep;
+    }
+
+    // 引数stepで文書を区切る
+    public void recordStepSplit(int step) {
+        int splitStep = 60;
         if (step == 0 || step % splitStep == 0) {
-            setAgent(agentList);
+            setDataList(agentList);
+        }
+        if (outPrintStep == null) {
+            return;
+        }
+        if (step > outPrintStep) {
+            outPrintStep = null;
+            outPrint("stepSplit_Corpus");
         }
     }
 
-    // group sizeで文書を区切る
-    private static int perceptionGroupSize = 0;
-
-    public static void record2(ArrayList<Agent> agentList) {
+    // グループサイズが変わったタイミングで文書を区切る
+    public void recordGroupSizeSplit(int step) {
         ArrayList<ArrayList<Agent>> AgentGroups = Group.getGroup3(agentList);
         if (AgentGroups.size() != perceptionGroupSize) {
-            setAgent(agentList);
+            setDataList(agentList);
         }
         perceptionGroupSize = AgentGroups.size();
-    }
-
-    // agentごと
-    public static void record3(int step, ArrayList<Agent> agentList)  {
-        if (step == 0 || step % splitStep == 0) {
-            setAgent2(agentList);
+        if (outPrintStep == null) {
+            return;
+        }
+        if (step > outPrintStep) {
+            outPrintStep = null;
+            outPrint("groupSizeSplit_Corpus");
         }
     }
 
     // シミュレーションごと
-
-    private static void setAgent(ArrayList<Agent> agentList) {
+    private void setDataList(ArrayList<Agent> agentList) {
         ArrayList<String> data = new ArrayList<>();
         for (Agent agent : agentList) {
             String pos = String.valueOf(positionMap.getCells().indexOf(positionMap.getCell(agent.getPosition())));
@@ -54,74 +71,35 @@ public class LDA {
         dataList.add(data);
     }
 
-    private static void setAgent2(ArrayList<Agent> agentList) {
-        if(dataList3.isEmpty()){
-            for (Agent agent : agentList) {
-                dataList3.add(new ArrayList<String>());
-            }
-        }
-        for (Agent agent : agentList) {
-            String pos = String.valueOf(positionMap.getCells().indexOf(positionMap.getCell(agent.getPosition())));
-            String dir = String.valueOf(getAgentDirection(agent));
-            String state = agent.getStateTag();
-            dataList3.get(Integer.parseInt(agent.getID())-1).add("p" + pos + "d" + dir + state);
-        }
-    }
-
-    public static int getAgentDirection(Agent agent) {
-        int direction = (int)agent.getDirectionDegree();
-        if(direction < 0) {
+    public int getAgentDirection(Agent agent) {
+        int direction = (int) agent.getDirectionDegree();
+        if (direction < 0) {
             direction += 360;
         }
         if (direction >= 0 && direction <= 45) {
             return 1;
-        }
-        if (direction > 45 && direction <= 90) {
+        } else if (direction > 45 && direction <= 90) {
             return 2;
-        }
-        if (direction > 90 && direction <= 135) {
+        } else if (direction > 90 && direction <= 135) {
             return 3;
-        }
-        if (direction > 135 && direction <= 180) {
+        } else if (direction > 135 && direction <= 180) {
             return 4;
-        }
-        if (direction > 180 && direction <= 225) {
+        } else if (direction > 180 && direction <= 225) {
             return 5;
-        }
-        if (direction > 225 && direction <= 270) {
+        } else if (direction > 225 && direction <= 270) {
             return 6;
-        }
-        if (direction > 270 && direction <= 315) {
+        } else if (direction > 270 && direction <= 315) {
             return 7;
-        }
-        if (direction > 315 && direction < 360) {
+        } else if (direction > 315 && direction < 360) {
             return 8;
         }
-        throw new IllegalArgumentException("範囲外 direction = " + direction);
+        throw new IllegalArgumentException("Direction is out of range. [ direction = " + direction + " ]");
     }
 
-    public static void outPrint() {
-        String path = "core/assets/corpus.txt";
+    public void outPrint(String fileName) {
+        String path = "core/assets/" + fileName;
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path))) {
             for (ArrayList<String> data : dataList) {
-                for (String s : data) {
-                    bw.append(s);
-                    if (s != data.get(data.size() - 1)) {
-                        bw.append(",");
-                    }
-                }
-                bw.newLine();
-            }
-            System.out.println("save corpus data");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        outPrint3();
-    }
-    public static void outPrint3() {
-        String path = "core/assets/corpus3.txt";
-        try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path))) {
-            for (ArrayList<String> data : dataList3) {
                 for (String s : data) {
                     bw.append(s);
                     if (s != data.get(data.size() - 1)) {
