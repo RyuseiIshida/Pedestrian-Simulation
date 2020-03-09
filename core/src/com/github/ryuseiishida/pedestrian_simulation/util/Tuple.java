@@ -1,8 +1,8 @@
 package com.github.ryuseiishida.pedestrian_simulation.util;
 
 public class Tuple<T> {
-    public final T valueA;
-    public final T valueB;
+    public T valueA;
+    public T valueB;
 
     public Tuple(T valueA, T valueB) {
         this.valueA = valueA;
@@ -13,8 +13,16 @@ public class Tuple<T> {
         return valueA;
     }
 
+    public void setValueA(T valueA) {
+        this.valueA = valueA;
+    }
+
     public T getValueB() {
         return valueB;
+    }
+
+    public void setValueB(T valueB) {
+        this.valueB = valueB;
     }
 
     @Override
