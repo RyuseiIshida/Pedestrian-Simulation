@@ -1,5 +1,6 @@
 ## Multi-agent simulation tool incorporating group evacuation behavior model
-JSAI2019(人工知能学会全国大会)のプログラムです。   
+JSAI2019(人工知能学会全国大会)のプログラムです。
+![top-page](https://github.com/RyuseiIshida/Pedestrian-Simulation/blob/master/_SCREENSHOT/simulation.png?raw=true)   
 #### 利用方法
 DesktopLauncherよりビルドを行う。  
 シミュレーション設定は``core/src/com/github/ryuseiishida/
@@ -15,10 +16,10 @@ JavaFXプログラムリファクタリング中
 ``Ctr+数字+マウルクリック``エージェント設置(出口を知っている避難エージェント)
 
 ### トピックモデルによる集団行動の解析
-JSAI2020(人工知能学会全国大会)での発表プログラムです。
+JSAI2020(人工知能学会全国大会)での発表予定プログラムです。
 避難シミュレーションログをトピックモデルで学習することにより、
 集団行動の分析を可能にします。
-
+![lda](https://github.com/RyuseiIshida/Pedestrian-Simulation/blob/master/_SCREENSHOT/lda.png?raw=true)
 #### 利用方法
 シミュレーション後に``assets/out``フォルダ以下にLDA用のコーパスとして
 ``stepGroupSizeSplit_Corpus.txt``と``stepSplit_Corpus.txt``が生成されます。  
