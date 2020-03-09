@@ -18,16 +18,44 @@ public class Parameter {
     public static String MODE = "DefaultSimulation";
 
     /**
+     * シミュレーションループ回数
+     */
+    public static int LOOP_NUM = 2;
+
+    /**
+     * シミュレーション終了ステップ
+     */
+    public static int END_STEP = 1000;
+
+    /**
      * ログの記録
      */
     public static boolean IS_WRITE_LOG = false;
+    
+    public static boolean IS_WRITE_LOG_AGENT = false;
+    
+    public static boolean IS_WRITE_LOG_MACRO = false;
+
+    /**
+     * LDA コーパス保存ステップ
+     * nullの場合はCtr+Lで保存する
+     */
+    public static int LDA_OUT_PRINT_STEP = 1000;
+
+    /**
+     * LDA 文書の区切り方
+     */
+    public static int LDA_SPLIT_STEP = 60;
+
+
 
     //Environment
     //1 pixel = 1 cm
     private static float METER = 100f;
     public static Vector2 SCALE = new Vector2(100 * METER, 100 * METER);
     public static ArrayList<Goal> GOALS = new ArrayList<>(Arrays.asList(
-            new Goal(0, 200, 200, 200 + 200)
+            new Goal(0, 200, 200, 200 + 200),
+                        new Goal(SCALE.x - 200, SCALE.y - 1400, 200, 200 + 200)
 //            new Goal(8900, 4000, 100, 2000)
 //            new Goal(-1000, -4000, 0, 0)
 //            new Goal(9000 + 200, SCALE.y / 2 + 3000, 0, 0)
@@ -39,7 +67,7 @@ public class Parameter {
     public static Vector2 FIRE_POINT = new Vector2();
 
     //Obstacles
-    public static CellsMap cellsMap = new CellsMap(SCALE, CELL_INTERVAL);
+    public static CellsMap ENV_CELLS_MAP = new CellsMap(SCALE, CELL_INTERVAL);
 
     public static ArrayList<BoxLine> Boxes = new ArrayList<>(Arrays.asList(
 //            // 左上
@@ -67,13 +95,14 @@ public class Parameter {
 //            new Line(0, SCALE.y, SCALE.x, SCALE.y, cellsMap),
 
             //left wall line
-            new Line(200, 600, 200, SCALE.y - 1000, cellsMap),
+            new Line(200, 600, 200, SCALE.y - 1000, ENV_CELLS_MAP),
             //right wall line
-            new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1000, cellsMap),
+            //new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1000, cellsMap),
+            new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1400, ENV_CELLS_MAP),
             // bottom wall line
-            new Line(200, 200, SCALE.x - 200, 200, cellsMap),
+            new Line(200, 200, SCALE.x - 200, 200, ENV_CELLS_MAP),
             // top wall line
-            new Line(200, SCALE.y - 1000, SCALE.x - 200, SCALE.y - 1000, cellsMap)
+            new Line(200, SCALE.y - 1000, SCALE.x - 200, SCALE.y - 1000, ENV_CELLS_MAP)
 //
 //            // 左下
 //            // left
@@ -133,7 +162,7 @@ public class Parameter {
 //            new Line(1200, 5500, 4000, 5500, cellsMap)
     ));
 
-    public static Line experienceOLINE = new Line(0, 0, 0, 0, cellsMap);
+    public static Line experienceOLINE = new Line(0, 0, 0, 0, ENV_CELLS_MAP);
 
     //potential
     public static float AGENT_KIM_POTENTIAL_WEIGHT = 200;
@@ -143,10 +172,10 @@ public class Parameter {
     public static float POTENTIAL_DELTA = 1f;
 
     //agent
-    public static int INIT_AGENT_NUM = 100;
+    public static int INIT_AGENT_NUM = 30;
     public static int GOAL_AGENT_NUM = 30;
-    public static Tuple<Float> INIT_RANDOM_X = new Tuple<>(200f, SCALE.x - 300);
-    public static Tuple<Float> INIT_RANDOM_Y = new Tuple<>(200f, SCALE.y - 1100);
+    public static Tuple<Float> INIT_RANDOM_X = new Tuple<>(300f, SCALE.x - 300);
+    public static Tuple<Float> INIT_RANDOM_Y = new Tuple<>(300f, SCALE.y - 1100);
     //ゴールを知っているエージェントのゴール番号 or "random"
     public static String GOAL_AGENT_DESTINATION = "1";
     private static int AGENT_ACTION_INTERVAL = 10; //1秒あたり何回行動できるか

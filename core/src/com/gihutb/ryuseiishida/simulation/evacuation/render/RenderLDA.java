@@ -22,7 +22,7 @@ public class RenderLDA {
 
     public RenderLDA(Batch batch, BitmapFont bitmapFont, ShapeRenderer shapeRenderer, Camera camera) {
         if (renderFlag) {
-            //renderTopicRegion(shapeRenderer, camera);
+            renderTopicRegion(shapeRenderer, camera);
             cellIndex(shapeRenderer, camera, batch, bitmapFont);
         }
     }

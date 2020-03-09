@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.gihutb.ryuseiishida.simulation.evacuation.environment.LoopController;
 import com.gihutb.ryuseiishida.simulation.evacuation.util.Parameter;
 import com.gihutb.ryuseiishida.simulation.evacuation.environment.Environment;
 import com.gihutb.ryuseiishida.simulation.evacuation.input.Inputs;
@@ -17,6 +18,7 @@ public class DefaultSimulation extends ApplicationAdapter {
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private BitmapFont bitmapFont;
+    private LoopController loopController;
     private static Environment environment;
 
     @Override
@@ -27,8 +29,9 @@ public class DefaultSimulation extends ApplicationAdapter {
         shapeRenderer = new ShapeRenderer();
         bitmapFont = new BitmapFont();
         bitmapFont.setColor(Color.BLACK);
-        bitmapFont.getData().setScale(10);
-        environment = new Environment();
+        bitmapFont.getData().setScale(15);
+        loopController = new LoopController();
+        environment = loopController.isLoop() ? new Environment(true) : new Environment();
     }
 
     @Override
@@ -42,10 +45,18 @@ public class DefaultSimulation extends ApplicationAdapter {
         new RenderObstacle(shapeRenderer, camera, environment);
         new RenderLDA(batch, bitmapFont, shapeRenderer, camera);
         new Inputs(camera, environment);
+        if (loopController.isResetLoop(environment.getStep())) {
+            System.out.println("looped " + loopController.getCountLoopNum());
+            environment = new Environment(true);
+        }
+        if (loopController.isEndLoop()) {
+            dispose();
+        }
     }
 
     @Override
     public void dispose() {
         batch.dispose();
+        System.exit(1);
     }
 }

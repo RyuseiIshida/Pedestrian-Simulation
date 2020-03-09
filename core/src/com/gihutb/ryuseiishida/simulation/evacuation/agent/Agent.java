@@ -12,7 +12,6 @@ import com.gihutb.ryuseiishida.simulation.evacuation.util.UtilVector;
 import org.apache.commons.math3.analysis.function.Exp;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -141,7 +140,6 @@ public class Agent {
         this.movePos = position;
         this.velocity = new Vector2(0, 0);
         this.followers = new ArrayList<>();
-        //setObstaclePositionList();
         setObstaclePositionMap();
     }
 
@@ -157,7 +155,6 @@ public class Agent {
         this.movePos = goal.getCenter();
         this.velocity = new Vector2(0, 0);
         this.followers = new ArrayList<>();
-        //setObstaclePositionList();
         setObstaclePositionMap2();
     }
 
@@ -173,8 +170,6 @@ public class Agent {
         action();
     }
 
-    LinkedList<Vector2> pheromone = new LinkedList<>();
-
     /**
      * エージェント行動
      */
@@ -183,9 +178,6 @@ public class Agent {
             setLogToAgent(env.getStep());
         } else {
             perception();
-//            if(env.getStep() == 0) {
-//                initRandomWalk();
-//            }
             if (goal != null) {
                 moveGoal();
             } else {
@@ -207,10 +199,7 @@ public class Agent {
     }
 
     private void ex() {
-        //if (perceptionInViewAgentList.size() >= 3 && isRandomWalkAgent()) {
-        if(isRandomWalkAgent()) {
-            //|| potentialModel.repulsivePotential(position, env.getObstaclesPosition()) < 0){
-            //&& !isFollowNearGroup(perceptionInViewAgentList)) {
+        if (isRandomWalkAgent()) {
             moveFollow();
         } else {
             randomWalk();
@@ -233,8 +222,6 @@ public class Agent {
                 }
             }
         }
-        System.out.println("isGroup.containsAll(tmpFollowAgents) = " + isGroup.containsAll(tmpFollowAgents));
-
         for (Agent tmpFollowAgent : tmpFollowAgents) {
             if (tmpFollowAgent.getStateTag().equals(StateTag.follow)) {
                 if (isGroup.contains(tmpFollowAgent)) {
@@ -387,23 +374,14 @@ public class Agent {
     }
 
     /**
-     * 行動ルール{@link #randomWalk()}の初期設定を行う
+     * ランダムな方向に移動する
      */
-    private void initRandomWalk() {
-        stateTag = StateTag.randomWalk;
-        float posX = MathUtils.random(Parameter.SCALE.x);
-        float posY = MathUtils.random(Parameter.SCALE.y);
-        movePos = new Vector2(posX, posY);
-        move(movePos);
-    }
-
     private void randomWalk() {
-        if (!stateTag.equals(StateTag.randomWalk)) {
-            initRandomWalk();
-        }
-        if (potentialModel.repulsivePotential(position, env.getObstaclesPosition()) > 0) {
-            initRandomWalk();
-            return;
+        if (!stateTag.equals(StateTag.randomWalk) || potentialModel.repulsivePotential(position, env.getObstaclesPosition()) > 0) {
+            stateTag = StateTag.randomWalk;
+            float posX = MathUtils.random(Parameter.SCALE.x);
+            float posY = MathUtils.random(Parameter.SCALE.y);
+            movePos = new Vector2(posX, posY);
         }
         movePos = movePos.add(velocity);
         move(movePos);
@@ -417,7 +395,7 @@ public class Agent {
     private void move(Vector2 movePos) {
         Vector2 direction = UtilVector.direction(position, movePos);
         //setPotentialVector(direction);
-        setFastPotentialVector(direction);
+        setPotentialVector(direction);
         direction.nor();
         velocity = direction.scl(speed);
         Vector2 tmpPos = new Vector2(position);
@@ -430,47 +408,8 @@ public class Agent {
         }
     }
 
-    ArrayList<Agent> beforeFollowAgent;
 
-    private void velocityFollow(Vector2 direction) {
-        Vector2 pVector = new Vector2();
-        float delta = 1f;
-        pVector.x = -1 * (getFollowPotentialVelocity(position.x + delta, position.y) - getFollowPotentialVelocity(position.x, position.y)) / delta;
-        pVector.y = -1 * (getFollowPotentialVelocity(position.x, position.y + delta) - getFollowPotentialVelocity(position.x, position.y)) / delta;
-        pVector.nor();
-        direction.set(pVector);
-    }
-
-    private float getFollowPotentialVelocity(float x, float y) {
-        return getFollowKimPotential(x, y);
-    }
-
-
-    private void moveFollow() {
-        velocityFollow(velocity);
-        stateTag = StateTag.follow;
-        beforeFollowAgent = perceptionInViewAgentList;
-        Vector2 direction = UtilVector.direction(position, movePos);
-        setFastFollowPotentialVector(direction);
-        Vector2 tmpPos = new Vector2(position);
-        tmpPos.add(direction.scl(speed));
-        if (tmpPos.x >= 0 + Parameter.AGENT_RADIUS && tmpPos.x <= Parameter.SCALE.x - Parameter.AGENT_RADIUS) {
-            position.x = tmpPos.x;
-        }
-        if (tmpPos.y >= 0 + Parameter.AGENT_RADIUS && tmpPos.y <= Parameter.SCALE.y - Parameter.AGENT_RADIUS) {
-            position.y = tmpPos.y;
-        }
-    }
-
-    /**
-     * @param direction Agent移動方向
-     */
     private void setPotentialVector(Vector2 direction) {
-        direction.set(potentialModel.getMoveDirection());
-    }
-
-
-    private void setFastPotentialVector(Vector2 direction) {
         Vector2 pVector = new Vector2();
         float delta = 1f;
         pVector.x = -1 * (getPotential(position.x + delta, position.y) - getPotential(position.x, position.y)) / delta;
@@ -486,8 +425,7 @@ public class Agent {
         //float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y);
         //float Uo = getAgentKIMPotential(x, y) + getFastObstacleKIMPotential(x, y);
 
-
-        float Uo = getAgentKIMPotential(x, y) + getFastObstacleKIMPotential(x, y) + getFastFireKIMPotential(x, y);
+        float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y) + getFireKIMPotential(x, y);
         //float U = (((1 / cg) * Uo) + 1) * Ug;
         float U = Ug + Uo;
         return U;
@@ -517,6 +455,88 @@ public class Agent {
         return potentialWight;
     }
 
+    private float getObstacleKIMPotential(float x, float y) {
+        Vector2 pos = new Vector2(x, y);
+        float potentialWeight = 0;
+        float co = 1200;
+        float lo;
+        for (Map.Entry<Vector2, Float> entry : obstaclePositionMap.entrySet()) {
+            lo = entry.getValue();
+            double value = -1 * (pos.dst2(entry.getKey()) / (lo * lo));
+            potentialWeight += co * new Exp().value(value);
+        }
+        return potentialWeight;
+    }
+
+    private float getFireKIMPotential(float x, float y) {
+        Vector2 pos = new Vector2(x, y);
+        float potentialWeight = 0;
+        float co = 200;
+        float lo = env.getFire().getSpreadFireRange();
+        double value = -1 * (pos.dst2(env.getFire().getFirePoint()) / (lo * lo));
+        potentialWeight += co * new Exp().value(value);
+        return potentialWeight;
+    }
+
+    ArrayList<Agent> beforeFollowAgent;
+
+    private void moveFollow() {
+        velocityFollow();
+        stateTag = StateTag.follow;
+        beforeFollowAgent = perceptionInViewAgentList;
+        Vector2 direction = UtilVector.direction(position, movePos);
+        setFollowPotentialVector(direction);
+        Vector2 tmpPos = new Vector2(position);
+        tmpPos.add(direction.scl(speed));
+        if (tmpPos.x >= 0 + Parameter.AGENT_RADIUS && tmpPos.x <= Parameter.SCALE.x - Parameter.AGENT_RADIUS) {
+            position.x = tmpPos.x;
+        }
+        if (tmpPos.y >= 0 + Parameter.AGENT_RADIUS && tmpPos.y <= Parameter.SCALE.y - Parameter.AGENT_RADIUS) {
+            position.y = tmpPos.y;
+        }
+    }
+
+    private void velocityFollow() {
+        Vector2 pVector = new Vector2();
+        float delta = 1f;
+        pVector.x = -1 * (getFollowKimPotential(position.x + delta, position.y) - getFollowKimPotential(position.x, position.y)) / delta;
+        pVector.y = -1 * (getFollowKimPotential(position.x, position.y + delta) - getFollowKimPotential(position.x, position.y)) / delta;
+        pVector.nor();
+        velocity.set(pVector);
+    }
+
+    private void setFollowPotentialVector(Vector2 direction) {
+        Vector2 pVector = new Vector2();
+        float delta = 1f;
+        pVector.x = -1 * (getFollowPotential(position.x + delta, position.y) - getFollowPotential(position.x, position.y)) / delta;
+        pVector.y = -1 * (getFollowPotential(position.x, position.y + delta) - getFollowPotential(position.x, position.y)) / delta;
+        pVector.nor();
+        direction.set(pVector);
+    }
+
+    private float getFollowPotential(float x, float y) {
+        float cg = goal == null ? 100 : 1000;
+        //float Ug = getGoalKIMPotential(x, y) + getFollowKimPotential(x, y);
+        float Ug = getFollowKimPotential(x, y);
+        float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y) + getFireKIMPotential(x, y);
+        //float U = (((1 / cg) * Uo) + 1) * Ug;
+        float U = Ug + Uo;
+        return U;
+    }
+
+    private float getFollowKimPotential(float x, float y) {
+        float potentialWeight = 0;
+        float cg = goal == null ? 10 : 100;
+        float lg = Parameter.VIEW_RADIUS_LENGTH * 2;
+        Vector2 pos = new Vector2(x, y);
+        for (Agent agent : perceptionInViewAgentList) {
+            Vector2 followVelocity = UtilVector.direction(agent.getPosition(), agent.getMovePos());
+            Vector2 followVector = new Vector2(agent.getPosition()).add(followVelocity);
+            potentialWeight = (float) (cg * (1 - new Exp().value(-1 * (pos.dst2(followVector) / (lg * lg)))));
+        }
+        return potentialWeight;
+    }
+
     private float getAgentKIMPotential2(float x, float y) {
         float potentialWight = 0;
         float co = 1000;
@@ -530,41 +550,6 @@ public class Agent {
             }
         }
         return potentialWight;
-    }
-
-    //今使ってない
-    private float getObstacleKIMPotential(float x, float y) {
-        Vector2 pos = new Vector2(x, y);
-        float potentialWeight = 0;
-        float co = 1200;
-        float lo = Parameter.AGENT_RADIUS;
-        System.out.println("lo = " + lo);
-        for (Obstacle obstacle : env.getObstacles()) {
-            for (Cell obstacleCell : obstacle.getObstacleCells()) {
-                double value = -1 * (pos.dst2(obstacleCell.getCenterPoint()) / (lo * lo));
-                potentialWeight += co * new Exp().value(value);
-            }
-        }
-        return potentialWeight;
-    }
-
-
-    private float getObstacleKIMPotential(Vector2 vec) {
-        return getObstacleKIMPotential(vec.x, vec.y);
-    }
-
-    private float getFastFireKIMPotential(float x, float y) {
-        Vector2 pos = new Vector2(x, y);
-        float potentialWeight = 0;
-        float co = 200;
-        float lo = env.getFire().getSpreadFireRange();
-        double value = -1 * (pos.dst2(env.getFire().getFirePoint()) / (lo * lo));
-        potentialWeight += co * new Exp().value(value);
-        return potentialWeight;
-    }
-
-    private float getFireKIMPotential(Vector2 vec) {
-        return getObstacleKIMPotential(vec.x, vec.y);
     }
 
     /**
@@ -718,39 +703,6 @@ public class Agent {
         return "agent" + ID;
     }
 
-    private void setFastFollowPotentialVector(Vector2 direction) {
-        Vector2 pVector = new Vector2();
-        float delta = 1f;
-        pVector.x = -1 * (getFollowPotential(position.x + delta, position.y) - getFollowPotential(position.x, position.y)) / delta;
-        pVector.y = -1 * (getFollowPotential(position.x, position.y + delta) - getFollowPotential(position.x, position.y)) / delta;
-        pVector.nor();
-        direction.set(pVector);
-    }
-
-    private float getFollowPotential(float x, float y) {
-        float cg = goal == null ? 100 : 1000;
-        //float Ug = getGoalKIMPotential(x, y) + getFollowKimPotential(x, y);
-        float Ug = getFollowKimPotential(x, y);
-        float Uo = getAgentKIMPotential(x, y) + getFastObstacleKIMPotential(x, y) + getFastFireKIMPotential(x, y);
-        //float U = (((1 / cg) * Uo) + 1) * Ug;
-        float U = Ug + Uo;
-        return U;
-    }
-
-    private float getFollowKimPotential(float x, float y) {
-        float potentialWeight = 0;
-        float cg = goal == null ? 10 : 100;
-        float lg = Parameter.VIEW_RADIUS_LENGTH * 2;
-        Vector2 pos = new Vector2(x, y);
-        for (Agent agent : perceptionInViewAgentList) {
-            Vector2 followVelocity = UtilVector.direction(agent.getPosition(), agent.getMovePos());
-            Vector2 followVector = new Vector2(agent.getPosition()).add(followVelocity);
-            potentialWeight = (float) (cg * (1 - new Exp().value(-1 * (pos.dst2(followVector) / (lg * lg)))));
-        }
-        return potentialWeight;
-    }
-
-    private LinkedList<Vector2> obstaclePositionList;
     private LinkedHashMap<Vector2, Float> obstaclePositionMap;
     private float obstacleLo = radius;
 
@@ -769,18 +721,5 @@ public class Agent {
                 obstaclePositionMap.put(obstacleCell.getCenterPoint(), obstacleLo);
             }
         }
-    }
-
-    private float getFastObstacleKIMPotential(float x, float y) {
-        Vector2 pos = new Vector2(x, y);
-        float potentialWeight = 0;
-        float co = 1200;
-        float lo;
-        for (Map.Entry<Vector2, Float> entry : obstaclePositionMap.entrySet()) {
-            lo = entry.getValue();
-            double value = -1 * (pos.dst2(entry.getKey()) / (lo * lo));
-            potentialWeight += co * new Exp().value(value);
-        }
-        return potentialWeight;
     }
 }

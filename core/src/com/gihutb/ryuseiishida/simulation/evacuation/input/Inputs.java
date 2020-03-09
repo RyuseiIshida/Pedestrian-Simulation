@@ -27,6 +27,7 @@ public class Inputs {
         }
         if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
             agentController();
+            ldaController();
         }
     }
 
@@ -37,8 +38,9 @@ public class Inputs {
 
         if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.D)) {
             environment.getAgentList().clear();
-            environment.setStep(0);
             environment.setGoalAgentNum(0);
+            environment.setStep(0);
+            environment.setUpdateFlag(false);
         }
 
         if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.F) && Gdx.input.justTouched()) {
@@ -53,6 +55,18 @@ public class Inputs {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
             environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), 0);
+        }
+        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.NUM_2) && Gdx.input.justTouched()) {
+            Vector3 touchPos = new Vector3();
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touchPos);
+            environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), 1);
+        }
+    }
+
+    private void ldaController() {
+        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.L)) {
+            environment.saveLDA();
         }
     }
 
@@ -77,22 +91,23 @@ public class Inputs {
 
     private void setRenderFlag() {
         if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+            // agent view
             if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.V)) {
                 RenderAgent.setRenderViewFlag();
             }
-
+            // agent goal line
             if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.G)) {
                 RenderAgent.setRenderMoveGoalLineFlag();
             }
-
+            // agent follow line
             if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.F)) {
                 RenderAgent.setRenderFollowLineFlag();
             }
-
+            // fire
             if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.C)) {
                 RenderFire.setRenderFlag();
             }
-
+            // LDA
             if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.D)) {
                 RenderLDA.switchRenderFlag();
             }

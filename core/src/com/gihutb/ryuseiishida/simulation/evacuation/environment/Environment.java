@@ -3,16 +3,13 @@ package com.gihutb.ryuseiishida.simulation.evacuation.environment;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.gihutb.ryuseiishida.simulation.evacuation.util.Parameter;
-import com.gihutb.ryuseiishida.simulation.evacuation.agent.Group;
 import com.gihutb.ryuseiishida.simulation.evacuation.analysis.LDA;
 import com.gihutb.ryuseiishida.simulation.evacuation.cell.Cell;
 import com.gihutb.ryuseiishida.simulation.evacuation.goal.Goal;
 import com.gihutb.ryuseiishida.simulation.evacuation.log.LoadLog;
 import com.gihutb.ryuseiishida.simulation.evacuation.log.WriterLog;
-import com.gihutb.ryuseiishida.simulation.evacuation.cell.CellsMap;
 import com.gihutb.ryuseiishida.simulation.evacuation.agent.Agent;
 import com.gihutb.ryuseiishida.simulation.evacuation.obstacle.*;
-import com.gihutb.ryuseiishida.simulation.evacuation.util.TimeMeasurement;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,28 +19,23 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class Environment {
-    private int step;
+    private int step = 0;
     private boolean updateFlag = false;
-    private CellsMap envCellsMap = Parameter.cellsMap;
-    private ArrayList<Goal> goals = new ArrayList<>(Parameter.GOALS);
-    private ArrayList<BoxLine> boxes = Parameter.Boxes;
+    private ArrayList<Goal> goals = Parameter.GOALS;
     private ArrayList<Obstacle> obstacles = Parameter.OBSTACLES;
     private Fire fire = new Fire(Parameter.FIRE_POINT, 0);
-    private ArrayList<Agent> agentList;
+    private ArrayList<Agent> agentList = new ArrayList<>();
     private int goalAgentNum;
 
     private LDA ldaStepSplit;
     private LDA ldaGroupSizeSplit;
 
     private LoadLog loadLog;
-    private WriterLog writerLog = new WriterLog();
+    private WriterLog writerLog = new WriterLog(this);
 
-    private final String MAP_PATH = "core/assets/saveMap.txt";
 
     public Environment() {
-        step = 0;
-        agentList = new ArrayList<>();
-        for (BoxLine box : boxes) {
+        for (BoxLine box : Parameter.Boxes) {
             obstacles.addAll(box.getLines());
         }
         if (Parameter.MODE.equals("LogSimulation")) {
@@ -52,21 +44,36 @@ public class Environment {
         } else {
             spawnInitAgents();
         }
-        if (Parameter.IS_WRITE_LOG) {
-            writerLog = new WriterLog(this);
+        LoadMap.setObstacle(obstacles);
+        ldaStepSplit = new LDA(agentList);
+        ldaGroupSizeSplit = new LDA(agentList);
+    }
+
+    public Environment(boolean loopFlag) {
+        updateFlag = loopFlag;
+        for (BoxLine box : Parameter.Boxes) {
+            obstacles.addAll(box.getLines());
         }
-        ldaStepSplit = new LDA(agentList, 100);
-        ldaGroupSizeSplit = new LDA(agentList, 100);
+        if (Parameter.MODE.equals("LogSimulation")) {
+            loadLog = new LoadLog();
+            spawnLogAgents();
+        } else {
+            spawnInitAgents();
+        }
+        LoadMap.setObstacle(obstacles);
+        ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP);
+        ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP);
+    }
+
+    public void saveLDA() {
+        ldaGroupSizeSplit.outPrint("stepGroupSizeSplit_Corpus");
+        ldaStepSplit.outPrint("stepSplit_Corpus");
     }
 
     public void update() {
         if (updateFlag) {
-            TimeMeasurement timeMeasurement = new TimeMeasurement();
-            timeMeasurement.start();
-            if (Parameter.IS_WRITE_LOG) {
-                writerLog.writeAgentLog();
-                writerLog.writeMacroLog();
-            }
+            writerLog.ifWriteLog(Parameter.IS_WRITE_LOG);
+            step++;
             agentList.stream()
                     .parallel()
                     .forEach(Agent::action);
@@ -75,20 +82,9 @@ public class Environment {
             ldaStepSplit.recordStepSplit(step);
             ldaGroupSizeSplit.recordGroupSizeSplit(step);
             fire.spreadFire();
-            logGroup.add(String.valueOf(Group.getGroups2(agentList).size()));
-            step++;
         }
     }
 
-    public CellsMap cellsMapEntropy = new CellsMap(Parameter.SCALE, 1000);
-    private ArrayList<String> logEntropy = new ArrayList<>();
-    private ArrayList<String> logGroup = new ArrayList<>();
-
-
-    public void writeExperiment() {
-        writerLog.writeEntropy(logEntropy);
-        writerLog.writeGroup(logGroup);
-    }
 
     public void setStep(int step) {
         this.step = step;
@@ -112,13 +108,8 @@ public class Environment {
         agentList.removeIf(agent -> fire.dstFireEdge(agent) < 0);
     }
 
-    //potential
-    public CellsMap getEnvCellsMap() {
-        return envCellsMap;
-    }
-
     public void spawnObstacle(Vector2 pos) {
-        obstacles.add(new Box(pos.x, pos.y, Parameter.CELL_INTERVAL, Parameter.CELL_INTERVAL, envCellsMap));
+        obstacles.add(new Box(pos.x, pos.y, Parameter.CELL_INTERVAL, Parameter.CELL_INTERVAL, Parameter.ENV_CELLS_MAP));
     }
 
     public ArrayList<Obstacle> getObstacles() {
@@ -169,7 +160,7 @@ public class Environment {
     }
 
     public Boolean checkInBoxes(float x, float y) {
-        for (BoxLine box : boxes) {
+        for (BoxLine box : Parameter.Boxes) {
             if (box.isPositionInBox(x, y)) {
                 return true;
             }
@@ -276,26 +267,12 @@ public class Environment {
         updateFlag = !updateFlag;
     }
 
-    public Fire getFire() {
-        return this.fire;
+    public void setUpdateFlag(boolean flag) {
+        updateFlag = flag;
     }
 
-    public void loadMap() {
-        try (BufferedReader br = Files.newBufferedReader(Paths.get(MAP_PATH))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] points = line.split(",");
-                obstacles.add(
-                        new Line(
-                                Float.parseFloat(points[0]),
-                                Float.parseFloat(points[1]),
-                                Float.parseFloat(points[2]),
-                                Float.parseFloat(points[3]),
-                                envCellsMap));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public Fire getFire() {
+        return this.fire;
     }
 
 }

@@ -4,6 +4,8 @@ import com.gihutb.ryuseiishida.simulation.evacuation.agent.Agent;
 import com.gihutb.ryuseiishida.simulation.evacuation.agent.Group;
 import com.gihutb.ryuseiishida.simulation.evacuation.agent.StateTag;
 import com.gihutb.ryuseiishida.simulation.evacuation.environment.Environment;
+import com.gihutb.ryuseiishida.simulation.evacuation.util.Parameter;
+import com.sun.tools.doclint.Env;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -24,77 +26,40 @@ public class WriterLog {
     private Environment env;
     private ArrayList<Agent> agents;
 
-    public WriterLog() {
-    }
 
     public WriterLog(Environment env) {
-        this.env = env;
-        this.agents = env.getAgentList();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_hhmm");
-        String time = format.format(Calendar.getInstance().getTime());
-        path = Paths.get("SimLog/" + time).toString();
-        new File(path).mkdir();
-        new File(path + "/Agents").mkdir();
-        writeSourceCode(path);
+        if(Parameter.IS_WRITE_LOG) {
+            this.env = env;
+            this.agents = env.getAgentList();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_hhmm");
+            String time = format.format(Calendar.getInstance().getTime());
+            path = Paths.get("SimLog/" + time).toString();
+            new File(path).mkdir();
+            new File(path + "/Agents").mkdir();
+            writeParameterCode(path);
+        }
     }
 
-    private void writeSourceCode(String path) {
-        path += "/SourceCode";
+    public void ifWriteLog(boolean writeFlag) {
+        if (writeFlag) {
+            if (Parameter.IS_WRITE_LOG_AGENT) {
+                writeAgentLog();
+            }
+            if (Parameter.IS_WRITE_LOG_MACRO) {
+                writeMacroLog();
+            }
+        }
+    }
+
+    private void writeParameterCode(String path) {
+        path += "/ParameterCode";
         new File(path).mkdir();
         writeSourceCodeToParameter(path);
-        writeSourceCodeToEnvironment(path);
-        writeSourceCodeToAgent(path);
     }
 
     private void writeSourceCodeToParameter(String outPath) {
         Path path = Paths.get("core/src/com/simulation/pedestrian/Parameter.java");
         Path out = Paths.get(outPath + "/Parameter.txt");
-        List<String> readList = new ArrayList<>();
-        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                readList.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(out, StandardCharsets.UTF_8)) {
-            for (String s : readList) {
-                bufferedWriter.append(s);
-                bufferedWriter.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void writeSourceCodeToEnvironment(String outPath) {
-        Path path = Paths.get("core/src/com/simulation/pedestrian/Environment.java");
-        Path out = Paths.get(outPath + "/Envionment.txt");
-        List<String> readList = new ArrayList<>();
-        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                readList.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(out, StandardCharsets.UTF_8)) {
-            for (String s : readList) {
-                bufferedWriter.append(s);
-                bufferedWriter.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void writeSourceCodeToAgent(String outPath) {
-        Path path = Paths.get("core/src/com/simulation/pedestrian/agent/agent.java");
-        Path out = Paths.get(outPath + "/Agent.txt");
         List<String> readList = new ArrayList<>();
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             String line;

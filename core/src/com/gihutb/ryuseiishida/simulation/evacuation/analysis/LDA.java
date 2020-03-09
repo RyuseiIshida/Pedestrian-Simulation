@@ -1,5 +1,6 @@
 package com.gihutb.ryuseiishida.simulation.evacuation.analysis;
 
+import com.badlogic.gdx.math.Vector2;
 import com.gihutb.ryuseiishida.simulation.evacuation.util.Parameter;
 import com.gihutb.ryuseiishida.simulation.evacuation.agent.Agent;
 import com.gihutb.ryuseiishida.simulation.evacuation.agent.Group;
@@ -12,7 +13,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class LDA {
-    private static CellsMap positionMap = new CellsMap(Parameter.SCALE, 1000);
+    private static float METER = 100f;
+    private static CellsMap positionMap = new CellsMap(new Vector2(100 * METER, 80 * METER), 1000);
     // group sizeで文書を区切る
     private int perceptionGroupSize = 0;
     private ArrayList<Agent> agentList;
@@ -30,14 +32,13 @@ public class LDA {
 
     // 引数stepで文書を区切る
     public void recordStepSplit(int step) {
-        int splitStep = 60;
-        if (step == 0 || step % splitStep == 0) {
+        if (step == 0 || step % Parameter.LDA_SPLIT_STEP == 0) {
             setDataList(agentList);
         }
         if (outPrintStep == null) {
             return;
         }
-        if (step > outPrintStep) {
+        if (step >= outPrintStep) {
             outPrintStep = null;
             outPrint("stepSplit_Corpus");
         }
@@ -53,9 +54,9 @@ public class LDA {
         if (outPrintStep == null) {
             return;
         }
-        if (step > outPrintStep) {
+        if (step >= outPrintStep) {
             outPrintStep = null;
-            outPrint("groupSizeSplit_Corpus");
+            outPrint("stepGroupSizeSplit_Corpus");
         }
     }
 
@@ -97,7 +98,7 @@ public class LDA {
     }
 
     public void outPrint(String fileName) {
-        String path = "core/assets/" + fileName;
+        String path = "core/assets/" + fileName + ".txt";
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path))) {
             for (ArrayList<String> data : dataList) {
                 for (String s : data) {
