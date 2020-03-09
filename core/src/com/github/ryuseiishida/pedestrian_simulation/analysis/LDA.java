@@ -2,6 +2,7 @@ package com.github.ryuseiishida.pedestrian_simulation.analysis;
 
 import com.badlogic.gdx.math.Vector2;
 import com.github.ryuseiishida.pedestrian_simulation.cell.CellsMap;
+import com.github.ryuseiishida.pedestrian_simulation.log.WriterLog;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import com.github.ryuseiishida.pedestrian_simulation.agent.Agent;
 import com.github.ryuseiishida.pedestrian_simulation.agent.Group;
@@ -20,14 +21,19 @@ public class LDA {
     private ArrayList<Agent> agentList;
     private Integer outPrintStep;
     private ArrayList<ArrayList<String>> dataList = new ArrayList<>();
+    private ArrayList<String> print = new ArrayList<>();
 
-    public LDA(ArrayList<Agent> agentList) {
+    private String printPath;
+
+    public LDA(ArrayList<Agent> agentList, String printPath) {
         this.agentList = agentList;
+        this.printPath = printPath;
     }
 
-    public LDA(ArrayList<Agent> agentList, int outPrintStep) {
+    public LDA(ArrayList<Agent> agentList, int outPrintStep, String printPath) {
         this.agentList = agentList;
         this.outPrintStep = outPrintStep;
+        this.printPath = printPath;
     }
 
     // 引数stepで文書を区切る
@@ -98,7 +104,7 @@ public class LDA {
     }
 
     public void outPrint(String fileName) {
-        String path = "core/assets/" + fileName + ".txt";
+        String path = printPath + "/" + fileName + ".txt";
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path))) {
             for (ArrayList<String> data : dataList) {
                 for (String s : data) {

@@ -3,6 +3,7 @@ package com.github.ryuseiishida.pedestrian_simulation.log;
 import com.github.ryuseiishida.pedestrian_simulation.agent.Agent;
 import com.github.ryuseiishida.pedestrian_simulation.agent.Group;
 import com.github.ryuseiishida.pedestrian_simulation.agent.StateTag;
+import com.github.ryuseiishida.pedestrian_simulation.analysis.LDA;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import org.apache.commons.csv.CSVFormat;
@@ -27,10 +28,12 @@ public class WriterLog {
 
 
     public WriterLog(Environment env) {
-        if(Parameter.IS_WRITE_LOG) {
+        if (Parameter.IS_WRITE_LOG) {
             this.env = env;
             this.agents = env.getAgentList();
             makeDir();
+            writeAgentInitPosition();
+            writeSourceCodeToParameter();
         }
     }
 
@@ -40,6 +43,10 @@ public class WriterLog {
         String time = format.format(Calendar.getInstance().getTime());
         path = path + "/" + time;
         new File(path).mkdir();
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public void ifWriteLog(boolean writeFlag) {
@@ -54,7 +61,7 @@ public class WriterLog {
     }
 
     public void writeSourceCodeToParameter() {
-        Path codePath = Paths.get("core/src/com/github//pedestrian_simulation/pedestrian/util/Parameter.java");
+        Path codePath = Paths.get("core/src/com/github/ryuseiishida/pedestrian_simulation/util/Parameter.java");
         Path out = Paths.get(path + "/Parameter.txt");
         List<String> readList = new ArrayList<>();
         try (BufferedReader reader = Files.newBufferedReader(codePath, StandardCharsets.UTF_8)) {
@@ -224,6 +231,24 @@ public class WriterLog {
                 br.append(str);
                 br.newLine();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeLDACorpus(LDA lda, ArrayList<ArrayList<String>> dataList, String fileName) {
+        String path = this.path + fileName + ".txt";
+        try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path))) {
+            for (ArrayList<String> data : dataList) {
+                for (String s : data) {
+                    bw.append(s);
+                    if (!s.equals(data.get(data.size() - 1))) {
+                        bw.append(",");
+                    }
+                }
+                bw.newLine();
+            }
+            System.out.println("save corpus data");
         } catch (IOException e) {
             e.printStackTrace();
         }

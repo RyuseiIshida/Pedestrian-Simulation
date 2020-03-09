@@ -34,7 +34,7 @@ public class Environment {
     private LDA ldaGroupSizeSplit;
 
     private LoadLog loadLog;
-    private WriterLog writerLog = new WriterLog(this);
+    private WriterLog writerLog;
 
 
     public Environment() {
@@ -48,10 +48,9 @@ public class Environment {
             spawnInitAgents();
         }
         LoadMap.setObstacle(obstacles);
-        ldaStepSplit = new LDA(agentList);
-        ldaGroupSizeSplit = new LDA(agentList);
-        //writerLog.writeSourceCodeToParameter();
-        writerLog.writeAgentInitPosition();
+        writerLog = new WriterLog(this);
+        ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
+        ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
     }
 
     public Environment(boolean loopFlag) {
@@ -66,10 +65,9 @@ public class Environment {
             spawnInitAgents();
         }
         LoadMap.setObstacle(obstacles);
-        ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP);
-        ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP);
-        //writerLog.writeSourceCodeToParameter();
-        writerLog.writeAgentInitPosition();
+        writerLog = new WriterLog(this);
+        ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
+        ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
     }
 
     public void saveLDA() {
