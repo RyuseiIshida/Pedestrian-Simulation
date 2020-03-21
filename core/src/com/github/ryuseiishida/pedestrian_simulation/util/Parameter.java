@@ -20,19 +20,19 @@ public class Parameter {
     /**
      * シミュレーションループ回数
      */
-    public static int LOOP_NUM = 10;
+    public static int LOOP_NUM;
 
     /**
      * シミュレーション終了ステップ
      */
-    public static int END_STEP = 1000;
+    public static int END_STEP;
 
     /**
      * ログの記録
      */
-    public static boolean IS_WRITE_LOG = true;
+    public static boolean IS_WRITE_LOG = false;
     
-    public static boolean IS_WRITE_LOG_AGENT = true;
+    public static boolean IS_WRITE_LOG_AGENT = false;
     
     public static boolean IS_WRITE_LOG_MACRO = false;
 
@@ -46,8 +46,6 @@ public class Parameter {
      * LDA 文書の区切り方
      */
     public static int LDA_SPLIT_STEP = 60;
-
-
 
     //Environment
     //1 pixel = 1 cm
@@ -78,6 +76,8 @@ public class Parameter {
 //            new BoxLine(1200, 3700, 4500, 5500, ENV_CELLS_MAP),
 //            //中央右
 //            new BoxLine(5700, 3700, 9000, 5500, ENV_CELLS_MAP)
+//            //広い通路
+//            new BoxLine(1200, 1200, 9000, 8000, ENV_CELLS_MAP)
     ));
 
     public static ArrayList<Obstacle> OBSTACLES = new ArrayList<>(Arrays.asList(
@@ -85,12 +85,20 @@ public class Parameter {
             new Line(200, 600, 200, SCALE.y - 1000, ENV_CELLS_MAP),
             //right wall line
             new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1000, ENV_CELLS_MAP),
-            //new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1400, ENV_CELLS_MAP),
+            new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1400, ENV_CELLS_MAP),
             // bottom wall line
             new Line(200, 200, SCALE.x - 200, 200, ENV_CELLS_MAP),
             // top wall line
             new Line(200, SCALE.y - 1000, SCALE.x - 200, SCALE.y - 1000, ENV_CELLS_MAP)
-    ));
+
+
+//            new Line(200, 600, 200, 3000, ENV_CELLS_MAP),
+//            new Line(200, 3000, 4000, 3000, ENV_CELLS_MAP),
+//            new Line(4000, 3000, 4000, 7000, ENV_CELLS_MAP),
+//            new Line(4000, 7000, 6500, 7000, ENV_CELLS_MAP),
+//            new Line(6500, 7000, 6500, 200, ENV_CELLS_MAP),
+//            new Line(200, 200, 6500, 200, ENV_CELLS_MAP)
+            ));
 
     public static Line experienceOLINE = new Line(0, 0, 0, 0, ENV_CELLS_MAP);
 

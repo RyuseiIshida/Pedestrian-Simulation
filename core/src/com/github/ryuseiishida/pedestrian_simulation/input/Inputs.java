@@ -22,21 +22,27 @@ public class Inputs {
     }
 
     private void systemController() {
-        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.SPACE)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             environment.switchUpdateFlag();
         }
         if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
             agentController();
             ldaController();
         }
+        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.F) && Gdx.input.justTouched()) {
+            Vector3 touchPos = new Vector3();
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touchPos);
+            System.out.println(touchPos);
+        }
     }
 
     private void agentController() {
-        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.S)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             environment.spawnInitAgents();
         }
 
-        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.D)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
             environment.getAgentList().clear();
             environment.setGoalAgentNum(0);
             environment.setStep(0);
@@ -65,7 +71,7 @@ public class Inputs {
     }
 
     private void ldaController() {
-        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.L)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
             environment.saveLDA();
         }
     }
@@ -110,6 +116,12 @@ public class Inputs {
             // LDA
             if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.D)) {
                 RenderLDA.switchRenderFlag();
+            }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+                RenderLDA.setNumTopics(RenderLDA.getNumTopics() + 1);
+            }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+                RenderLDA.setNumTopics(RenderLDA.getNumTopics() - 1);
             }
         }
     }

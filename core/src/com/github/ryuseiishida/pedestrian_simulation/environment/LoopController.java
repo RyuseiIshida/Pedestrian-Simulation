@@ -5,12 +5,8 @@ import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 public class LoopController {
     private int countLoopNum = 0;
 
-    public boolean isLoop() {
-        return Parameter.LOOP_NUM > 0;
-    }
-
     public boolean isResetLoop(int step) {
-        if (step >= Parameter.END_STEP) {
+        if (step >= Parameter.END_STEP && Parameter.END_STEP != 0) {
             countLoopNum++;
             return true;
         }
@@ -18,7 +14,10 @@ public class LoopController {
     }
 
     public boolean isEndLoop() {
-        return countLoopNum >= Parameter.LOOP_NUM;
+        if (countLoopNum >= Parameter.LOOP_NUM && Parameter.LOOP_NUM != 0) {
+            return true;
+        }
+        return false;
     }
 
     public int getCountLoopNum() {

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.github.ryuseiishida.pedestrian_simulation.analysis.LDA;
 import com.github.ryuseiishida.pedestrian_simulation.cell.Cell;
 import com.github.ryuseiishida.pedestrian_simulation.agent.StateTag;
+import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,11 +20,13 @@ import java.util.ArrayList;
 
 public class RenderLDA {
     private static boolean renderFlag = false;
+    private static int numTopics = 0;
 
     public RenderLDA(Batch batch, BitmapFont bitmapFont, ShapeRenderer shapeRenderer, Camera camera) {
         if (renderFlag) {
             renderTopicRegion(shapeRenderer, camera);
-            cellIndex(shapeRenderer, camera, batch, bitmapFont);
+            //cellIndex(shapeRenderer, camera, batch, bitmapFont);
+            numTopics(shapeRenderer, camera, batch, bitmapFont);
         }
     }
 
@@ -62,9 +65,16 @@ public class RenderLDA {
         batch.end();
     }
 
-    public static ArrayList<String> getTopic() {
+    public static void numTopics(ShapeRenderer shapeRenderer, Camera camera, Batch batch, BitmapFont bitmapFont) {
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        batch.begin();
+        bitmapFont.draw(batch, "Topic = " + RenderLDA.getNumTopics(), Parameter.SCALE.x - 1000, Parameter.SCALE.y - 100);
+        batch.end();
+    }
+
+    private static ArrayList<String> readFileTopic() {
         ArrayList<String> topic = new ArrayList<>();
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get("core/assets/topic.txt"))) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get("core/assets/group_topic" + numTopics + ".txt"))) {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 topic.add(line);
@@ -76,7 +86,7 @@ public class RenderLDA {
     }
 
     public static void renderTopicRegion(ShapeRenderer shapeRenderer, Camera camera) {
-        for (String s : getTopic()) {
+        for (String s : readFileTopic()) {
             shapeRenderer.setProjectionMatrix(camera.combined);
             Gdx.gl.glEnable(GL20.GL_BLEND);
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -131,5 +141,15 @@ public class RenderLDA {
                 break;
         }
         shapeRenderer.end();
+    }
+
+    public static void setNumTopics(int numTopics) {
+        if (numTopics >= 0 && numTopics < 3) {
+            RenderLDA.numTopics = numTopics;
+        }
+    }
+
+    public static int getNumTopics() {
+        return numTopics;
     }
 }
