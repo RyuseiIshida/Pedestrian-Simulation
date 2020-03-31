@@ -4,6 +4,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.github.ryuseiishida.pedestrian_simulation.mode.CreateMap;
 import com.github.ryuseiishida.pedestrian_simulation.mode.DefaultSimulation;
+import com.github.ryuseiishida.pedestrian_simulation.mode.LogSimulation;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
 public class DesktopLauncher {
@@ -19,6 +20,9 @@ public class DesktopLauncher {
         switch (Parameter.MODE) {
             case "DefaultSimulation":
                 new LwjglApplication(new DefaultSimulation(), config);
+                break;
+            case "LogSimulation":
+                new LwjglApplication(new LogSimulation(), config);
                 break;
             case "CreateMap":
                 new LwjglApplication(new CreateMap(), config);

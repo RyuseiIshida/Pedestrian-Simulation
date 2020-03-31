@@ -10,20 +10,32 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
 
 public class LoadLog {
-    private String strPath = "core/src/com/pedestrian_simulation/pedestrian/log/2019-10-20_0904/";
+    private String logDirPath;
     private ArrayList<File> agentFileList;
 
-    public LoadLog() {
+    public LoadLog(String dirPath) {
+        logDirPath = dirPath;
         setAgentFileList();
     }
 
     private void setAgentFileList() {
         agentFileList = new ArrayList<>();
-        File agentFileList = new File(strPath + "Agents");
-        this.agentFileList.addAll(Arrays.asList(Objects.requireNonNull(agentFileList.listFiles())));
+        FilenameFilter filter = new FilenameFilter() {
+            public boolean accept(File file, String str) {
+                //指定文字列でフィルタする
+                //indexOfは指定した文字列が見つからなかったら-1を返す
+                if (str.indexOf("agent") != -1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+
+        File[] files = new File(logDirPath).listFiles(filter);
+        this.agentFileList.addAll(Arrays.asList(files));
     }
 
     public ArrayList<File> getAgentFileList() {
@@ -65,8 +77,4 @@ public class LoadLog {
         }
     }
 
-    public static void main(String[] args) {
-        LoadLog loadLog = new LoadLog();
-        loadLog.print(loadLog.getPosList(1));
-    }
 }

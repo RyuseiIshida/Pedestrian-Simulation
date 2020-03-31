@@ -163,11 +163,8 @@ public class Agent {
         int endIndexID = logFile.getPath().indexOf(".txt");
         this.ID = logFile.getPath().substring(startIndexID, endIndexID);
         this.env = env;
-        this.potentialModel = new KimPotentialModel(env, this);
-        this.followers = new ArrayList<>();
         loadLogFile = logFile;
         initLogToAgent();
-        action();
     }
 
     /**
@@ -259,21 +256,21 @@ public class Agent {
         int logStep = Integer.parseInt(valueList[0]);
         this.stateTag = valueList[1]; // tag
         this.position = UtilVector.strToVector(valueList[2]); // position
-        this.velocity = UtilVector.strToVector(valueList[3]); // velocity
-        this.movePos = UtilVector.strToVector(valueList[4]); // movePos
-        this.goal = UtilVector.strToVector(valueList[5]); // goal
-        if (!valueList[6].isEmpty()) {
-            System.out.println("valueList = " + valueList[6]);
-            this.followAgent = env.getAgent(valueList[6]); //followAgent
-            System.out.println("follow = " + followAgent);
-            this.followAgent.setFollower(this);
-        }
-        this.followers = strToAgentList(valueList[7]); //followers
-        this.perceptionInViewAgentList = strToAgentList(valueList[9]);
-        this.perceptionFollowAgentList = strToAgentList(valueList[11]);
-        this.perceptionContinueStep = Float.parseFloat(valueList[13]);
-        this.perceptionContinueDst = Float.parseFloat(valueList[14]);
-        this.perceptionAllDst = Float.parseFloat(valueList[15]);
+//        this.velocity = UtilVector.strToVector(valueList[3]); // velocity
+//        this.movePos = UtilVector.strToVector(valueList[4]); // movePos
+//        this.goal = UtilVector.strToVector(valueList[5]); // goal
+//        if (!valueList[6].isEmpty()) {
+//            System.out.println("valueList = " + valueList[6]);
+//            this.followAgent = env.getAgent(valueList[6]); //followAgent
+//            System.out.println("follow = " + followAgent);
+//            this.followAgent.setFollower(this);
+//        }
+//        this.followers = strToAgentList(valueList[7]); //followers
+//        this.perceptionInViewAgentList = strToAgentList(valueList[9]);
+//        this.perceptionFollowAgentList = strToAgentList(valueList[11]);
+//        this.perceptionContinueStep = Float.parseFloat(valueList[13]);
+//        this.perceptionContinueDst = Float.parseFloat(valueList[14]);
+//        this.perceptionAllDst = Float.parseFloat(valueList[15]);
         this.perceptionBeforePos = this.position;
         this.perceptionBeforeStateTag = this.stateTag;
     }

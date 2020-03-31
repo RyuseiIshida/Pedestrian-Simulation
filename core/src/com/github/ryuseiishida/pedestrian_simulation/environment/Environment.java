@@ -14,11 +14,7 @@ import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import com.github.ryuseiishida.pedestrian_simulation.analysis.LDA;
 import com.github.ryuseiishida.pedestrian_simulation.agent.Agent;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class Environment {
@@ -41,12 +37,7 @@ public class Environment {
         for (BoxLine box : Parameter.Boxes) {
             obstacles.addAll(box.getLines());
         }
-        if (Parameter.MODE.equals("LogSimulation")) {
-            loadLog = new LoadLog();
-            spawnLogAgents();
-        } else {
-            spawnInitAgents();
-        }
+        spawnInitAgents();
         LoadMap.setObstacle(obstacles);
         writerLog = new WriterLog(this);
         ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
@@ -58,16 +49,19 @@ public class Environment {
         for (BoxLine box : Parameter.Boxes) {
             obstacles.addAll(box.getLines());
         }
-        if (Parameter.MODE.equals("LogSimulation")) {
-            loadLog = new LoadLog();
-            spawnLogAgents();
-        } else {
-            spawnInitAgents();
-        }
+        spawnInitAgents();
         LoadMap.setObstacle(obstacles);
         writerLog = new WriterLog(this);
         ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
         ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
+    }
+
+    public Environment(String logDirPath) {
+        loadLog = new LoadLog(logDirPath);
+        writerLog = new WriterLog(this);
+        ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
+        ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
+        spawnLogAgents();
     }
 
     public void saveLDA() {
@@ -84,9 +78,9 @@ public class Environment {
                     .forEach(Agent::action);
             ifAgentInGoal();
             ifAgentInFire();
-            ldaStepSplit.recordStepSplit(step);
-            ldaGroupSizeSplit.recordGroupSizeSplit(step);
             fire.spreadFire();
+//            ldaStepSplit.recordStepSplit(step);
+//            ldaGroupSizeSplit.recordGroupSizeSplit(step);
         }
     }
 
@@ -173,36 +167,9 @@ public class Environment {
         return false;
     }
 
-    public void spawnInitLogAgent() {
-        String str = "core/assets/agentList.txt";
-        ArrayList<Vector2> position = new ArrayList<>();
-        try (BufferedReader br = Files.newBufferedReader(Paths.get(str))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] pos = line.split(",");
-                position.add(new Vector2(Float.parseFloat(pos[0]), Float.parseFloat(pos[1])));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        for (int i = 0; i < Parameter.INIT_AGENT_NUM; i++) {
-            if (i < Parameter.GOAL_AGENT_NUM) {
-                if (i < Parameter.GOAL_AGENT_NUM / 2) {
-                    agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position.get(i), goals.get(0)));
-                } else {
-                    agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position.get(i), goals.get(0)));
-                }
-            } else {
-                agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position.get(i)));
-            }
-        }
-    }
-
     private void spawnLogAgents() {
         for (File AgentLogFile : loadLog.getAgentFileList()) {
             agentList.add(new Agent(AgentLogFile, this));
-
         }
     }
 

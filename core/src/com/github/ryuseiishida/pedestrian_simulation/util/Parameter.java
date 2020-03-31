@@ -15,26 +15,31 @@ public class Parameter {
     /**
      * "DefaultSimulation" or "LogSimulation" or "CreateMap"
      */
-    public static String MODE = "DefaultSimulation";
+    public static String MODE = "LogSimulation";
 
     /**
      * シミュレーションループ回数
      */
-    public static int LOOP_NUM;
+    public static int LOOP_NUM = 10;
 
     /**
      * シミュレーション終了ステップ
      */
-    public static int END_STEP;
+    public static int END_STEP = 1000;
 
     /**
      * ログの記録
      */
     public static boolean IS_WRITE_LOG = false;
-    
+
     public static boolean IS_WRITE_LOG_AGENT = false;
-    
+
     public static boolean IS_WRITE_LOG_MACRO = false;
+
+    /**
+     * LogSimulationでのログディレクトリパス
+     */
+    public static String LOG_DIR_PATH = "core/assets/out/2020-03-10_061336/";
 
     /**
      * LDA コーパス保存ステップ
@@ -53,7 +58,7 @@ public class Parameter {
     public static Vector2 SCALE = new Vector2(100 * METER, 100 * METER);
     public static ArrayList<Goal> GOALS = new ArrayList<>(Arrays.asList(
             new Goal(0, 200, 200, 200 + 200)
-                        //new Goal(SCALE.x - 200, SCALE.y - 1400, 200, 200 + 200)
+            //new Goal(SCALE.x - 200, SCALE.y - 1400, 200, 200 + 200)
     ));
     public static int CELL_INTERVAL = 10;
 
@@ -64,20 +69,18 @@ public class Parameter {
     public static CellsMap ENV_CELLS_MAP = new CellsMap(SCALE, CELL_INTERVAL);
 
     public static ArrayList<BoxLine> Boxes = new ArrayList<>(Arrays.asList(
-//            // 左上
-//            new BoxLine(1200, 6200, 4500, 8000, ENV_CELLS_MAP),
-//            //右上
-//            new BoxLine(5700, 6200, 9000, 8000, ENV_CELLS_MAP),
-//            // 左下
-//            new BoxLine(1200, 1200, 4500, 3000, ENV_CELLS_MAP),
-//            //右下
-//            new BoxLine(5700, 1200, 9000, 3000, ENV_CELLS_MAP),
-//            //中央左
-//            new BoxLine(1200, 3700, 4500, 5500, ENV_CELLS_MAP),
-//            //中央右
-//            new BoxLine(5700, 3700, 9000, 5500, ENV_CELLS_MAP)
-//            //広い通路
-//            new BoxLine(1200, 1200, 9000, 8000, ENV_CELLS_MAP)
+            // 左上
+            new BoxLine(1200, 6200, 4500, 8000, ENV_CELLS_MAP),
+            //右上
+            new BoxLine(5700, 6200, 9000, 8000, ENV_CELLS_MAP),
+            // 左下
+            new BoxLine(1200, 1200, 4500, 3000, ENV_CELLS_MAP),
+            //右下
+            new BoxLine(5700, 1200, 9000, 3000, ENV_CELLS_MAP),
+            //中央左
+            new BoxLine(1200, 3700, 4500, 5500, ENV_CELLS_MAP),
+            //中央右
+            new BoxLine(5700, 3700, 9000, 5500, ENV_CELLS_MAP)
     ));
 
     public static ArrayList<Obstacle> OBSTACLES = new ArrayList<>(Arrays.asList(
@@ -85,20 +88,12 @@ public class Parameter {
             new Line(200, 600, 200, SCALE.y - 1000, ENV_CELLS_MAP),
             //right wall line
             new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1000, ENV_CELLS_MAP),
-            new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1400, ENV_CELLS_MAP),
+            //new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1400, ENV_CELLS_MAP),
             // bottom wall line
             new Line(200, 200, SCALE.x - 200, 200, ENV_CELLS_MAP),
             // top wall line
             new Line(200, SCALE.y - 1000, SCALE.x - 200, SCALE.y - 1000, ENV_CELLS_MAP)
-
-
-//            new Line(200, 600, 200, 3000, ENV_CELLS_MAP),
-//            new Line(200, 3000, 4000, 3000, ENV_CELLS_MAP),
-//            new Line(4000, 3000, 4000, 7000, ENV_CELLS_MAP),
-//            new Line(4000, 7000, 6500, 7000, ENV_CELLS_MAP),
-//            new Line(6500, 7000, 6500, 200, ENV_CELLS_MAP),
-//            new Line(200, 200, 6500, 200, ENV_CELLS_MAP)
-            ));
+    ));
 
     public static Line experienceOLINE = new Line(0, 0, 0, 0, ENV_CELLS_MAP);
 
