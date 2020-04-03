@@ -31,7 +31,6 @@ public class WriterLog {
             this.env = env;
             this.agents = env.getAgentList();
             makeDir();
-            writeAgentInitPosition();
             writeSourceCodeToParameter();
         }
     }
@@ -96,7 +95,7 @@ public class WriterLog {
 
     public void writeAgentLog() {
         agents.stream().parallel().forEach(agent -> {
-            String path = this.path  + "/agent" + agent.getID() + ".txt";
+            String path = this.path + "/agent" + agent.getID() + ".txt";
             if (!(new File(path).exists())) {
                 initWriteAgentLog(path);
             }
@@ -111,12 +110,14 @@ public class WriterLog {
                 //書き込み
                 CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
                 for (CSVRecord csvRecord : csvRecords) {
-                    printer.printRecord(csvRecord.get(0), csvRecord.get(1), csvRecord.get(2));
+                    printer.printRecord(csvRecord.get(0), csvRecord.get(1), csvRecord.get(2), csvRecord.get(3));
                 }
                 printer.printRecord(
                         env.getStep(), //0
                         agent.getStateTag(), //1
-                        agent.getPosition().toString().replace(",", ":")); //2
+                        agent.getPosition().toString().replace(",", ":"),
+                        agent.getVelocity().toString().replace(",", ":")
+                ); //2
                 printer.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -127,55 +128,12 @@ public class WriterLog {
     private void initWriteAgentLog(String path) {
         try {
             CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
-            printer.printRecord("step", "tag", "position");
+            printer.printRecord("step", "tag", "position", "velocity");
             printer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-//    public void writeMacroLog() {
-//        try {
-//            new File(this.path + "/Macro").mkdir();
-//            String path = this.path + "/Macro" + "/macro" + ".txt";
-//            if (!(new File(path).exists())) {
-//                CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
-//                printer.printRecord("step", "goalAgentNum", "groupSize", "follow");
-//                printer.close();
-//            }
-//            Reader reader = Files.newBufferedReader(Paths.get(path));
-//            CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-//            ArrayList<CSVRecord> csvRecords = new ArrayList<>();
-//            for (CSVRecord record : csvParser) {
-//                csvRecords.add(record);
-//            }
-//            CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
-//            for (CSVRecord csvRecord : csvRecords) {
-//                printer.printRecord(
-//                        csvRecord.get(0),
-//                        csvRecord.get(1),
-//                        csvRecord.get(2),
-//                        csvRecord.get(3)
-//                );
-//            }
-//            int follow = 0;
-//            for (Agent agent : env.getAgentList()) {
-//                if (agent.getStateTag().equals(StateTag.follow)) {
-//                    follow++;
-//                }
-//            }
-//            printer.printRecord(
-//                    env.getStep(), //0
-//                    env.getGoalAgentNum(), //1
-//                    Group.getGroupNum(env.getAgentList()), //2
-//                    follow //3
-//            );
-//            printer.close();
-//            csvParser.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     public void writeMacroLog() {
         try {

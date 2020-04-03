@@ -196,7 +196,7 @@ public class Agent {
     }
 
     private void ex() {
-        if (isRandomWalkAgent()) {
+        if (isMoveGoalAgent()) {
             moveFollow();
         } else {
             randomWalk();
@@ -206,6 +206,13 @@ public class Agent {
     private boolean isRandomWalkAgent() {
         for (Agent agent : perceptionInViewAgentList) {
             return !agent.getStateTag().equals(StateTag.follow);
+        }
+        return false;
+    }
+
+    private boolean isMoveGoalAgent() {
+        for (Agent agent : perceptionInViewAgentList) {
+            return agent.getStateTag().equals(StateTag.moveGoal);
         }
         return false;
     }
@@ -245,6 +252,7 @@ public class Agent {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        setLogToAgent(env.getStep());
     }
 
     private void setLogToAgent(int step) {
@@ -256,7 +264,7 @@ public class Agent {
         int logStep = Integer.parseInt(valueList[0]);
         this.stateTag = valueList[1]; // tag
         this.position = UtilVector.strToVector(valueList[2]); // position
-//        this.velocity = UtilVector.strToVector(valueList[3]); // velocity
+        this.velocity = UtilVector.strToVector(valueList[3]); // velocity
 //        this.movePos = UtilVector.strToVector(valueList[4]); // movePos
 //        this.goal = UtilVector.strToVector(valueList[5]); // goal
 //        if (!valueList[6].isEmpty()) {
@@ -496,8 +504,8 @@ public class Agent {
     private void velocityFollow() {
         Vector2 pVector = new Vector2();
         float delta = 1f;
-        pVector.x = -1 * (getFollowKimPotential(position.x + delta, position.y) - getFollowKimPotential(position.x, position.y)) / delta;
-        pVector.y = -1 * (getFollowKimPotential(position.x, position.y + delta) - getFollowKimPotential(position.x, position.y)) / delta;
+        pVector.x = -1 * (calcFollowKimPotential(position.x + delta, position.y) - calcFollowKimPotential(position.x, position.y)) / delta;
+        pVector.y = -1 * (calcFollowKimPotential(position.x, position.y + delta) - calcFollowKimPotential(position.x, position.y)) / delta;
         pVector.nor();
         velocity.set(pVector);
     }
@@ -505,31 +513,33 @@ public class Agent {
     private void setFollowPotentialVector(Vector2 direction) {
         Vector2 pVector = new Vector2();
         float delta = 1f;
-        pVector.x = -1 * (getFollowPotential(position.x + delta, position.y) - getFollowPotential(position.x, position.y)) / delta;
-        pVector.y = -1 * (getFollowPotential(position.x, position.y + delta) - getFollowPotential(position.x, position.y)) / delta;
+        pVector.x = -1 * (calcFollowPotential(position.x + delta, position.y) - calcFollowPotential(position.x, position.y)) / delta;
+        pVector.y = -1 * (calcFollowPotential(position.x, position.y + delta) - calcFollowPotential(position.x, position.y)) / delta;
         pVector.nor();
         direction.set(pVector);
     }
 
-    private float getFollowPotential(float x, float y) {
+    private float calcFollowPotential(float x, float y) {
         float cg = goal == null ? 100 : 1000;
         //float Ug = getGoalKIMPotential(x, y) + getFollowKimPotential(x, y);
-        float Ug = getFollowKimPotential(x, y);
+        float Ug = calcFollowKimPotential(x, y);
         float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y) + getFireKIMPotential(x, y);
         //float U = (((1 / cg) * Uo) + 1) * Ug;
         float U = Ug + Uo;
         return U;
     }
 
-    private float getFollowKimPotential(float x, float y) {
+    private float calcFollowKimPotential(float x, float y) {
         float potentialWeight = 0;
         float cg = goal == null ? 10 : 100;
         float lg = Parameter.VIEW_RADIUS_LENGTH * 2;
         Vector2 pos = new Vector2(x, y);
         for (Agent agent : perceptionInViewAgentList) {
-            Vector2 followVelocity = UtilVector.direction(agent.getPosition(), agent.getMovePos());
-            Vector2 followVector = new Vector2(agent.getPosition()).add(followVelocity);
-            potentialWeight = (float) (cg * (1 - new Exp().value(-1 * (pos.dst2(followVector) / (lg * lg)))));
+            if (agent.getStateTag().equals(StateTag.moveGoal)) {
+                Vector2 followVelocity = UtilVector.direction(agent.getPosition(), agent.getMovePos());
+                Vector2 followVector = new Vector2(agent.getPosition()).add(followVelocity);
+                potentialWeight = (float) (cg * (1 - new Exp().value(-1 * (pos.dst2(followVector) / (lg * lg)))));
+            }
         }
         return potentialWeight;
     }

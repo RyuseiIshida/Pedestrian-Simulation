@@ -25,7 +25,6 @@ public class LoadLog {
         FilenameFilter filter = new FilenameFilter() {
             public boolean accept(File file, String str) {
                 //指定文字列でフィルタする
-                //indexOfは指定した文字列が見つからなかったら-1を返す
                 if (str.indexOf("agent") != -1) {
                     return true;
                 } else {
