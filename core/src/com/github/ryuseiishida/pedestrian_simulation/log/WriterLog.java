@@ -220,18 +220,6 @@ public class WriterLog {
         }
     }
 
-    public void writeEntropy(ArrayList<String> logText) {
-        String path = "core/assets/entropy.txt";
-        try (BufferedWriter br = Files.newBufferedWriter(Paths.get(path))) {
-            for (String str : logText) {
-                br.append(str);
-                br.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void writeGroup(ArrayList<String> logText) {
         String path = "core/assets/group.txt";
         try (BufferedWriter br = Files.newBufferedWriter(Paths.get(path))) {
