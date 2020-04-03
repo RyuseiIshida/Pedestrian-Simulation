@@ -39,9 +39,6 @@ public class Environment {
         }
         spawnInitAgents();
         LoadMap.setObstacle(obstacles);
-        writerLog = new WriterLog(this);
-        ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
-        ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
     }
 
     public Environment(boolean loopFlag) {
@@ -51,16 +48,10 @@ public class Environment {
         }
         spawnInitAgents();
         LoadMap.setObstacle(obstacles);
-        writerLog = new WriterLog(this);
-        ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
-        ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
     }
 
     public Environment(String logDirPath) {
         loadLog = new LoadLog(logDirPath);
-        writerLog = new WriterLog(this);
-        ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
-        ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
         spawnLogAgents();
     }
 
@@ -71,6 +62,9 @@ public class Environment {
 
     public void update() {
         if (updateFlag) {
+            if(writerLog == null) {
+                initWriterLog();
+            }
             writerLog.ifWriteLog(Parameter.IS_WRITE_LOG);
             step++;
             agentList.stream()
@@ -79,11 +73,16 @@ public class Environment {
             ifAgentInGoal();
             ifAgentInFire();
             fire.spreadFire();
-//            ldaStepSplit.recordStepSplit(step);
-//            ldaGroupSizeSplit.recordGroupSizeSplit(step);
+            ldaStepSplit.recordStepSplit(step);
+            ldaGroupSizeSplit.recordGroupSizeSplit(step);
         }
     }
 
+    public void initWriterLog() {
+        writerLog = new WriterLog(this);
+        ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
+        ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
+    }
 
     public void setStep(int step) {
         this.step = step;
