@@ -15,12 +15,20 @@ public class Parameter {
     /**
      * "DefaultSimulation" or "LogSimulation" or "CreateMap"
      */
-    public static String MODE = "LogSimulation";
+    public static String MODE = "DefaultSimulation";
 
     /**
      * シミュレーションループ回数
      */
-    public static int LOOP_NUM = 10;
+    public static int LOOP_NUM = 1;
+
+    /**
+     * シミュレーションの終了方法
+     * not quit automatically -> "NONE"
+     * Agents escape all -> "ESCAPED"
+     * Specify end step -> "END_STEP"
+     */
+    public static String END = "NONE";
 
     /**
      * シミュレーション終了ステップ
@@ -39,7 +47,7 @@ public class Parameter {
     /**
      * LogSimulationでのログディレクトリパス
      */
-    public static String LOG_DIR_PATH = "core/assets/out/2020-03-10_061336/";
+    public static String LOG_DIR_PATH = "core/assets/out/2020-04-04_014607/";
 
     /**
      * LDA コーパス保存ステップ

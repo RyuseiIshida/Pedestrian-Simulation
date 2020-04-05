@@ -155,7 +155,7 @@ public class Agent {
         this.movePos = goal.getCenter();
         this.velocity = new Vector2(0, 0);
         this.followers = new ArrayList<>();
-        setObstaclePositionMap2();
+        setObstaclePositionMap();
     }
 
     public Agent(File logFile, Environment env) {
@@ -531,8 +531,8 @@ public class Agent {
 
     private float calcFollowKimPotential(float x, float y) {
         float potentialWeight = 0;
-        float cg = goal == null ? 10 : 100;
-        float lg = Parameter.VIEW_RADIUS_LENGTH * 2;
+        float cg = 100;
+        float lg = Parameter.VIEW_RADIUS_LENGTH * 100;
         Vector2 pos = new Vector2(x, y);
         for (Agent agent : perceptionInViewAgentList) {
             if (agent.getStateTag().equals(StateTag.moveGoal)) {
@@ -712,14 +712,6 @@ public class Agent {
 
     private LinkedHashMap<Vector2, Float> obstaclePositionMap;
     private float obstacleLo = radius;
-
-    private void setObstaclePositionMap2() {
-        setObstaclePositionMap();
-        for (Cell obstacleCell : Parameter.experienceOLINE.getObstacleCells()) {
-            //obstaclePositionList.add(obstacleCell.getCenterPoint());
-            obstaclePositionMap.put(obstacleCell.getCenterPoint(), obstacleLo);
-        }
-    }
 
     private void setObstaclePositionMap() {
         obstaclePositionMap = new LinkedHashMap<>();

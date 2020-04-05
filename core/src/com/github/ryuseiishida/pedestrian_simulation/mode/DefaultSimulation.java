@@ -30,8 +30,8 @@ public class DefaultSimulation extends ApplicationAdapter {
         bitmapFont = new BitmapFont();
         bitmapFont.setColor(Color.BLACK);
         bitmapFont.getData().setScale(15);
-        loopController = new LoopController();
         environment = new Environment();
+        loopController = new LoopController(environment);
     }
 
     @Override

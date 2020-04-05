@@ -52,12 +52,10 @@ public class Environment {
 
     public Environment(String logDirPath) {
         loadLog = new LoadLog(logDirPath);
+        for (BoxLine box : Parameter.Boxes) {
+            obstacles.addAll(box.getLines());
+        }
         spawnLogAgents();
-    }
-
-    public void saveLDA() {
-        ldaGroupSizeSplit.outPrint("stepGroupSizeSplit_Corpus");
-        ldaStepSplit.outPrint("stepSplit_Corpus");
     }
 
     public void update() {
@@ -82,6 +80,11 @@ public class Environment {
         writerLog = new WriterLog(this);
         ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
         ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
+    }
+
+    public void saveLDA() {
+        ldaGroupSizeSplit.outPrint("stepGroupSizeSplit_Corpus");
+        ldaStepSplit.outPrint("stepSplit_Corpus");
     }
 
     public void setStep(int step) {
