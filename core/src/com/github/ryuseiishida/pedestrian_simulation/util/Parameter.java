@@ -20,7 +20,7 @@ public class Parameter {
     /**
      * シミュレーションループ回数
      */
-    public static int LOOP_NUM = 3;
+    public static int LOOP_NUM = 5;
 
     /**
      * シミュレーションの終了方法
@@ -38,9 +38,9 @@ public class Parameter {
     /**
      * ログの記録
      */
-    public static boolean IS_WRITE_LOG = false;
+    public static boolean IS_WRITE_LOG = true;
 
-    public static boolean IS_WRITE_LOG_AGENT = false;
+    public static boolean IS_WRITE_LOG_AGENT = true;
 
     public static boolean IS_WRITE_LOG_MACRO = false;
 
@@ -114,8 +114,8 @@ public class Parameter {
     public static float POTENTIAL_DELTA = 1f;
 
     //agent
-    public static int INIT_AGENT_NUM = 10;
-    public static int GOAL_AGENT_NUM = 10;
+    public static int INIT_AGENT_NUM = 100;
+    public static int GOAL_AGENT_NUM = 30;
     public static Tuple<Float> INIT_RANDOM_X = new Tuple<>(300f, SCALE.x - 300);
     public static Tuple<Float> INIT_RANDOM_Y = new Tuple<>(300f, SCALE.y - 1100);
     //ゴールを知っているエージェントのゴール番号 or "random"

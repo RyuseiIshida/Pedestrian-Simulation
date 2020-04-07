@@ -2,6 +2,7 @@ package com.github.ryuseiishida.pedestrian_simulation.obstacle;
 
 import com.badlogic.gdx.math.Vector2;
 import com.github.ryuseiishida.pedestrian_simulation.cell.CellsMap;
+import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
 import java.util.ArrayList;
 
@@ -30,9 +31,9 @@ public class BoxLine {
     }
 
     public boolean isPositionInBox(float targetX, float targetY) {
-        return targetX > startPoint.x
-                && targetY > startPoint.y
-                && targetX < endPoint.x
-                && targetY < endPoint.y;
+        return targetX > startPoint.x - Parameter.AGENT_RADIUS
+                && targetY > startPoint.y - Parameter.AGENT_RADIUS
+                && targetX < endPoint.x + Parameter.AGENT_RADIUS
+                && targetY < endPoint.y + Parameter.AGENT_RADIUS;
     }
 }

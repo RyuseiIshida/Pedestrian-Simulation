@@ -75,7 +75,7 @@ public class LDA {
         if (Parameter.END.equals("ESCAPED") && goalAgent.size()==0) {
             outPrintStep = null;
             outPrint("stepGroupSizeSplit_Corpus");
-        } else if (step >= outPrintStep) {
+        } else if (!Parameter.END.equals("ESCAPED") && step >= outPrintStep) {
             outPrintStep = null;
             outPrint("stepGroupSizeSplit_Corpus");
         }

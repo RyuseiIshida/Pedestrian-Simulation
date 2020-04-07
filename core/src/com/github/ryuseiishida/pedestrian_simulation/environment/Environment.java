@@ -130,15 +130,9 @@ public class Environment {
     //agent
     public void spawnInitAgents() {
         for (int i = 0; i < Parameter.INIT_AGENT_NUM; i++) {
-            float x = MathUtils.random(Parameter.INIT_RANDOM_X.valueA, Parameter.INIT_RANDOM_X.valueB);
-            float y = MathUtils.random(Parameter.INIT_RANDOM_Y.valueA, Parameter.INIT_RANDOM_Y.valueB);
             Vector2 position = getRandomPosition();
             if (i < Parameter.GOAL_AGENT_NUM) {
-                if (i < Parameter.GOAL_AGENT_NUM / 2) {
-                    agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position, goals.get(0)));
-                } else {
-                    agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position, goals.get(0)));
-                }
+                agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position, goals.get(0)));
             } else {
                 agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position));
             }
