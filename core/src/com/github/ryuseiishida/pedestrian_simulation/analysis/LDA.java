@@ -130,7 +130,7 @@ public class LDA {
                 }
                 bw.newLine();
             }
-            System.out.println("save corpus data");
+            System.out.println("save corpus data [" + fileName + "]");
         } catch (IOException e) {
             e.printStackTrace();
         }

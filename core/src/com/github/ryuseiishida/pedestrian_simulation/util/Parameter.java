@@ -47,7 +47,7 @@ public class Parameter {
     /**
      * LogSimulationでのログディレクトリパス
      */
-    public static String LOG_DIR_PATH = "core/assets/out/2020-04-07_071452/";
+    public static String LOG_DIR_PATH = "core/assets/out/2020-04-07_092742/";
 
     /**
      * LDA コーパス保存ステップ
@@ -66,8 +66,8 @@ public class Parameter {
     private static float METER = 100f;
     public static Vector2 SCALE = new Vector2(100 * METER, 100 * METER);
     public static ArrayList<Goal> GOALS = new ArrayList<>(Arrays.asList(
-            new Goal(0, 200, 200, 200 + 200)
-            //new Goal(SCALE.x - 200, SCALE.y - 1400, 200, 200 + 200)
+            new Goal(0, 200, 200, 200 + 200),
+            new Goal(SCALE.x - 200, SCALE.y - 1400, 200, 200 + 200)
     ));
     public static int CELL_INTERVAL = 10;
 
@@ -96,8 +96,8 @@ public class Parameter {
             //left wall line
             new Line(200, 600, 200, SCALE.y - 1000, ENV_CELLS_MAP),
             //right wall line
-            new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1000, ENV_CELLS_MAP),
-            //new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1400, ENV_CELLS_MAP),
+            //new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1000, ENV_CELLS_MAP),
+            new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1400, ENV_CELLS_MAP),
             // bottom wall line
             new Line(200, 200, SCALE.x - 200, 200, ENV_CELLS_MAP),
             // top wall line
@@ -115,7 +115,7 @@ public class Parameter {
 
     //agent
     public static int INIT_AGENT_NUM = 100;
-    public static int GOAL_AGENT_NUM = 30;
+    public static int GOAL_AGENT_NUM = 50;
     public static Tuple<Float> INIT_RANDOM_X = new Tuple<>(300f, SCALE.x - 300);
     public static Tuple<Float> INIT_RANDOM_Y = new Tuple<>(300f, SCALE.y - 1100);
     //ゴールを知っているエージェントのゴール番号 or "random"

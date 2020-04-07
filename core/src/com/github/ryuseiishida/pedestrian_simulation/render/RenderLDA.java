@@ -74,7 +74,7 @@ public class RenderLDA {
 
     private static ArrayList<String> readFileTopic() {
         ArrayList<String> topic = new ArrayList<>();
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get("core/assets/group_topic" + numTopics + ".txt"))) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(Parameter.LOG_DIR_PATH + "group_topic" + numTopics + ".txt"))) {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 topic.add(line);

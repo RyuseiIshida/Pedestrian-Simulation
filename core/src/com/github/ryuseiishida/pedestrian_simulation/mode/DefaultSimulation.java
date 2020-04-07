@@ -43,7 +43,6 @@ public class DefaultSimulation extends ApplicationAdapter {
         new RenderFire(shapeRenderer, camera, environment);
         new RenderGoal(shapeRenderer, camera, environment);
         new RenderObstacle(shapeRenderer, camera, environment);
-        new RenderLDA(batch, bitmapFont, shapeRenderer, camera);
         new Inputs(camera, environment);
         if (loopController.isResetLoop(environment.getStep())) {
             System.out.println("looped " + loopController.getCountLoopNum());
