@@ -1,6 +1,7 @@
 package com.github.ryuseiishida.pedestrian_simulation.analysis;
 
 import com.badlogic.gdx.math.Vector2;
+import com.github.ryuseiishida.pedestrian_simulation.agent.StateTag;
 import com.github.ryuseiishida.pedestrian_simulation.cell.CellsMap;
 import com.github.ryuseiishida.pedestrian_simulation.log.WriterLog;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
@@ -44,7 +45,14 @@ public class LDA {
         if (outPrintStep == null) {
             return;
         }
-        if (step >= outPrintStep) {
+        ArrayList<Agent> goalAgent = new ArrayList<>();
+        agentList.stream().forEach(agent -> {
+            if (agent.getStateTag().equals(StateTag.moveGoal)) goalAgent.add(agent);
+        });
+        if (Parameter.END.equals("ESCAPED") && goalAgent.size()==0) {
+            outPrintStep = null;
+            outPrint("stepSplit_Corpus");
+        } else if (!Parameter.END.equals("ESCAPED") && step >= outPrintStep) {
             outPrintStep = null;
             outPrint("stepSplit_Corpus");
         }
@@ -60,7 +68,14 @@ public class LDA {
         if (outPrintStep == null) {
             return;
         }
-        if (step >= outPrintStep) {
+        ArrayList<Agent> goalAgent = new ArrayList<>();
+        agentList.stream().forEach(agent -> {
+            if (agent.getStateTag().equals(StateTag.moveGoal)) goalAgent.add(agent);
+        });
+        if (Parameter.END.equals("ESCAPED") && goalAgent.size()==0) {
+            outPrintStep = null;
+            outPrint("stepGroupSizeSplit_Corpus");
+        } else if (step >= outPrintStep) {
             outPrintStep = null;
             outPrint("stepGroupSizeSplit_Corpus");
         }

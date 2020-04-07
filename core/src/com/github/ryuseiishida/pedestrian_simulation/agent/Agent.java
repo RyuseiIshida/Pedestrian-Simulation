@@ -447,7 +447,7 @@ public class Agent {
 
     private float getAgentKIMPotential(float x, float y) {
         float potentialWight = 0;
-        float co = 1000;
+        float co = stateTag.equals(StateTag.moveGoal) ? 1000 : 1000000;
         float lo = Parameter.AGENT_RADIUS;
         //float lo = Parameter.AGENT_RADIUS;
         //System.out.println("lo = " + lo);

@@ -12,15 +12,20 @@ public class LoopController {
         this.env = environment;
     }
 
+    public void newEnvironment(Environment environment) {
+        this.env = environment;
+    }
+
     public boolean isResetLoop(int step) {
         if (Parameter.END.equals("ESCAPED") && env.getStep() != 0) {
             int goalAgentCounter = 0;
             for (Agent agent : env.getAgentList()) {
-                if (!agent.getStateTag().equals(StateTag.moveGoal)) {
+                if (agent.getStateTag().equals(StateTag.moveGoal)) {
                     goalAgentCounter++;
                 }
             }
             if (goalAgentCounter == 0) {
+                countLoopNum++;
                 return true;
             }
         } else if (Parameter.END.equals("END_STEP") && step >= Parameter.END_STEP && Parameter.END_STEP != 0) {

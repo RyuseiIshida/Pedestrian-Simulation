@@ -48,6 +48,7 @@ public class DefaultSimulation extends ApplicationAdapter {
         if (loopController.isResetLoop(environment.getStep())) {
             System.out.println("looped " + loopController.getCountLoopNum());
             environment = new Environment(true);
+            loopController.newEnvironment(environment);
         }
         if (loopController.isEndLoop()) {
             dispose();

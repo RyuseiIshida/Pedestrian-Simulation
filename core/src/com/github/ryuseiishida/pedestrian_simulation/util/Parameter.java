@@ -20,7 +20,7 @@ public class Parameter {
     /**
      * シミュレーションループ回数
      */
-    public static int LOOP_NUM = 1;
+    public static int LOOP_NUM = 3;
 
     /**
      * シミュレーションの終了方法
@@ -28,7 +28,7 @@ public class Parameter {
      * Agents escape all -> "ESCAPED"
      * Specify end step -> "END_STEP"
      */
-    public static String END = "NONE";
+    public static String END = "ESCAPED";
 
     /**
      * シミュレーション終了ステップ
@@ -47,13 +47,14 @@ public class Parameter {
     /**
      * LogSimulationでのログディレクトリパス
      */
-    public static String LOG_DIR_PATH = "core/assets/out/2020-04-04_014607/";
+    public static String LOG_DIR_PATH = "core/assets/out/2020-04-07_071452/";
 
     /**
      * LDA コーパス保存ステップ
+     * END が"ESCAPED"の場合はそのタイミングが優先される
      * nullの場合はCtr+Lで保存する
      */
-    public static int LDA_OUT_PRINT_STEP = 1000;
+    public static int LDA_OUT_PRINT_STEP = 500;
 
     /**
      * LDA 文書の区切り方
@@ -113,8 +114,8 @@ public class Parameter {
     public static float POTENTIAL_DELTA = 1f;
 
     //agent
-    public static int INIT_AGENT_NUM = 100;
-    public static int GOAL_AGENT_NUM = 30;
+    public static int INIT_AGENT_NUM = 10;
+    public static int GOAL_AGENT_NUM = 10;
     public static Tuple<Float> INIT_RANDOM_X = new Tuple<>(300f, SCALE.x - 300);
     public static Tuple<Float> INIT_RANDOM_Y = new Tuple<>(300f, SCALE.y - 1100);
     //ゴールを知っているエージェントのゴール番号 or "random"

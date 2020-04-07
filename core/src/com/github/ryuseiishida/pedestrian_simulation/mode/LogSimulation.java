@@ -29,6 +29,11 @@ public class LogSimulation extends ApplicationAdapter {
         bitmapFont.setColor(Color.BLACK);
         bitmapFont.getData().setScale(15);
         environment = new Environment(Parameter.LOG_DIR_PATH);
+        Parameter.IS_WRITE_LOG = false;
+        Parameter.IS_WRITE_LOG_AGENT = false;
+        Parameter.IS_WRITE_LOG_MACRO = false;
+        Parameter.LDA_OUT_PRINT_STEP = -1;
+        Parameter.LDA_SPLIT_STEP = -1;
     }
 
     @Override
