@@ -137,8 +137,7 @@ public class WriterLog {
 
     public void writeMacroLog() {
         try {
-            new File(this.path + "/Macro").mkdir();
-            String path = this.path + "/Macro" + "/macro" + ".txt";
+            String path = this.path + "/macro" + ".txt";
             if (!(new File(path).exists())) {
                 CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
                 printer.printRecord("step", "goalAgentNum", "groupSize", "follow");
@@ -168,7 +167,7 @@ public class WriterLog {
             printer.printRecord(
                     env.getStep(), //0
                     env.getGoalAgentNum(), //1
-                    Group.getGroupNum(env.getAgentList()), //2
+                    Group.getGroup3(env.getAgentList()), //2
                     follow //3
             );
             printer.close();

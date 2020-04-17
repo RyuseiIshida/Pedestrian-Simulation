@@ -12,4 +12,7 @@ public class StateTag {
 
     /** the state of the agent is random move */
     public static final String randomWalk = "randomWalk";
+
+    /** the state of the agent is escaped */
+    public static final String escaped = "escaped";
 }

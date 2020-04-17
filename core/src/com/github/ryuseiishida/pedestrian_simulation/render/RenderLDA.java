@@ -144,7 +144,7 @@ public class RenderLDA {
     }
 
     public static void setNumTopics(int numTopics) {
-        if (numTopics >= 0 && numTopics < 3) {
+        if (numTopics >= 0) {
             RenderLDA.numTopics = numTopics;
         }
     }

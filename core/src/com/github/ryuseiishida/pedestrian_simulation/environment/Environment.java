@@ -2,6 +2,7 @@ package com.github.ryuseiishida.pedestrian_simulation.environment;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.github.ryuseiishida.pedestrian_simulation.agent.StateTag;
 import com.github.ryuseiishida.pedestrian_simulation.cell.Cell;
 import com.github.ryuseiishida.pedestrian_simulation.goal.Goal;
 import com.github.ryuseiishida.pedestrian_simulation.log.LoadLog;
@@ -63,6 +64,9 @@ public class Environment {
             if(writerLog == null) {
                 initWriterLog();
             }
+            if(step == loadLog.endStep()) {
+                return;
+            }
             writerLog.ifWriteLog(Parameter.IS_WRITE_LOG);
             step++;
             agentList.stream()
@@ -103,6 +107,7 @@ public class Environment {
         for (Goal goal : goals) {
             agentList.removeIf(goal::isAgentInGoal);
         }
+        agentList.removeIf(agent -> agent.getStateTag().equals(StateTag.escaped));
     }
 
     private void ifAgentInFire() {

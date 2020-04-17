@@ -43,7 +43,30 @@ public class Group {
         return groupList;
     }
 
+    public static ArrayList<ArrayList<Agent>> getGroup3Log(ArrayList<Agent> agentList) {
+        groupList = new ArrayList<>();
+        for (Agent agent : agentList) {
+            ArrayList<Agent> nearAgentList = new ArrayList<>(searchLengthAgent(agent, agentList));
+            if (!searchGroup(nearAgentList)){
+                groupList.add(nearAgentList);
+            }
+        }
+        return groupList;
+    }
+
     private static ArrayList<Agent> searchLengthAgent(Agent targetAgent, ArrayList<Agent> agentList) {
+        //距離閾値
+        float value = 20 * 100;
+        ArrayList<Agent> group = new ArrayList<>();
+        for (Agent agent : agentList) {
+            if(targetAgent.getPosition().dst(agent.getPosition()) <= value){
+                group.add(agent);
+            }
+        }
+        return group;
+    }
+
+    private static ArrayList<Agent> searchLengthAgentLog(Agent targetAgent, ArrayList<Agent> agentList) {
         //距離閾値
         float value = 20 * 100;
         ArrayList<Agent> group = new ArrayList<>();

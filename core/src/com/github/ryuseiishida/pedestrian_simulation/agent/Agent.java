@@ -258,6 +258,7 @@ public class Agent {
     private void setLogToAgent(int step) {
         String strValue = log.get(step);
         if (strValue == null) {
+            stateTag = StateTag.escaped;
             return;
         }
         String[] valueList = log.get(step).split(",", 0);

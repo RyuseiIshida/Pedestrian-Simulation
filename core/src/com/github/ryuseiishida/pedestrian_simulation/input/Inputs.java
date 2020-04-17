@@ -68,6 +68,12 @@ public class Inputs {
             camera.unproject(touchPos);
             environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), 1);
         }
+        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.NUM_3) && Gdx.input.justTouched()) {
+            Vector3 touchPos = new Vector3();
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touchPos);
+            environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), 2);
+        }
     }
 
     private void ldaController() {

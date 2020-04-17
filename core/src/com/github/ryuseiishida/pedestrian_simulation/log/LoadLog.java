@@ -41,6 +41,21 @@ public class LoadLog {
         return agentFileList;
     }
 
+    public int endStep() {
+        int endStep = 0;
+        String path = logDirPath + "macro.txt";
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(path))) {
+            String line;
+            br.readLine(); //ヘッダーを抜かす処理
+            while ((line = br.readLine()) != null) {
+                endStep++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return endStep;
+    }
+
     public int getAgentNum() {
         return agentFileList.size();
     }
