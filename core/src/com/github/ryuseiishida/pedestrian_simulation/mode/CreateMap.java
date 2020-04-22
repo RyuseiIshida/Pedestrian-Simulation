@@ -36,7 +36,7 @@ public class CreateMap extends ApplicationAdapter {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Parameter.SCALE.x, Parameter.SCALE.y);
         batch = new SpriteBatch();
-        texture = new Texture("core/assets/tressa-yokohama.png");
+//        texture = new Texture("core/assets/tressa-yokohama.png");
         shapeRenderer = new ShapeRenderer();
     }
 
@@ -47,9 +47,9 @@ public class CreateMap extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
         //batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        batch.draw(texture, 0, 0);
-        batch.end();
+//        batch.begin();
+//        batch.draw(texture, 0, 0);
+//        batch.end();
         drawTmpLine();
         drawLine();
         mapInput();

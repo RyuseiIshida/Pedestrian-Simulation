@@ -38,8 +38,8 @@ public class Environment {
         for (BoxLine box : Parameter.Boxes) {
             obstacles.addAll(box.getLines());
         }
-        spawnInitAgents();
         LoadMap.setObstacle(obstacles);
+        spawnInitAgents();
     }
 
     public Environment(boolean loopFlag) {
@@ -47,8 +47,8 @@ public class Environment {
         for (BoxLine box : Parameter.Boxes) {
             obstacles.addAll(box.getLines());
         }
-        spawnInitAgents();
         LoadMap.setObstacle(obstacles);
+        spawnInitAgents();
     }
 
     public Environment(String logDirPath) {
@@ -64,9 +64,7 @@ public class Environment {
             if(writerLog == null) {
                 initWriterLog();
             }
-            if(step == loadLog.endStep()) {
-                return;
-            }
+            ifLoadLog();
             writerLog.ifWriteLog(Parameter.IS_WRITE_LOG);
             step++;
             agentList.stream()
@@ -84,6 +82,14 @@ public class Environment {
         writerLog = new WriterLog(this);
         ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
         ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
+    }
+
+    public void ifLoadLog(){
+        if (loadLog != null) {
+            if (step == loadLog.endStep()) {
+                return;
+            }
+        }
     }
 
     public void saveLDA() {
