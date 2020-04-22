@@ -19,38 +19,40 @@ import org.jboss.netty.handler.codec.string.StringEncoder;
  */
 class EchoServer {
     ServerBootstrap bootstrap;
-    
+
     EchoServer() {
-        ChannelFactory factory = 
-            new NioServerSocketChannelFactory( // server
-					      Executors.newCachedThreadPool(),
-					      Executors.newCachedThreadPool()
-					       );
-        
+        ChannelFactory factory =
+                new NioServerSocketChannelFactory( // server
+                        Executors.newCachedThreadPool(),
+                        Executors.newCachedThreadPool()
+                );
+
         this.bootstrap = new ServerBootstrap(factory);
         this.bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
-		public ChannelPipeline getPipeline() {
-		    ChannelPipeline pipeline = Channels.pipeline();
-		    // Downstream(送信)
-		    pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));
-		    pipeline.addLast("stringEncoder", new StringEncoder());
-		    // Upstream(受信)
-		    pipeline.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(8192, 0, 4, 0, 4));
-		    pipeline.addLast("stringDecoder", new StringDecoder());
-		    // Application Logic Handler
-		    pipeline.addLast("handler", new EchoServerHandler()); // server
-                
-		    return pipeline;
-		}
-	    });
+            public ChannelPipeline getPipeline() {
+                ChannelPipeline pipeline = Channels.pipeline();
+                // Downstream(送信)
+                pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));
+                pipeline.addLast("stringEncoder", new StringEncoder());
+                // Upstream(受信)
+                pipeline.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(8192, 0, 4, 0, 4));
+                pipeline.addLast("stringDecoder", new StringDecoder());
+                // Application Logic Handler
+                pipeline.addLast("handler", new EchoServerHandler()); // server
+
+                return pipeline;
+            }
+        });
     }
+
     public void launch() {
         this.bootstrap.bind(new InetSocketAddress(9999)); // 9999番ポートでlisten
-	System.out.println("\n\n*** Server process is listening! ***\n");
+        System.out.println("\n\n*** Server process is listening! ***\n");
     }
-    public static void main(String[] args) {
-	EchoServer aProcess = new EchoServer();
 
-	aProcess.launch();
+    public static void main(String[] args) {
+        EchoServer aProcess = new EchoServer();
+
+        aProcess.launch();
     }
 }

@@ -21,56 +21,62 @@ import org.jboss.netty.handler.codec.string.StringEncoder;
 class EchoClient {
     ChannelFuture future;
     ClientBootstrap bootstrap;
-    
-    EchoClient() { 
+
+    EchoClient() {
         ChannelFactory factory =
-            new NioClientSocketChannelFactory( // client
-					      Executors.newCachedThreadPool(),
-					      Executors.newCachedThreadPool()
-					       );
-        
+                new NioClientSocketChannelFactory( // client
+                        Executors.newCachedThreadPool(),
+                        Executors.newCachedThreadPool()
+                );
+
         this.bootstrap = new ClientBootstrap(factory);
         this.bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
-		public ChannelPipeline getPipeline() {
-		    ChannelPipeline pipeline = Channels.pipeline();
-		    // Downstream(送信)
-		    pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));
-		    pipeline.addLast("stringEncoder", new StringEncoder());
-		    // Upstream(受信)
-		    pipeline.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(8192, 0, 4, 0, 4));
-		    pipeline.addLast("stringDecoder", new StringDecoder());
-		    // Application Logic Handler
-		    pipeline.addLast("handler", new EchoClientHandler()); // client
+            public ChannelPipeline getPipeline() {
+                ChannelPipeline pipeline = Channels.pipeline();
+                // Downstream(送信)
+                pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));
+                pipeline.addLast("stringEncoder", new StringEncoder());
+                // Upstream(受信)
+                pipeline.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(8192, 0, 4, 0, 4));
+                pipeline.addLast("stringDecoder", new StringDecoder());
+                // Application Logic Handler
+                pipeline.addLast("handler", new EchoClientHandler()); // client
 
-		    return pipeline;
-		}
-	    });        
+                return pipeline;
+            }
+        });
     }
+
     public void launch() {
-	this.future = this.bootstrap.connect(new InetSocketAddress("192.168.50.120", 9999)); // 9999番ポートにconnect
+        this.future = this.bootstrap.connect(new InetSocketAddress("192.168.50.120", 9999)); // 9999番ポートにconnect
     }
+
     public void exit() {
-    	this.future.getChannel().getCloseFuture().awaitUninterruptibly();
+        this.future.getChannel().getCloseFuture().awaitUninterruptibly();
         this.bootstrap.releaseExternalResources();
     }
+
     public static void main(String[] args) {
-	EchoClient aProcess = new EchoClient();
+        EchoClient aProcess = new EchoClient();
 
-	try {
-	    long start = System.currentTimeMillis(), current;
-	    long end = start + Integer.parseInt(args[0])*1000;
-	    int interval = Integer.parseInt(args[1])*1000;
+        try {
+//	    long start = System.currentTimeMillis(), current;
+//		long end = start + Integer.parseInt(args[0])*1000;
+//		int interval = Integer.parseInt(args[1])*1000;
+            long start = System.currentTimeMillis(), current;
+            long end = start + Integer.parseInt("5") * 1000;
+            int interval = Integer.parseInt("5") * 1000;
 
-	    System.out.println("\n\n*** Client process is requesting! ***");
-	    do {
-		aProcess.launch();
-		Thread.sleep(interval);
-		current = System.currentTimeMillis();
-	    } while(current < end);
-	} catch(Exception e) {
-	    e.printStackTrace();
-	}
-	aProcess.exit();
-	System.out.println("\n\n*** Client process is finished! ***");
+            System.out.println("\n\n*** Client process is requesting! ***");
+            do {
+                aProcess.launch();
+                Thread.sleep(interval);
+                current = System.currentTimeMillis();
+            } while (current < end);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        aProcess.exit();
+        System.out.println("\n\n*** Client process is finished! ***");
     }
 }
