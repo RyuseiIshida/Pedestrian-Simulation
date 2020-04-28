@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 /**
  * クライアント側アプリケーションロジック
  */
-class EchoClientHandler extends SimpleChannelHandler {
+public class EchoClientHandler extends SimpleChannelHandler {
     /**
      * サーバに接続した際に呼び出されるメソッド
      */

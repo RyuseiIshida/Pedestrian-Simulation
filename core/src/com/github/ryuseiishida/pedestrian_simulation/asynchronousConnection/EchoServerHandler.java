@@ -12,11 +12,10 @@ import java.util.*;
 /**
  * サーバ側アプリケーションロジック
  */
-class EchoServerHandler extends SimpleChannelHandler {
-    String replyMsgJP = "ありがとう！";
-    String replyMsgEN = "Thank you !";
-
-    Random randomGenerator = new Random();
+public class EchoServerHandler extends SimpleChannelHandler {
+    private String replyMsgJP = "ありがとう！";
+    private String replyMsgEN = "Thank you !";
+    private Random randomGenerator = new Random();
 
     /**
      * クライアントから電文を受信した際に呼び出されるメソッド

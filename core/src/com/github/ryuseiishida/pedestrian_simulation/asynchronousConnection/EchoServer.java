@@ -17,10 +17,10 @@ import org.jboss.netty.handler.codec.string.StringEncoder;
 /**
  * サーバ側メインクラス
  */
-class EchoServer {
-    ServerBootstrap bootstrap;
+public class EchoServer {
+    private ServerBootstrap bootstrap;
 
-    EchoServer() {
+    public EchoServer() {
         ChannelFactory factory =
                 new NioServerSocketChannelFactory( // server
                         Executors.newCachedThreadPool(),

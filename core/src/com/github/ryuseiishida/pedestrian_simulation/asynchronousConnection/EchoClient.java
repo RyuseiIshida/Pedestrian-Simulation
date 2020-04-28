@@ -18,9 +18,9 @@ import org.jboss.netty.handler.codec.string.StringEncoder;
 /**
  * クライアント側メインクラス
  */
-class EchoClient {
-    ChannelFuture future;
-    ClientBootstrap bootstrap;
+public class EchoClient {
+    private ChannelFuture future;
+    private ClientBootstrap bootstrap;
 
     EchoClient() {
         ChannelFactory factory =
