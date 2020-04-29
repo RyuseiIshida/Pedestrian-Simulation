@@ -51,10 +51,10 @@ public class LDA {
         });
         if (Parameter.END.equals("ESCAPED") && goalAgent.size()==0) {
             outPrintStep = null;
-            outPrint("stepSplit_Corpus");
+            outPrint("step_split_corpus");
         } else if (Parameter.END.equals("END_STEP") && step >= outPrintStep) {
             outPrintStep = null;
-            outPrint("stepSplit_Corpus");
+            outPrint("step_split_corpus");
         }
     }
 
@@ -74,10 +74,10 @@ public class LDA {
         });
         if (Parameter.END.equals("ESCAPED") && goalAgent.size()==0) {
             outPrintStep = null;
-            outPrint("stepGroupSizeSplit_Corpus");
+            outPrint("step_group_size_split_corpus");
         } else if (Parameter.END.equals("END_STEP") && step >= outPrintStep) {
             outPrintStep = null;
-            outPrint("stepGroupSizeSplit_Corpus");
+            outPrint("step_group_size_split_corpus");
         }
     }
 

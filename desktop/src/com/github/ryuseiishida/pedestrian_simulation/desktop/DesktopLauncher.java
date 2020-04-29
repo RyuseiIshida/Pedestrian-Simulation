@@ -6,6 +6,7 @@ import com.github.ryuseiishida.pedestrian_simulation.mode.CreateMap;
 import com.github.ryuseiishida.pedestrian_simulation.mode.DefaultSimulation;
 import com.github.ryuseiishida.pedestrian_simulation.mode.LogSimulation;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
+import javafx.application.Application;
 
 public class DesktopLauncher {
     public void startGDX() {
