@@ -74,10 +74,10 @@ public class LDA {
         });
         if (Parameter.END.equals("ESCAPED") && goalAgent.size()==0) {
             outPrintStep = null;
-            outPrint("step_group_size_split_corpus");
+            outPrint("group_size_split_corpus");
         } else if (Parameter.END.equals("END_STEP") && step >= outPrintStep) {
             outPrintStep = null;
-            outPrint("step_group_size_split_corpus");
+            outPrint("group_size_split_corpus");
         }
     }
 
