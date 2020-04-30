@@ -49,13 +49,10 @@ public class WriterLog {
 
     public void ifWriteLog(boolean writeFlag) {
         if (writeFlag) {
-            if (Parameter.IS_WRITE_LOG_AGENT) {
-                writeAgentLog();
-            }
-            if (Parameter.IS_WRITE_LOG_MACRO) {
-                writeMacroLog();
-            }
+            writeAgentLog();
+            writeMacroLog();
         }
+
     }
 
     public void writeSourceCodeToParameter() {
@@ -140,7 +137,7 @@ public class WriterLog {
             String path = this.path + "/macro" + ".txt";
             if (!(new File(path).exists())) {
                 CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
-                printer.printRecord("step", "goalAgentNum", "groupSize", "follow");
+                printer.printRecord("step", "goal_agent_num", "group", "group_size", "follow");
                 printer.close();
             }
             Reader reader = Files.newBufferedReader(Paths.get(path));
@@ -155,7 +152,8 @@ public class WriterLog {
                         csvRecord.get(0),
                         csvRecord.get(1),
                         csvRecord.get(2),
-                        csvRecord.get(3)
+                        csvRecord.get(3),
+                        csvRecord.get(4)
                 );
             }
             int follow = 0;
@@ -164,11 +162,22 @@ public class WriterLog {
                     follow++;
                 }
             }
+
+            ArrayList<ArrayList<Agent>> group = Group.getGroup3(env.getAgentList());
+            StringBuilder groupList = new StringBuilder();
+            for (ArrayList<Agent> agents : group) {
+                for (Agent agent : agents) {
+                    groupList.append(agent).append(":");
+                }
+                groupList.append("*");
+            }
+            groupList.setLength(groupList.length() - 2);//末尾削除
             printer.printRecord(
                     env.getStep(), //0
                     env.getGoalAgentNum(), //1
-                    Group.getGroup3(env.getAgentList()), //2
-                    follow //3
+                    groupList.toString(), //2
+                    Group.getGroup3(env.getAgentList()).size(), //3
+                    follow //4
             );
             printer.close();
             csvParser.close();
