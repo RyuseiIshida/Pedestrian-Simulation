@@ -24,7 +24,7 @@ public class RenderLDA {
 
     public RenderLDA(Batch batch, BitmapFont bitmapFont, ShapeRenderer shapeRenderer, Camera camera) {
         if (renderFlag) {
-            renderTopicRegion(shapeRenderer, camera);
+            topicRegion(shapeRenderer, camera);
             //cellIndex(shapeRenderer, camera, batch, bitmapFont);
             numTopics(shapeRenderer, camera, batch, bitmapFont);
         }
@@ -85,7 +85,7 @@ public class RenderLDA {
         return topic;
     }
 
-    public static void renderTopicRegion(ShapeRenderer shapeRenderer, Camera camera) {
+    public static void topicRegion(ShapeRenderer shapeRenderer, Camera camera) {
         for (String s : readFileTopic()) {
             shapeRenderer.setProjectionMatrix(camera.combined);
             Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -100,11 +100,11 @@ public class RenderLDA {
             String tag = s.split(",")[0].split("d")[1].substring(1);
             shapeRenderer.circle(x, y, 500);
             shapeRenderer.end();
-            renderTopicLine(shapeRenderer, camera, x, y, dir, tag);
+            topicLine(shapeRenderer, camera, x, y, dir, tag);
         }
     }
 
-    public static void renderTopicLine(ShapeRenderer shapeRenderer, Camera camera, float x, float y, int direction, String tag) {
+    public static void topicLine(ShapeRenderer shapeRenderer, Camera camera, float x, float y, int direction, String tag) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.BLACK);

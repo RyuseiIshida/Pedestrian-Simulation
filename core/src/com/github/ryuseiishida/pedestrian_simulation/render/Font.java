@@ -10,10 +10,10 @@ import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
 public class Font {
     public Font(Batch batch, BitmapFont bitmapFont, Camera camera, Environment environment) {
-        renderFont(batch, bitmapFont, camera, environment);
+        font(batch, bitmapFont, camera, environment);
     }
 
-    public static void renderFont(Batch batch, BitmapFont bitmapFont, Camera camera, Environment environment) {
+    public static void font(Batch batch, BitmapFont bitmapFont, Camera camera, Environment environment) {
         Gdx.gl.glClearColor(255, 255, 255, 255);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();

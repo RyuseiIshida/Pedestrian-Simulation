@@ -8,10 +8,10 @@ import com.github.ryuseiishida.pedestrian_simulation.goal.Goal;
 
 public class RenderGoal {
     public RenderGoal(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
-        renderGoalRegion(shapeRenderer, camera, environment);
+        goalRegion(shapeRenderer, camera, environment);
     }
 
-    public static void renderGoalRegion(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+    public static void goalRegion(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.RED);

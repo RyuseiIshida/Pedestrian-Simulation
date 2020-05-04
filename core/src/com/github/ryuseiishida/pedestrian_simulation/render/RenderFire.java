@@ -10,16 +10,16 @@ public class RenderFire {
     private static boolean renderFireFlag = true;
 
     public RenderFire(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
-        isRenderFireRegion(shapeRenderer, camera, environment);
+        isRegion(shapeRenderer, camera, environment);
     }
 
-    public static void isRenderFireRegion(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+    public static void isRegion(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         if (renderFireFlag) {
-            renderFireRegion(shapeRenderer, camera, environment);
+            renderRegion(shapeRenderer, camera, environment);
         }
     }
 
-    public static void renderFireRegion(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+    public static void renderRegion(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.FIREBRICK);

@@ -9,10 +9,10 @@ import com.github.ryuseiishida.pedestrian_simulation.obstacle.Obstacle;
 
 public class RenderObstacle {
     public RenderObstacle(ShapeRenderer shapeRenderer, Camera camera, Environment environment){
-        renderObstacleRegion(shapeRenderer, camera, environment);
+        obstacleRegion(shapeRenderer, camera, environment);
     }
 
-    public static void renderObstacleRegion(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+    public static void obstacleRegion(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.BLACK);

@@ -16,13 +16,13 @@ public class RenderAgent {
     private static boolean renderFollowLineFlag = false;
 
     public RenderAgent(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
-        renderBody(shapeRenderer, camera, environment);
-        isRenderView(shapeRenderer, camera, environment);
-        isRenderMoveGoalLine(shapeRenderer, camera, environment);
-        isRenderFollowLine(shapeRenderer, camera, environment);
+        body(shapeRenderer, camera, environment);
+        isView(shapeRenderer, camera, environment);
+        isMoveGoalLine(shapeRenderer, camera, environment);
+        isFollowLine(shapeRenderer, camera, environment);
     }
 
-    public static void renderBody(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+    public static void body(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (Agent agent : environment.getAgentList()) {
@@ -50,13 +50,13 @@ public class RenderAgent {
         shapeRenderer.end();
     }
 
-    public static void isRenderView(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+    public static void isView(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         if (renderViewFlag) {
-            renderView(shapeRenderer, camera, environment);
+            view(shapeRenderer, camera, environment);
         }
     }
 
-    public static void renderView(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+    public static void view(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -71,13 +71,13 @@ public class RenderAgent {
         Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
-    public static void isRenderMoveGoalLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+    public static void isMoveGoalLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         if (renderMoveGoalLineFlag) {
-            renderMoveGoalLine(shapeRenderer, camera, environment);
+            moveGoalLine(shapeRenderer, camera, environment);
         }
     }
 
-    public static void renderMoveGoalLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+    public static void moveGoalLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.RED);
@@ -89,13 +89,13 @@ public class RenderAgent {
         shapeRenderer.end();
     }
 
-    public static void isRenderFollowLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+    public static void isFollowLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         if (renderFollowLineFlag) {
-            renderFollowLine(shapeRenderer, camera, environment);
+            followLine(shapeRenderer, camera, environment);
         }
     }
 
-    public static void renderFollowLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
+    public static void followLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.BLACK);
@@ -107,15 +107,15 @@ public class RenderAgent {
         shapeRenderer.end();
     }
 
-    public static void setRenderViewFlag() {
+    public static void setViewFlag() {
         renderViewFlag = !renderViewFlag;
     }
 
-    public static void setRenderMoveGoalLineFlag() {
+    public static void setMoveGoalLineFlag() {
         renderMoveGoalLineFlag = !renderMoveGoalLineFlag;
     }
 
-    public static void setRenderFollowLineFlag() {
+    public static void setFollowLineFlag() {
         renderFollowLineFlag = !renderFollowLineFlag;
     }
 }
