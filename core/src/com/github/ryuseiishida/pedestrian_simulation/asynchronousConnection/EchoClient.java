@@ -65,7 +65,7 @@ public class EchoClient {
 //		int interval = Integer.parseInt(args[1])*1000;
             long start = System.currentTimeMillis(), current;
             long end = start + Integer.parseInt("5") * 1000;
-            int interval = Integer.parseInt("5") * 1000;
+            int interval = Integer.parseInt("1") * 1000;
 
             System.out.println("\n\n*** Client process is requesting! ***");
             do {

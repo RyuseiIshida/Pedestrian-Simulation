@@ -85,9 +85,42 @@ public class LoadLog {
         return posList;
     }
 
+    public ArrayList<String> getStepLines(int step) {
+        ArrayList<String> out = new ArrayList<>();
+        agentFileList.forEach(agentFile -> {
+            String line = getStepLine(agentFile, step);
+            if (line != null) {
+                out.add(line);
+            }
+        });
+        return out;
+    }
+
+    private String getStepLine(File file, int step) {
+        try (BufferedReader br = Files.newBufferedReader(file.toPath())) {
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                if (line.split(",")[0].equals(String.valueOf(step))) {
+                    return line;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+        //throw new IllegalArgumentException("line you specified could not be found");
+    }
+
     private void print(ArrayList<Vector2> vec) {
         for (Vector2 vector2 : vec) {
             System.out.println("vector2 = " + vector2);
+        }
+    }
+
+    public static void main(String[] args) {
+        LoadLog loadlog = new LoadLog("core/assets/out/2020-04-07_075459/");
+        for (String stepLine : loadlog.getStepLines(0)) {
+            System.out.println(stepLine);
         }
     }
 

@@ -35,7 +35,7 @@ public class Environment {
 
 
     public Environment() {
-        for (BoxLine box : Parameter.Boxes) {
+        for (BoxLine box : Parameter.BOX_LIST) {
             obstacles.addAll(box.getLines());
         }
         LoadMap.setObstacle(obstacles);
@@ -44,7 +44,7 @@ public class Environment {
 
     public Environment(boolean loopFlag) {
         updateFlag = loopFlag;
-        for (BoxLine box : Parameter.Boxes) {
+        for (BoxLine box : Parameter.BOX_LIST) {
             obstacles.addAll(box.getLines());
         }
         LoadMap.setObstacle(obstacles);
@@ -53,7 +53,7 @@ public class Environment {
 
     public Environment(String logDirPath) {
         loadLog = new LoadLog(logDirPath);
-        for (BoxLine box : Parameter.Boxes) {
+        for (BoxLine box : Parameter.BOX_LIST) {
             obstacles.addAll(box.getLines());
         }
         spawnLogAgents();
@@ -61,7 +61,7 @@ public class Environment {
 
     public void update() {
         if (updateFlag) {
-            if(writerLog == null) {
+            if (writerLog == null) {
                 initWriterLog();
             }
             ifLoadLog();
@@ -84,7 +84,7 @@ public class Environment {
         ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
     }
 
-    public void ifLoadLog(){
+    public void ifLoadLog() {
         if (loadLog != null) {
             if (step == loadLog.endStep()) {
                 return;
@@ -111,6 +111,11 @@ public class Environment {
 
     private void ifAgentInGoal() {
         for (Goal goal : goals) {
+            for (Agent agent : agentList) {
+                if (goal.isAgentInGoal(agent)) {
+                    goalAgentNum++;
+                }
+            }
             agentList.removeIf(goal::isAgentInGoal);
         }
         agentList.removeIf(agent -> agent.getStateTag().equals(StateTag.escaped));
@@ -166,7 +171,7 @@ public class Environment {
     }
 
     public Boolean checkInBoxes(float x, float y) {
-        for (BoxLine box : Parameter.Boxes) {
+        for (BoxLine box : Parameter.BOX_LIST) {
             if (box.isPositionInBox(x, y)) {
                 return true;
             }

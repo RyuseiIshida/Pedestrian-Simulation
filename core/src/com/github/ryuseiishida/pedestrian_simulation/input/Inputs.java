@@ -105,15 +105,15 @@ public class Inputs {
         if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
             // agent view
             if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.V)) {
-                RenderAgent.setRenderViewFlag();
+                RenderAgent.setViewFlag();
             }
             // agent goal line
             if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.G)) {
-                RenderAgent.setRenderMoveGoalLineFlag();
+                RenderAgent.setMoveGoalLineFlag();
             }
             // agent follow line
             if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.F)) {
-                RenderAgent.setRenderFollowLineFlag();
+                RenderAgent.setFollowLineFlag();
             }
             // fire
             if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.C)) {

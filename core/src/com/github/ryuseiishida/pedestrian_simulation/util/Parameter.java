@@ -74,7 +74,7 @@ public class Parameter {
     //Obstacles
     public static CellsMap ENV_CELLS_MAP = new CellsMap(SCALE, CELL_INTERVAL);
 
-    public static ArrayList<BoxLine> Boxes = new ArrayList<>(Arrays.asList(
+    public static ArrayList<BoxLine> BOX_LIST = new ArrayList<>(Arrays.asList(
             // 左上
             new BoxLine(1200, 6200, 4500, 8000, ENV_CELLS_MAP),
             //右上
@@ -101,8 +101,6 @@ public class Parameter {
             // top wall line
             new Line(200, SCALE.y - 1000, SCALE.x - 200, SCALE.y - 1000, ENV_CELLS_MAP)
     ));
-
-    public static Line experienceOLINE = new Line(0, 0, 0, 0, ENV_CELLS_MAP);
 
     //potential
     public static float AGENT_KIM_POTENTIAL_WEIGHT = 200;

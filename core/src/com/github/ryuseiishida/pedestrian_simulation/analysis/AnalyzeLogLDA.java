@@ -30,7 +30,7 @@ public class AnalyzeLogLDA {
     // TODO LDAクラスとの要素数の違い
     public void recordStepSplit() {
         for (int step = 0; step <= loadLog.endStep(); step++) {
-            if (step == 0 || step % splitStep == 0) {
+            if (step % splitStep == 0) {
                 setDataList(loadLog.getStepLines(step));
             }
         }
