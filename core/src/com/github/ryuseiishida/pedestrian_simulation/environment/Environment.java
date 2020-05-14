@@ -93,8 +93,8 @@ public class Environment {
     }
 
     public void saveLDA() {
-        ldaGroupSizeSplit.outPrint("stepGroupSizeSplit_Corpus");
-        ldaStepSplit.outPrint("stepSplit_Corpus");
+        ldaGroupSizeSplit.outPrint("group_size_split_corpus");
+        ldaStepSplit.outPrint("step_split_corpus");
     }
 
     public void setStep(int step) {
