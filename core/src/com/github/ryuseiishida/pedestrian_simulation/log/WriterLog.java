@@ -37,7 +37,7 @@ public class WriterLog {
 
     private void makeDir() {
         new File(path).mkdir();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_hhmmss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
         String time = format.format(Calendar.getInstance().getTime());
         path = path + "/" + time;
         new File(path).mkdir();
