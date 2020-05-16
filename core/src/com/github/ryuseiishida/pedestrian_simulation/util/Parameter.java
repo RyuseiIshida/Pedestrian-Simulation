@@ -20,7 +20,7 @@ public class Parameter {
     /**
      * シミュレーションループ回数
      */
-    public static int LOOP_NUM = 2;
+    public static int LOOP_NUM = 1;
 
     /**
      * シミュレーションの終了方法
@@ -28,12 +28,12 @@ public class Parameter {
      * Agents escape all -> "ESCAPED"
      * Specify end step -> "END_STEP"
      */
-    public static String END = "ESCAPED";
+    public static String END = "END_STEP";
 
     /**
      * シミュレーション終了ステップ
      */
-    public static int END_STEP;
+    public static int END_STEP = 200;
 
     /**
      * ログの記録
@@ -43,14 +43,14 @@ public class Parameter {
     /**
      * LogSimulationでのログディレクトリパス
      */
-    public static String LOG_DIR_PATH = "core/assets/out/2020-04-07_075459/";
+    public static String LOG_DIR_PATH = "core/assets/";
 
     /**
      * LDA コーパス保存ステップ
      * END が"ESCAPED"の場合はそのタイミングが優先される
      * nullの場合はCtr+Lで保存する
      */
-    public static int LDA_OUT_PRINT_STEP;
+    public static int LDA_OUT_PRINT_STEP = END_STEP;
 
     /**
      * LDA 文書の区切り方
@@ -93,9 +93,9 @@ public class Parameter {
             //left wall line
             new Line(200, 600, 200, SCALE.y - 1000, ENV_CELLS_MAP),
             //right wall line
-            //new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1000, ENV_CELLS_MAP),
+            new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1000, ENV_CELLS_MAP),
             //new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1400, ENV_CELLS_MAP),
-            new Line(SCALE.x - 200, 600, SCALE.x - 200, SCALE.y - 1400, ENV_CELLS_MAP),
+            //new Line(SCALE.x - 200, 600, SCALE.x - 200, SCALE.y - 1400, ENV_CELLS_MAP),
             // bottom wall line
             new Line(200, 200, SCALE.x - 200, 200, ENV_CELLS_MAP),
             // top wall line
@@ -110,8 +110,8 @@ public class Parameter {
     public static float POTENTIAL_DELTA = 1f;
 
     //agent
-    public static int INIT_AGENT_NUM = 50;
-    public static int GOAL_AGENT_NUM = 50;
+    public static int INIT_AGENT_NUM = 100;
+    public static int GOAL_AGENT_NUM = 30;
     public static Tuple<Float> INIT_RANDOM_X = new Tuple<>(300f, SCALE.x - 300);
     public static Tuple<Float> INIT_RANDOM_Y = new Tuple<>(300f, SCALE.y - 1100);
     //ゴールを知っているエージェントのゴール番号 or "random"

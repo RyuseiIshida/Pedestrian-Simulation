@@ -53,6 +53,8 @@ public class LDA {
             outPrintStep = null;
             outPrint("step_split_corpus");
         } else if (Parameter.END.equals("END_STEP") && step >= outPrintStep) {
+            System.out.println("outPrintStep = " + outPrintStep);
+            System.out.println("step = " + step);
             outPrintStep = null;
             outPrint("step_split_corpus");
         }

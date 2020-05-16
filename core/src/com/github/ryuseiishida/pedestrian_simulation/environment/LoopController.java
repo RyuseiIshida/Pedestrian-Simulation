@@ -28,7 +28,7 @@ public class LoopController {
                 countLoopNum++;
                 return true;
             }
-        } else if (Parameter.END.equals("END_STEP") && step >= Parameter.END_STEP && Parameter.END_STEP != 0) {
+        } else if (Parameter.END.equals("END_STEP") && step > Parameter.END_STEP && Parameter.END_STEP != 0) {
             countLoopNum++;
             return true;
         }

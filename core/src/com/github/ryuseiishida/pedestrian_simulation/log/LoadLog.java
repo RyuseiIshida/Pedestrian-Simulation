@@ -12,12 +12,34 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class LoadLog {
-    private String logDirPath;
+    private String simulationLogPath;
     private ArrayList<File> agentFileList;
 
-    public LoadLog(String dirPath) {
-        logDirPath = dirPath;
+    public LoadLog(String loadPath) {
+        setSimulationLogPath(loadPath);
         setAgentFileList();
+    }
+
+    private void setSimulationLogPath(String parentPath) {
+        FilenameFilter filter = new FilenameFilter() {
+            public boolean accept(File file, String str) {
+                //指定文字列でフィルタする
+                if (str.indexOf("SIM_LOG") != -1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        File[] files = new File(parentPath).listFiles(filter);
+        if(files.length == 0) {
+            throw new IllegalArgumentException("simulation log file is not included");
+        } else if(files.length != 1) {
+            throw new IllegalArgumentException("Multiple log files detected.\n" +
+                    "There should be only one specified directory.");
+        }
+        simulationLogPath = files[0].getPath();
+        System.out.println(simulationLogPath);
     }
 
     private void setAgentFileList() {
@@ -33,7 +55,7 @@ public class LoadLog {
             }
         };
 
-        File[] files = new File(logDirPath).listFiles(filter);
+        File[] files = new File(simulationLogPath).listFiles(filter);
         this.agentFileList.addAll(Arrays.asList(files));
     }
 
@@ -43,7 +65,7 @@ public class LoadLog {
 
     public int endStep() {
         int endStep = 0;
-        String path = logDirPath + "macro.txt";
+        String path = simulationLogPath + "/macro.txt";
         try (BufferedReader br = Files.newBufferedReader(Paths.get(path))) {
             String line;
             br.readLine(); //ヘッダーを抜かす処理
