@@ -5,15 +5,19 @@ import com.github.ryuseiishida.pedestrian_simulation.obstacle.Obstacle;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class LoadMap {
-    private static final String MAP_PATH = "core/assets/saveMap.txt";
+    private static final String MAP_PATH = "core/assets/obstacle_map.txt";
 
     public static void setObstacle(ArrayList<Obstacle> obstacles) {
+        if (!new File(MAP_PATH).exists()) {
+            return;
+        }
         try (BufferedReader br = Files.newBufferedReader(Paths.get(MAP_PATH))) {
             String line;
             while ((line = br.readLine()) != null) {

@@ -29,7 +29,7 @@ public class CreateMap extends ApplicationAdapter {
     private Vector3 startPoint;
     private Vector3 endPoint;
 
-    private String strPath = "core/assets/saveMap.txt";
+    private String strPath = "core/assets/obstacle_map.txt";
 
     @Override
     public void create() {
