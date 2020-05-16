@@ -39,7 +39,7 @@ public class WriterLog {
         new File(path).mkdir();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
         String time = format.format(Calendar.getInstance().getTime());
-        path = path + "/" + time;
+        path = path + "/SIM_LOG_" + time;
         new File(path).mkdir();
     }
 
