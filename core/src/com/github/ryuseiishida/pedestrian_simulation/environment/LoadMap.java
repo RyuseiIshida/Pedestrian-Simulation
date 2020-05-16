@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class LoadMap {
     private static final String MAP_PATH = "core/assets/obstacle_map.txt";
 
+    //TODO Environmentインスタンス生成時のSCALEとobstacle_map.txtのSCALEとの突合せ
     public static void setObstacle(ArrayList<Obstacle> obstacles) {
         if (!new File(MAP_PATH).exists()) {
             return;

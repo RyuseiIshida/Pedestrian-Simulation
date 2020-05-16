@@ -127,11 +127,13 @@ public class CreateMap extends ApplicationAdapter {
 
     private void writeFile() {
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(strPath))) {
+            bw.append(Parameter.SCALE.x + "f," + Parameter.SCALE.x + "f");
+            bw.newLine();
             for (float[] line : lines) {
                 bw.append(String.valueOf(line[0])).append("f,");
                 bw.append(String.valueOf(line[1])).append("f,");
                 bw.append(String.valueOf(line[2])).append("f,");
-                bw.append(String.valueOf(line[3])).append("f,");
+                bw.append(String.valueOf(line[3])).append("f");
                 bw.newLine();
             }
             System.out.println("save complete");
