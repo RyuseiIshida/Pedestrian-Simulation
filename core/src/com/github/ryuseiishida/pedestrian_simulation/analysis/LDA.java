@@ -49,14 +49,14 @@ public class LDA {
         agentList.stream().forEach(agent -> {
             if (agent.getStateTag().equals(StateTag.moveGoal)) goalAgent.add(agent);
         });
-        if (Parameter.END.equals("ESCAPED") && goalAgent.size()==0) {
+        if (Parameter.END.equals("ESCAPED") && goalAgent.size() == 0) {
             outPrintStep = null;
-            outPrint("step_split_corpus");
+            outPrint("step_split_corpus" + Parameter.LDA_SPLIT_STEP);
         } else if (Parameter.END.equals("END_STEP") && step >= outPrintStep) {
             System.out.println("outPrintStep = " + outPrintStep);
             System.out.println("step = " + step);
             outPrintStep = null;
-            outPrint("step_split_corpus");
+            outPrint("step_split_corpus" + Parameter.LDA_SPLIT_STEP);
         }
     }
 
@@ -74,7 +74,7 @@ public class LDA {
         agentList.stream().forEach(agent -> {
             if (agent.getStateTag().equals(StateTag.moveGoal)) goalAgent.add(agent);
         });
-        if (Parameter.END.equals("ESCAPED") && goalAgent.size()==0) {
+        if (Parameter.END.equals("ESCAPED") && goalAgent.size() == 0) {
             outPrintStep = null;
             outPrint("group_size_split_corpus");
         } else if (Parameter.END.equals("END_STEP") && step >= outPrintStep) {

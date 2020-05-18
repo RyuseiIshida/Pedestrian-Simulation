@@ -12,11 +12,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class AnalyzeLogLDA {
-    private String loadFilesDir = "core/assets/out/2020-04-29_122935/";
+    private String loadFilesDir = "core/assets/";
     private String outPrintPath = loadFilesDir;
     private LoadLog loadLog = new LoadLog(loadFilesDir);
 
-    private int splitStep = 30;
+    private int splitStep = 15;
 
     //Parameterのから
     private static float METER = 100f;
@@ -28,7 +28,7 @@ public class AnalyzeLogLDA {
 
     // stepで文書を区切る
     // TODO LDAクラスとの要素数の違い
-    public void recordStepSplit() {
+    private void recordStepSplit() {
         for (int step = 0; step <= loadLog.endStep(); step++) {
             if (step % splitStep == 0) {
                 setDataList(loadLog.getStepLines(step));
@@ -64,7 +64,7 @@ public class AnalyzeLogLDA {
         dataList.add(data);
     }
 
-    public int getAgentDirection(String dir) {
+    private int getAgentDirection(String dir) {
         Vector2 velocity = UtilVector.strToVector(dir);
         float radian = (float) Math.atan2(velocity.y, velocity.x);
         int degree = (int) Math.toDegrees(radian);
@@ -91,7 +91,7 @@ public class AnalyzeLogLDA {
         throw new IllegalArgumentException("Direction is out of range. [ direction = " + degree + " ]");
     }
 
-    public void outPrint(String fileName) {
+    private void outPrint(String fileName) {
         String path = outPrintPath + "/" + fileName + ".txt";
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path))) {
             for (ArrayList<String> data : dataList) {
