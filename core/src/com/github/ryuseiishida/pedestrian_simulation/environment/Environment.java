@@ -38,7 +38,7 @@ public class Environment {
         for (BoxLine box : Parameter.BOX_LIST) {
             obstacles.addAll(box.getLines());
         }
-        LoadMap.setObstacle(obstacles);
+//        LoadMap.setObstacle(obstacles);
         spawnInitAgents();
     }
 
@@ -47,7 +47,7 @@ public class Environment {
         for (BoxLine box : Parameter.BOX_LIST) {
             obstacles.addAll(box.getLines());
         }
-        LoadMap.setObstacle(obstacles);
+//        LoadMap.setObstacle(obstacles);
         spawnInitAgents();
     }
 
@@ -257,6 +257,10 @@ public class Environment {
 
     public Fire getFire() {
         return this.fire;
+    }
+
+    public LoadLog getLoadLog() {
+        return loadLog;
     }
 
 }

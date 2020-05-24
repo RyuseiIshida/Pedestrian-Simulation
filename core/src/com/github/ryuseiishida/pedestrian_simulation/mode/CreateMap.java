@@ -36,7 +36,7 @@ public class CreateMap extends ApplicationAdapter {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Parameter.SCALE.x, Parameter.SCALE.y);
         batch = new SpriteBatch();
-//        texture = new Texture("core/assets/tressa-yokohama.png");
+        texture = new Texture("core/assets/tressa-yokohama.png");
         shapeRenderer = new ShapeRenderer();
     }
 
@@ -46,10 +46,10 @@ public class CreateMap extends ApplicationAdapter {
         Gdx.gl.glClearColor(255, 255, 255, 255);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
-        //batch.setProjectionMatrix(camera.combined);
-//        batch.begin();
-//        batch.draw(texture, 0, 0);
-//        batch.end();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        batch.draw(texture, 0, 0);
+        batch.end();
         drawTmpLine();
         drawLine();
         mapInput();
@@ -130,10 +130,12 @@ public class CreateMap extends ApplicationAdapter {
             bw.append(Parameter.SCALE.x + "f," + Parameter.SCALE.x + "f");
             bw.newLine();
             for (float[] line : lines) {
+                bw.append("new Line(");
                 bw.append(String.valueOf(line[0])).append("f,");
                 bw.append(String.valueOf(line[1])).append("f,");
                 bw.append(String.valueOf(line[2])).append("f,");
-                bw.append(String.valueOf(line[3])).append("f");
+                bw.append(String.valueOf(line[3])).append("f,");
+                bw.append("ENV_CELLS_MAP),");
                 bw.newLine();
             }
             System.out.println("save complete");

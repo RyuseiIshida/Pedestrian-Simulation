@@ -1,0 +1,216 @@
+package com.github.ryuseiishida.pedestrian_simulation.util;
+
+
+import com.badlogic.gdx.math.Vector2;
+import com.github.ryuseiishida.pedestrian_simulation.cell.CellsMap;
+import com.github.ryuseiishida.pedestrian_simulation.goal.Goal;
+import com.github.ryuseiishida.pedestrian_simulation.obstacle.BoxLine;
+import com.github.ryuseiishida.pedestrian_simulation.obstacle.Line;
+import com.github.ryuseiishida.pedestrian_simulation.obstacle.Obstacle;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class Parameter {
+    /**
+     * "DefaultSimulation" or "LogSimulation" or "CreateMap"
+     */
+    public static String MODE = "DefaultSimulation";
+
+    /**
+     * シミュレーションループ回数
+     */
+    public static int LOOP_NUM = 1;
+
+    /**
+     * シミュレーションの終了方法
+     * not quit automatically -> "NONE"
+     * Agents escape all -> "ESCAPED"
+     * Specify end step -> "END_STEP"
+     */
+    public static String END = "ESCAPED";
+
+    /**
+     * シミュレーション終了ステップ
+     */
+    public static int END_STEP;
+
+    /**
+     * ログの記録
+     */
+    public static boolean IS_WRITE_LOG = true;
+
+    /**
+     * LogSimulationでのログディレクトリパス
+     */
+    public static String LOG_DIR_PATH = "core/assets/";
+
+    /**
+     * LDA コーパス保存ステップ
+     * END が"ESCAPED"の場合はそのタイミングが優先される
+     * nullの場合はCtr+Lで保存する
+     */
+    public static int LDA_OUT_PRINT_STEP = END_STEP;
+
+    /**
+     * LDA 文書の区切り方
+     */
+    public static int LDA_SPLIT_STEP = 60;
+
+    //Environment
+    //1 pixel = 1 cm
+    private static float METER = 100f;
+    public static Vector2 SCALE = new Vector2(100 * METER, 100 * METER);
+    public static ArrayList<Goal> GOALS = new ArrayList<>(Arrays.asList(
+            new Goal(1800, 1100, 200, 200)
+//            new Goal(SCALE.x - 200, SCALE.y - 1400, 200, 200 + 200)
+//            new Goal(SCALE.x - 200, 200, 200, 200 + 200)
+    ));
+    public static int CELL_INTERVAL = 10;
+
+    //Fire
+    public static Vector2 FIRE_POINT = new Vector2();
+
+    //Obstacles
+    public static CellsMap ENV_CELLS_MAP = new CellsMap(SCALE, CELL_INTERVAL);
+
+    public static ArrayList<BoxLine> BOX_LIST = new ArrayList<>(Arrays.asList(
+//            // 左上
+//            new BoxLine(1200, 6200, 4500, 8000, ENV_CELLS_MAP),
+//            //右上
+//            new BoxLine(5700, 6200, 9000, 8000, ENV_CELLS_MAP),
+//            // 左下
+//            new BoxLine(1200, 1200, 4500, 3000, ENV_CELLS_MAP),
+//            //右下
+//            new BoxLine(5700, 1200, 9000, 3000, ENV_CELLS_MAP),
+//            //中央左
+//            new BoxLine(1200, 3700, 4500, 5500, ENV_CELLS_MAP),
+//            //中央右
+//            new BoxLine(5700, 3700, 9000, 5500, ENV_CELLS_MAP)
+    ));
+
+    public static ArrayList<Obstacle> OBSTACLES = new ArrayList<>(Arrays.asList(
+//            //left wall line
+//            new Line(200, 600, 200, SCALE.y - 1000, ENV_CELLS_MAP),
+//            //right wall line
+//            new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1000, ENV_CELLS_MAP),
+//            //new Line(SCALE.x - 200, 200, SCALE.x - 200, SCALE.y - 1400, ENV_CELLS_MAP),
+//            //new Line(SCALE.x - 200, 600, SCALE.x - 200, SCALE.y - 1400, ENV_CELLS_MAP),
+//            // bottom wall line
+//            new Line(200, 200, SCALE.x - 200, 200, ENV_CELLS_MAP),
+//            // top wall line
+//            new Line(200, SCALE.y - 1000, SCALE.x - 200, SCALE.y - 1000, ENV_CELLS_MAP),
+
+
+            //MAP
+            new Line(3511.1113f, 8666.668f, 2922.2227f, 7700.0005f, ENV_CELLS_MAP),
+            new Line(2922.2227f, 7700.0005f, 2488.8894f, 6533.334f, ENV_CELLS_MAP),
+            new Line(2488.8894f, 6533.334f, 2466.667f, 5166.667f, ENV_CELLS_MAP),
+            new Line(2466.667f, 5166.667f, 2822.2224f, 3983.3337f, ENV_CELLS_MAP),
+            new Line(2822.2224f, 3983.3337f, 3033.3337f, 3533.3335f, ENV_CELLS_MAP),
+            new Line(3033.3337f, 3533.3335f, 2911.1113f, 3400.0005f, ENV_CELLS_MAP),
+            new Line(2911.1113f, 3400.0005f, 2888.8894f, 3216.667f, ENV_CELLS_MAP),
+            new Line(2888.8894f, 3216.667f, 3077.7783f, 2733.3337f, ENV_CELLS_MAP),
+            new Line(3077.7783f, 2733.3337f, 1877.7778f, 1550.0002f, ENV_CELLS_MAP),
+            new Line(2055.5557f, 1216.6667f, 3333.3337f, 2483.3335f, ENV_CELLS_MAP),
+            new Line(3333.3337f, 2483.3335f, 4000.0005f, 2283.3337f, ENV_CELLS_MAP),
+            new Line(4000.0005f, 2283.3337f, 4133.3335f, 2433.3337f, ENV_CELLS_MAP),
+            new Line(4133.3335f, 2433.3337f, 5988.889f, 1866.6667f, ENV_CELLS_MAP),
+            new Line(5988.889f, 1866.6667f, 7522.223f, 2016.6667f, ENV_CELLS_MAP),
+            new Line(7522.223f, 2016.6667f, 7888.8896f, 2200.0002f, ENV_CELLS_MAP),
+            new Line(7888.8896f, 2200.0002f, 8588.89f, 2916.6667f, ENV_CELLS_MAP),
+            new Line(8588.89f, 2916.6667f, 9666.668f, 2916.6667f, ENV_CELLS_MAP),
+            new Line(9666.668f, 2916.6667f, 9700.002f, 3466.667f, ENV_CELLS_MAP),
+            new Line(9700.002f, 3466.667f, 9522.223f, 3550.0002f, ENV_CELLS_MAP),
+            new Line(9522.223f, 3550.0002f, 9511.112f, 3916.6672f, ENV_CELLS_MAP),
+            new Line(9511.112f, 3916.6672f, 8100.001f, 3916.6672f, ENV_CELLS_MAP),
+            new Line(8100.001f, 3916.6672f, 6833.334f, 5383.334f, ENV_CELLS_MAP),
+//            new Line(6833.334f, 5383.334f, 4422.2227f, 2966.667f, ENV_CELLS_MAP),
+            new Line(4422.2227f, 2966.667f, 4777.7783f, 2600.0002f, ENV_CELLS_MAP),
+            new Line(4777.7783f, 2600.0002f, 5544.445f, 2383.3337f, ENV_CELLS_MAP),
+            new Line(5544.445f, 2383.3337f, 7166.667f, 2383.3337f, ENV_CELLS_MAP),
+            new Line(7166.667f, 2383.3337f, 7922.2227f, 2566.6667f, ENV_CELLS_MAP),
+            new Line(7922.2227f, 2566.6667f, 8100.001f, 2766.667f, ENV_CELLS_MAP),
+            new Line(8100.001f, 2766.667f, 8088.8896f, 3600.0005f, ENV_CELLS_MAP),
+            new Line(8088.8896f, 3600.0005f, 6566.6675f, 5133.3335f, ENV_CELLS_MAP),
+            new Line(3766.667f, 7933.334f, 3188.8892f, 7333.334f, ENV_CELLS_MAP),
+            new Line(3188.8892f, 7333.334f, 3188.8892f, 5600.0005f, ENV_CELLS_MAP),
+            new Line(3188.8892f, 5600.0005f, 4155.556f, 5550.0005f, ENV_CELLS_MAP),
+            new Line(4155.556f, 5550.0005f, 5100.0005f, 6566.6675f, ENV_CELLS_MAP),
+            new Line(5100.0005f, 6566.6675f, 3755.5557f, 7933.334f, ENV_CELLS_MAP),
+            new Line(4233.334f, 9416.668f, 4244.445f, 9116.668f, ENV_CELLS_MAP),
+            new Line(4244.445f, 9116.668f, 4866.6675f, 8700.001f, ENV_CELLS_MAP),
+            new Line(4866.6675f, 8700.001f, 4944.445f, 8166.6675f, ENV_CELLS_MAP),
+            new Line(4944.445f, 8166.6675f, 4611.1113f, 7766.667f, ENV_CELLS_MAP),
+            new Line(4611.1113f, 7766.667f, 4611.1113f, 7433.334f, ENV_CELLS_MAP),
+            new Line(4611.1113f, 7433.334f, 5422.2227f, 6516.667f, ENV_CELLS_MAP),
+            new Line(5422.2227f, 6516.667f, 6211.1113f, 7383.334f, ENV_CELLS_MAP),
+            new Line(6211.1113f, 7383.334f, 6200.0005f, 9433.334f, ENV_CELLS_MAP),
+            new Line(6200.0005f, 9433.334f, 7200.001f, 9433.334f, ENV_CELLS_MAP),
+            new Line(7200.001f, 9433.334f, 7211.112f, 7133.334f, ENV_CELLS_MAP),
+            new Line(7211.112f, 7133.334f, 7666.667f, 7133.334f, ENV_CELLS_MAP),
+            new Line(7666.667f, 7133.334f, 7688.8896f, 6400.0005f, ENV_CELLS_MAP),
+            new Line(7688.8896f, 6400.0005f, 9488.891f, 6433.334f, ENV_CELLS_MAP),
+            new Line(9488.891f, 6433.334f, 9511.112f, 5700.0005f, ENV_CELLS_MAP),
+            new Line(9511.112f, 5700.0005f, 7911.112f, 5700.0005f, ENV_CELLS_MAP),
+            new Line(7911.112f, 5700.0005f, 7422.223f, 5216.667f, ENV_CELLS_MAP),
+            new Line(7422.223f, 5216.667f, 7200.001f, 5466.6675f, ENV_CELLS_MAP),
+            new Line(7200.001f, 5466.6675f, 6988.8896f, 5216.667f, ENV_CELLS_MAP),
+            new Line(3477.7783f, 9433.334f, 3500.0002f, 8666.668f, ENV_CELLS_MAP),
+            new Line(3177.778f, 5283.3335f, 3144.4448f, 4100.0005f, ENV_CELLS_MAP),
+            new Line(3144.4448f, 4116.667f, 3566.667f, 3916.6672f, ENV_CELLS_MAP),
+            new Line(3566.667f, 3900.0002f, 5666.667f, 6016.6675f, ENV_CELLS_MAP),
+            new Line(5666.667f, 6016.6675f, 5311.112f, 6400.0005f, ENV_CELLS_MAP),
+            new Line(5311.112f, 6400.0005f, 4200.0005f, 5266.667f, ENV_CELLS_MAP),
+            new Line(4200.0005f, 5266.667f, 3155.5557f, 5283.3335f, ENV_CELLS_MAP),
+            new Line(6455.556f, 8633.334f, 6433.334f, 7816.668f, ENV_CELLS_MAP),
+            new Line(6433.334f, 7816.668f, 7011.1123f, 7800.0005f, ENV_CELLS_MAP),
+            new Line(7011.1123f, 7800.0005f, 7033.334f, 8250.001f, ENV_CELLS_MAP),
+            new Line(7033.334f, 8250.001f, 6777.7783f, 8233.334f, ENV_CELLS_MAP),
+            new Line(6777.7783f, 8233.334f, 6777.7783f, 8650.001f, ENV_CELLS_MAP),
+            new Line(6777.7783f, 8650.001f, 6433.334f, 8616.668f, ENV_CELLS_MAP),
+            new Line(4411.112f,2933.3335f,6566.6675f,5133.3335f,ENV_CELLS_MAP),
+            new Line(8122.223f,3916.6672f,9511.112f,3950.0005f,ENV_CELLS_MAP),
+            new Line(3277.778f,3283.3337f,3155.5557f,3200.0002f,ENV_CELLS_MAP),
+            new Line(3155.5557f,3200.0002f,3288.8892f,2850.0002f,ENV_CELLS_MAP),
+            new Line(3288.8892f,2850.0002f,3733.3337f,2566.6667f,ENV_CELLS_MAP),
+            new Line(3733.3337f,2566.6667f,3800.0005f,2650.0f,ENV_CELLS_MAP),
+            new Line(3844.4448f,2683.3337f,3611.1113f,3133.3335f,ENV_CELLS_MAP),
+            new Line(3611.1113f,3133.3335f,3255.556f,3300.0005f,ENV_CELLS_MAP),
+            new Line(4488.8896f,4016.667f,4188.8896f,4183.3335f,ENV_CELLS_MAP),
+            new Line(4188.8896f,4183.3335f,3655.556f,3683.3337f,ENV_CELLS_MAP),
+            new Line(3655.556f,3683.3337f,4211.1113f,3133.3335f,ENV_CELLS_MAP),
+            new Line(4211.1113f,3133.3335f,4700.0005f,3616.667f,ENV_CELLS_MAP),
+            new Line(4700.0005f,3616.667f,4500.0005f,4000.0005f,ENV_CELLS_MAP)
+    ));
+
+    //potential
+    public static float AGENT_KIM_POTENTIAL_WEIGHT = 200;
+    public static float AGENT_KIM_POTENTIAL_RANGE = 1000;
+    public static float OBSTACLE_KIM_POTENTIAL_WEIGHT = 700;
+    public static float OBSTACLE_KIM_POTENTIAL_RANGE = 20;
+    public static float POTENTIAL_DELTA = 1f;
+
+    //agent
+    public static int INIT_AGENT_NUM = 100;
+    public static int GOAL_AGENT_NUM = 50;
+    public static Tuple<Float> INIT_RANDOM_X = new Tuple<>(300f, SCALE.x - 300);
+    public static Tuple<Float> INIT_RANDOM_Y = new Tuple<>(300f, SCALE.y - 1100);
+    //ゴールを知っているエージェントのゴール番号 or "random"
+    public static String GOAL_AGENT_DESTINATION = "1";
+    private static int AGENT_ACTION_INTERVAL = 10; //1秒あたり何回行動できるか
+    public static float AGENT_SPEED = 75f / AGENT_ACTION_INTERVAL; //1.5m/s
+    public static float AGENT_RADIUS = 25; //50cm
+    public static float VIEW_RADIUS_LENGTH = 5 * METER;
+    public static float VIEW_DEGREE = 50f;
+
+    //utility parameter
+    public static float U_RANDOM_WALK = 0.5f;
+    public static float U_FOLLOW_AGENT = 0;
+    public static float U_MOVE_GOAL = 0;
+    public static float ALPHA = 1f;
+    public static float BETA = 0.3f;
+    public static float GAMMA = 0.002f;
+    public static float DELTA = 0.002f;
+    public static float EPSILON = 0.0001f;
+}

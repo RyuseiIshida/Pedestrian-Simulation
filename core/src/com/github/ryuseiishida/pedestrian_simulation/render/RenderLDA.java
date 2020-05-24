@@ -20,10 +20,13 @@ import java.util.ArrayList;
 
 public class RenderLDA {
     private static boolean renderFlag = false;
-    private static int numTopics = 0;
+    private static int numTopics = 1;
+    private static int topicK = 3;
+    private static String ldaFilePath;
 
-    public RenderLDA(Batch batch, BitmapFont bitmapFont, ShapeRenderer shapeRenderer, Camera camera) {
+    public RenderLDA(Batch batch, BitmapFont bitmapFont, ShapeRenderer shapeRenderer, Camera camera, String filePath) {
         if (renderFlag) {
+            ldaFilePath = filePath;
             topicRegion(shapeRenderer, camera);
             //cellIndex(shapeRenderer, camera, batch, bitmapFont);
             numTopics(shapeRenderer, camera, batch, bitmapFont);
@@ -74,8 +77,9 @@ public class RenderLDA {
 
     private static ArrayList<String> readFileTopic() {
         ArrayList<String> topic = new ArrayList<>();
-        System.out.println(Parameter.LOG_DIR_PATH + "topic_k3/group_topic" + numTopics + ".txt");
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get(Parameter.LOG_DIR_PATH + "topic_k3/group_topic" + numTopics + ".txt"))) {
+        String path = ldaFilePath + "￿/topic_k" + topicK + "/group_topic" + numTopics + ".txt";
+        path = path.replace("\uFFFF", "");
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(path))) {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 topic.add(line);
@@ -144,9 +148,9 @@ public class RenderLDA {
         shapeRenderer.end();
     }
 
-    public static void setNumTopics(int numTopics) {
-        if (numTopics >= 0) {
-            RenderLDA.numTopics = numTopics;
+    public static void setNumTopics(int topicNum) {
+        if (topicNum >= 1 && topicNum <= topicK) {
+            numTopics = topicNum;
         }
     }
 

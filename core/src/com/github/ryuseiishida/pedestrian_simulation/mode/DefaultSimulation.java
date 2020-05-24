@@ -3,6 +3,7 @@ package com.github.ryuseiishida.pedestrian_simulation.mode;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -20,6 +21,7 @@ public class DefaultSimulation extends ApplicationAdapter {
     private BitmapFont bitmapFont;
     private LoopController loopController;
     private static Environment environment;
+    private Texture texture;
 
     @Override
     public void create() {
@@ -32,12 +34,13 @@ public class DefaultSimulation extends ApplicationAdapter {
         bitmapFont.getData().setScale(15);
         environment = new Environment();
         loopController = new LoopController(environment);
+        texture = new Texture("core/assets/tressa-yokohama.png");
     }
 
     @Override
     public void render() {
         environment.update();
-        new Font(batch, bitmapFont, camera, environment);
+        new Font(batch, bitmapFont, texture, camera, environment);
         new RenderAgent(shapeRenderer, camera, environment);
         new RenderCell(shapeRenderer, camera, environment);
         new RenderFire(shapeRenderer, camera, environment);

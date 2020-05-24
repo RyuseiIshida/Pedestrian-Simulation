@@ -32,9 +32,9 @@ public class LoadLog {
             }
         };
         File[] files = new File(parentPath).listFiles(filter);
-        if(files.length == 0) {
+        if (files.length == 0) {
             throw new IllegalArgumentException("simulation log file is not included");
-        } else if(files.length != 1) {
+        } else if (files.length != 1) {
             throw new IllegalArgumentException("Multiple log files detected.\n" +
                     "There should be only one specified directory.");
         }
@@ -137,6 +137,10 @@ public class LoadLog {
         for (Vector2 vector2 : vec) {
             System.out.println("vector2 = " + vector2);
         }
+    }
+
+    public String getSimulationLogPath() {
+        return simulationLogPath;
     }
 
     public static void main(String[] args) {
