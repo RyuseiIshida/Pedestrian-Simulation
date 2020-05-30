@@ -16,7 +16,7 @@ public class AnalyzeLogLDA {
     private String outPrintPath = loadFilesDir;
     private LoadLog loadLog = new LoadLog(loadFilesDir);
 
-    private int splitStep = 15;
+    private int splitStep = 30;
 
     //Parameterのから
     private static float METER = 100f;

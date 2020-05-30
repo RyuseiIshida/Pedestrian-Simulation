@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class RenderLDA {
     private static boolean renderFlag = false;
     private static int numTopics = 1;
-    private static int topicK = 3;
+    private static int topicK = 33;
     private static String ldaFilePath;
 
     public RenderLDA(Batch batch, BitmapFont bitmapFont, ShapeRenderer shapeRenderer, Camera camera, String filePath) {

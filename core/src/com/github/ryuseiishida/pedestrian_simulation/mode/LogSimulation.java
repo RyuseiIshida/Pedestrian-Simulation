@@ -46,7 +46,7 @@ public class LogSimulation extends ApplicationAdapter {
         new Font(batch, bitmapFont, texture, camera, environment);
         new RenderAgent(shapeRenderer, camera, environment);
         new RenderGoal(shapeRenderer, camera, environment);
-        new RenderObstacle(shapeRenderer, camera, environment);
+//        new RenderObstacle(shapeRenderer, camera, environment);
         new RenderLDA(batch, bitmapFont, shapeRenderer, camera, environment.getLoadLog().getSimulationLogPath());
         new Inputs(camera, environment);
     }
