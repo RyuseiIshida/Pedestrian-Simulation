@@ -8,7 +8,7 @@ import com.github.ryuseiishida.pedestrian_simulation.cell.Cell;
 import com.github.ryuseiishida.pedestrian_simulation.obstacle.Obstacle;
 
 public class RenderObstacle {
-    public RenderObstacle(ShapeRenderer shapeRenderer, Camera camera, Environment environment){
+    public RenderObstacle(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
         obstacleRegion(shapeRenderer, camera, environment);
     }
 

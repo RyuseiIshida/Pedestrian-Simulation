@@ -36,7 +36,7 @@ public class Group {
         groupList = new ArrayList<>();
         for (Agent agent : agentList) {
             ArrayList<Agent> nearAgentList = new ArrayList<>(searchLengthAgent(agent, agentList));
-            if (!searchGroup(nearAgentList)){
+            if (!searchGroup(nearAgentList)) {
                 groupList.add(nearAgentList);
             }
         }
@@ -47,7 +47,7 @@ public class Group {
         groupList = new ArrayList<>();
         for (Agent agent : agentList) {
             ArrayList<Agent> nearAgentList = new ArrayList<>(searchLengthAgent(agent, agentList));
-            if (!searchGroup(nearAgentList)){
+            if (!searchGroup(nearAgentList)) {
                 groupList.add(nearAgentList);
             }
         }
@@ -59,7 +59,7 @@ public class Group {
         float value = 20 * 100;
         ArrayList<Agent> group = new ArrayList<>();
         for (Agent agent : agentList) {
-            if(targetAgent.getPosition().dst(agent.getPosition()) <= value){
+            if (targetAgent.getPosition().dst(agent.getPosition()) <= value) {
                 group.add(agent);
             }
         }
@@ -71,7 +71,7 @@ public class Group {
         float value = 20 * 100;
         ArrayList<Agent> group = new ArrayList<>();
         for (Agent agent : agentList) {
-            if(targetAgent.getPosition().dst(agent.getPosition()) <= value){
+            if (targetAgent.getPosition().dst(agent.getPosition()) <= value) {
                 group.add(agent);
             }
         }

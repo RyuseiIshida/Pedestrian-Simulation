@@ -9,16 +9,24 @@ import java.util.ArrayList;
  * This class manages multiple Cell classes for the representation of pedestrian_simulation areas and obstacle areas.
  */
 public class CellsMap {
-    /** cells in scale */
+    /**
+     * cells in scale
+     */
     private ArrayList<Cell> cellList;
 
-    /** matrix of <@code cellList> */
+    /**
+     * matrix of <@code cellList>
+     */
     private ArrayList<ArrayList<Cell>> matrixCells;
 
-    /** pedestrian_simulation scale */
+    /**
+     * pedestrian_simulation scale
+     */
     private Vector2 scale;
 
-    /** the interval of this cell */
+    /**
+     * the interval of this cell
+     */
     private int cellInterval;
 
     /**

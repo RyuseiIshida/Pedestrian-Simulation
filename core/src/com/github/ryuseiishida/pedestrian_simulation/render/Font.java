@@ -33,7 +33,7 @@ public class Font {
         batch.end();
     }
 
-    public static void font(Batch batch, BitmapFont bitmapFont, Camera camera,Texture texture, Environment environment) {
+    public static void font(Batch batch, BitmapFont bitmapFont, Camera camera, Texture texture, Environment environment) {
         Gdx.gl.glClearColor(255, 255, 255, 255);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();

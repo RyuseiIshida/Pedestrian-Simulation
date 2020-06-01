@@ -123,10 +123,10 @@ public class Inputs {
             if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.D)) {
                 RenderLDA.switchRenderFlag();
             }
-            if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
                 RenderLDA.setNumTopics(RenderLDA.getNumTopics() + 1);
             }
-            if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
                 RenderLDA.setNumTopics(RenderLDA.getNumTopics() - 1);
             }
         }

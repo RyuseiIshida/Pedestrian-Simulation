@@ -51,16 +51,17 @@ public class Goal {
     }
 
     public boolean isAgentInGoal(Agent agent) {
-            float aPosX = agent.getPosition().x;
-            float aPosY = agent.getPosition().y;
-            if (aPosX > position.x
-                    && aPosY > position.y
-                    && aPosX < getRightTop().x
-                    && aPosY < getRightTop().y) {
-                return true;
-            }
+        float aPosX = agent.getPosition().x;
+        float aPosY = agent.getPosition().y;
+        if (aPosX > position.x
+                && aPosY > position.y
+                && aPosX < getRightTop().x
+                && aPosY < getRightTop().y) {
+            return true;
+        }
         return false;
     }
+
     @Override
     public String toString() {
         return "goal = (x=" + position.x + ", y=" + position.y + ", w=" + width + ", h=" + height + ")";

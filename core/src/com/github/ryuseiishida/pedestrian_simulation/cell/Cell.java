@@ -6,22 +6,34 @@ import com.badlogic.gdx.math.Vector2;
  * This class is the base class of the CellsMap class.
  */
 public class Cell {
-    /** the interval of this cell */
+    /**
+     * the interval of this cell
+     */
     private float cellInterval;
 
-    /** the left-bottom position of this cell */
+    /**
+     * the left-bottom position of this cell
+     */
     private Vector2 leftBottomPoint;
 
-    /** the left-top position of this cell */
+    /**
+     * the left-top position of this cell
+     */
     private Vector2 leftTopPoint;
 
-    /** the right-bottom position of this cell */
+    /**
+     * the right-bottom position of this cell
+     */
     private Vector2 rightBottomPoint;
 
-    /** the right-top position of this cell */
+    /**
+     * the right-top position of this cell
+     */
     private Vector2 rightTopPoint;
 
-    /** the center-point of this cell */
+    /**
+     * the center-point of this cell
+     */
     private Vector2 centerPoint;
 
     /**

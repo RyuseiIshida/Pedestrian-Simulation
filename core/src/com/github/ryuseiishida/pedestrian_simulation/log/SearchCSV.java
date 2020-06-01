@@ -37,7 +37,7 @@ public class SearchCSV {
         try (Reader reader = Files.newBufferedReader(path)) {
             CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
             for (CSVRecord record : csvParser.getRecords()) {
-                if(i%100==0) {
+                if (i % 100 == 0) {
                     System.out.println(record.get(1));
                 }
                 i++;
