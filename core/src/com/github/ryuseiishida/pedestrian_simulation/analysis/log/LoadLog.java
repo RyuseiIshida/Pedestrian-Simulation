@@ -1,4 +1,4 @@
-package com.github.ryuseiishida.pedestrian_simulation.log;
+package com.github.ryuseiishida.pedestrian_simulation.analysis.log;
 
 import com.badlogic.gdx.math.Vector2;
 import org.apache.commons.csv.CSVFormat;
@@ -16,7 +16,8 @@ public class LoadLog {
     private ArrayList<File> agentFileList;
 
     public LoadLog(String loadPath) {
-        setSimulationLogPath(loadPath);
+//        setSimulationLogPath(loadPath);
+        simulationLogPath = loadPath;
         setAgentFileList();
     }
 

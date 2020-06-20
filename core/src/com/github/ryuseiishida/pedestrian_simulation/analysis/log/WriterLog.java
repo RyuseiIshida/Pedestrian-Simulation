@@ -1,8 +1,8 @@
-package com.github.ryuseiishida.pedestrian_simulation.log;
+package com.github.ryuseiishida.pedestrian_simulation.analysis.log;
 
-import com.github.ryuseiishida.pedestrian_simulation.agent.Agent;
-import com.github.ryuseiishida.pedestrian_simulation.agent.Group;
-import com.github.ryuseiishida.pedestrian_simulation.agent.StateTag;
+import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
+import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Group;
+import com.github.ryuseiishida.pedestrian_simulation.environment.agent.StateTag;
 import com.github.ryuseiishida.pedestrian_simulation.analysis.LDA;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
@@ -163,7 +163,7 @@ public class WriterLog {
                 }
             }
 
-            ArrayList<ArrayList<Agent>> group = Group.getGroup3(env.getAgentList());
+            ArrayList<ArrayList<Agent>> group = Group.getGroup(env.getAgentList());
             StringBuilder groupList = new StringBuilder();
             for (ArrayList<Agent> agents : group) {
                 for (Agent agent : agents) {
@@ -176,7 +176,7 @@ public class WriterLog {
                     env.getStep(), //0
                     env.getGoalAgentNum(), //1
                     groupList.toString(), //2
-                    Group.getGroup3(env.getAgentList()).size(), //3
+                    Group.getGroup(env.getAgentList()).size(), //3
                     follow //4
             );
             printer.close();

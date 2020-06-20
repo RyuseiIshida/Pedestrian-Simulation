@@ -1,17 +1,23 @@
-package com.github.ryuseiishida.pedestrian_simulation.goal;
+package com.github.ryuseiishida.pedestrian_simulation.environment.object.goal;
 
 import com.badlogic.gdx.math.Vector2;
-import com.github.ryuseiishida.pedestrian_simulation.agent.Agent;
+import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
 
 public class Goal {
+    private String ID;
     private Vector2 position;
     private float width;
     private float height;
 
-    public Goal(float x, float y, float width, float height) {
+    public Goal(String ID, float x, float y, float width, float height) {
+        this.ID = ID;
         this.position = new Vector2(x, y);
         this.width = width;
         this.height = height;
+    }
+
+    public String getID() {
+        return ID;
     }
 
     public float getPositionX() {
@@ -53,13 +59,14 @@ public class Goal {
     public boolean isAgentInGoal(Agent agent) {
         float aPosX = agent.getPosition().x;
         float aPosY = agent.getPosition().y;
-        if (aPosX > position.x
+        return aPosX > position.x
                 && aPosY > position.y
                 && aPosX < getRightTop().x
-                && aPosY < getRightTop().y) {
-            return true;
-        }
-        return false;
+                && aPosY < getRightTop().y;
+    }
+
+    public boolean exists(String id) {
+        return ID.equals(id);
     }
 
     @Override

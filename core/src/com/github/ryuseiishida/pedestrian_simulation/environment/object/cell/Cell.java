@@ -1,4 +1,4 @@
-package com.github.ryuseiishida.pedestrian_simulation.cell;
+package com.github.ryuseiishida.pedestrian_simulation.environment.object.cell;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -103,6 +103,17 @@ public class Cell {
      */
     public Vector2 getCenterPoint() {
         return centerPoint;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        Cell other = (Cell) obj;
+        if ((int) centerPoint.x == (int) other.getCenterPoint().x) return false;
+        if ((int) centerPoint.y == (int) other.getCenterPoint().y) return false;
+        return true;
     }
 
 }

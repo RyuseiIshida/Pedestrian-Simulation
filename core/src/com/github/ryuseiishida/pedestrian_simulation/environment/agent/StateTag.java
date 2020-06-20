@@ -1,4 +1,4 @@
-package com.github.ryuseiishida.pedestrian_simulation.agent;
+package com.github.ryuseiishida.pedestrian_simulation.environment.agent;
 
 public class StateTag {
     /** the state of the agent is initial or nothing*/

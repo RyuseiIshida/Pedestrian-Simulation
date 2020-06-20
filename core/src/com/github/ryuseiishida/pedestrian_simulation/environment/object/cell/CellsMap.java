@@ -1,4 +1,4 @@
-package com.github.ryuseiishida.pedestrian_simulation.cell;
+package com.github.ryuseiishida.pedestrian_simulation.environment.object.cell;
 
 import com.badlogic.gdx.math.Vector2;
 import com.github.ryuseiishida.pedestrian_simulation.util.Tuple;
@@ -120,29 +120,17 @@ public class CellsMap {
         //線形探索
         int x = 0, y = 0;
         for (int i = 0; i < matrixCells.size(); i++) {
-            if (targetPositionX < matrixCells.get(i).get(0).getRightBottomPoint().x) {
+            if (targetPositionX <= matrixCells.get(i).get(0).getRightBottomPoint().x) {
                 break;
             }
             x++;
         }
-//        for (ArrayList<Cell> cell : matrixCells) {
-//            if (targetPositionX < cell.get(0).getRightBottomPoint().x) {
-//                break;
-//            }
-//            x++;
-//        }
         for (int i = 0; i < matrixCells.get(0).size(); i++) {
-            if (targetPositionY < matrixCells.get(0).get(i).getRightTopPoint().y) {
+            if (targetPositionY <= matrixCells.get(0).get(i).getRightTopPoint().y) {
                 break;
             }
             y++;
         }
-//        for (ArrayList<Cell> matrixCell : matrixCells) {
-//            if (targetPositionY < matrixCell.get(0).getRightTopPoint().y) {
-//                break;
-//            }
-//            y++;
-//        }
         return new Tuple<>(x, y);
     }
 

@@ -1,12 +1,11 @@
 package com.github.ryuseiishida.pedestrian_simulation.analysis;
 
 import com.badlogic.gdx.math.Vector2;
-import com.github.ryuseiishida.pedestrian_simulation.agent.StateTag;
-import com.github.ryuseiishida.pedestrian_simulation.cell.CellsMap;
-import com.github.ryuseiishida.pedestrian_simulation.log.WriterLog;
+import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
+import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Group;
+import com.github.ryuseiishida.pedestrian_simulation.environment.agent.StateTag;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.CellsMap;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
-import com.github.ryuseiishida.pedestrian_simulation.agent.Agent;
-import com.github.ryuseiishida.pedestrian_simulation.agent.Group;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 
 public class LDA {
     private static float METER = 100f;
-    private static CellsMap positionMap = new CellsMap(new Vector2(100 * METER, 80 * METER), 1000);
+    private static CellsMap positionMap = new CellsMap(new Vector2(100 * METER, 100 * METER), 500);
     // group sizeで文書を区切る
     private int perceptionGroupSize = 0;
     private ArrayList<Agent> agentList;
@@ -62,7 +61,7 @@ public class LDA {
 
     // グループサイズが変わったタイミングで文書を区切る
     public void recordGroupSizeSplit(int step) {
-        ArrayList<ArrayList<Agent>> AgentGroups = Group.getGroup3(agentList);
+        ArrayList<ArrayList<Agent>> AgentGroups = Group.getGroup(agentList);
         if (AgentGroups.size() != perceptionGroupSize) {
             setDataList(agentList);
         }

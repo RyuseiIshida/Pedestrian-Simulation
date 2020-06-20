@@ -7,9 +7,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.github.ryuseiishida.pedestrian_simulation.environment.agent.StateTag;
 import com.github.ryuseiishida.pedestrian_simulation.analysis.LDA;
-import com.github.ryuseiishida.pedestrian_simulation.cell.Cell;
-import com.github.ryuseiishida.pedestrian_simulation.agent.StateTag;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.Cell;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
 import java.io.BufferedReader;
@@ -20,8 +20,8 @@ import java.util.ArrayList;
 
 public class RenderLDA {
     private static boolean renderFlag = false;
-    private static int numTopics = 1;
-    private static int topicK = 33;
+    private static int numTopics = 17;
+    private static int topicK = 18;
     private static String ldaFilePath;
 
     public RenderLDA(Batch batch, BitmapFont bitmapFont, ShapeRenderer shapeRenderer, Camera camera, String filePath) {
@@ -33,10 +33,13 @@ public class RenderLDA {
         }
     }
 
+    public static void setRenderFlag(boolean flag) {
+        renderFlag = flag;
+    }
+
     public static void switchRenderFlag() {
         renderFlag = !renderFlag;
     }
-
 
     public static void cell(ShapeRenderer shapeRenderer, Camera camera) {
         shapeRenderer.setProjectionMatrix(camera.combined);

@@ -1,7 +1,7 @@
-package com.github.ryuseiishida.pedestrian_simulation.obstacle;
+package com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle;
 
-import com.github.ryuseiishida.pedestrian_simulation.cell.Cell;
-import com.github.ryuseiishida.pedestrian_simulation.cell.CellsMap;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.Cell;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.CellsMap;
 import com.github.ryuseiishida.pedestrian_simulation.util.Tuple;
 
 import java.util.ArrayList;

@@ -1,8 +1,8 @@
-package com.github.ryuseiishida.pedestrian_simulation.obstacle;
+package com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle;
 
 import com.badlogic.gdx.math.Vector2;
-import com.github.ryuseiishida.pedestrian_simulation.cell.Cell;
-import com.github.ryuseiishida.pedestrian_simulation.cell.CellsMap;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.Cell;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.CellsMap;
 
 import java.util.ArrayList;
 import java.util.List;

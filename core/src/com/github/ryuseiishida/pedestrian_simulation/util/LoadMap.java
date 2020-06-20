@@ -1,7 +1,7 @@
-package com.github.ryuseiishida.pedestrian_simulation.environment;
+package com.github.ryuseiishida.pedestrian_simulation.util;
 
-import com.github.ryuseiishida.pedestrian_simulation.obstacle.Line;
-import com.github.ryuseiishida.pedestrian_simulation.obstacle.Obstacle;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Line;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Obstacle;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
 import java.io.BufferedReader;

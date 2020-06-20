@@ -1,14 +1,15 @@
-package com.github.ryuseiishida.pedestrian_simulation.potential;
+package com.github.ryuseiishida.pedestrian_simulation.environment.agent.potential;
 
 import com.badlogic.gdx.math.Vector2;
-import com.github.ryuseiishida.pedestrian_simulation.cell.Cell;
-import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
+import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.Cell;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
-import com.github.ryuseiishida.pedestrian_simulation.agent.Agent;
-import com.github.ryuseiishida.pedestrian_simulation.obstacle.Obstacle;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Obstacle;
+import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import org.apache.commons.math3.analysis.function.Exp;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class KimPotentialModel {
     private float cg = Parameter.AGENT_KIM_POTENTIAL_WEIGHT;
@@ -29,6 +30,14 @@ public class KimPotentialModel {
         float len = targetPosition.dst2(goalPosition);
         double potentialWeight = cg * (1 - new Exp().value(-1 * (len / (lg * lg))));
         return (float) potentialWeight;
+    }
+
+    public float repulsivePotential(Vector2 targetPosition, Set<Vector2> ObstaclePositionList) {
+        float potentialWeight = 0f;
+        for (Vector2 vec : ObstaclePositionList) {
+            potentialWeight += co * new Exp().value(-1 * (targetPosition.dst2(vec) / (lo * lo)));
+        }
+        return potentialWeight;
     }
 
     public float repulsivePotential(Vector2 targetPosition, ArrayList<Vector2> ObstaclePositionList) {

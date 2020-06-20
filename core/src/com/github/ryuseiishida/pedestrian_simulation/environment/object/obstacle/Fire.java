@@ -1,7 +1,7 @@
-package com.github.ryuseiishida.pedestrian_simulation.obstacle;
+package com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle;
 
 import com.badlogic.gdx.math.Vector2;
-import com.github.ryuseiishida.pedestrian_simulation.agent.Agent;
+import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
 
 public class Fire {
     private Vector2 firePoint;

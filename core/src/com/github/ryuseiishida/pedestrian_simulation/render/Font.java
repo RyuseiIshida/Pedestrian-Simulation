@@ -25,7 +25,7 @@ public class Font {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         bitmapFont.draw(batch,
-                "time " + environment.getStep()
+                "step " + environment.getStep()
                         + "  " + "agentNum = " + String.format(String.valueOf(environment.getAgentList().size())),
 //                        + "  " + "groupNum= " + String.format(String.valueOf(Group.getGroupNum(environment.getAgentList())))
 //                        + "  " + "goalNum= " + String.format(String.valueOf(environment.getGoalAgentNum())),
@@ -40,8 +40,8 @@ public class Font {
         batch.setProjectionMatrix(camera.combined);
         //文字の描画
         batch.begin();
-        batch.draw(texture, 0, 0);
-        batch.draw(texture, 0, 0);
+//        batch.draw(texture, 0, 0);
+        batch.draw(texture, 0, 0,Parameter.SCALE.x,Parameter.SCALE.y);
         bitmapFont.draw(batch,
                 "time " + environment.getStep()
                         + "  " + "agentNum = " + String.format(String.valueOf(environment.getAgentList().size())),

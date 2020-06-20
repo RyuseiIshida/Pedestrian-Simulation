@@ -5,12 +5,14 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
+import com.github.ryuseiishida.pedestrian_simulation.environment.agent.StateTag;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
-import com.github.ryuseiishida.pedestrian_simulation.agent.Agent;
-import com.github.ryuseiishida.pedestrian_simulation.agent.StateTag;
 
 public class RenderAgent {
+    public static Color nonGoalAgentColor = Color.BLACK;
+    public static Color goalAgentColor = Color.RED;
     private static boolean renderViewFlag = false;
     private static boolean renderMoveGoalLineFlag = false;
     private static boolean renderFollowLineFlag = false;
@@ -19,7 +21,6 @@ public class RenderAgent {
         body(shapeRenderer, camera, environment);
         isView(shapeRenderer, camera, environment);
         isMoveGoalLine(shapeRenderer, camera, environment);
-        isFollowLine(shapeRenderer, camera, environment);
     }
 
     public static void body(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
@@ -89,33 +90,15 @@ public class RenderAgent {
         shapeRenderer.end();
     }
 
-    public static void isFollowLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
-        if (renderFollowLineFlag) {
-            followLine(shapeRenderer, camera, environment);
-        }
-    }
-
-    public static void followLine(ShapeRenderer shapeRenderer, Camera camera, Environment environment) {
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.BLACK);
-        for (Agent agent : environment.getAgentList()) {
-            if (agent.getFollowAgent() != null) {
-                shapeRenderer.line(agent.getPosition(), agent.getFollowAgent().getPosition());
-            }
-        }
-        shapeRenderer.end();
-    }
-
-    public static void setViewFlag() {
+    public static void switchViewFlag() {
         renderViewFlag = !renderViewFlag;
     }
 
-    public static void setMoveGoalLineFlag() {
+    public static void switchMoveGoalLineFlag() {
         renderMoveGoalLineFlag = !renderMoveGoalLineFlag;
     }
 
-    public static void setFollowLineFlag() {
+    public static void switchFollowLineFlag() {
         renderFollowLineFlag = !renderFollowLineFlag;
     }
 }

@@ -2,29 +2,28 @@ package com.github.ryuseiishida.pedestrian_simulation.environment;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.github.ryuseiishida.pedestrian_simulation.agent.StateTag;
-import com.github.ryuseiishida.pedestrian_simulation.cell.Cell;
-import com.github.ryuseiishida.pedestrian_simulation.goal.Goal;
-import com.github.ryuseiishida.pedestrian_simulation.log.LoadLog;
-import com.github.ryuseiishida.pedestrian_simulation.log.WriterLog;
-import com.github.ryuseiishida.pedestrian_simulation.obstacle.Box;
-import com.github.ryuseiishida.pedestrian_simulation.obstacle.BoxLine;
-import com.github.ryuseiishida.pedestrian_simulation.obstacle.Fire;
-import com.github.ryuseiishida.pedestrian_simulation.obstacle.Obstacle;
-import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
+import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
+import com.github.ryuseiishida.pedestrian_simulation.environment.agent.StateTag;
 import com.github.ryuseiishida.pedestrian_simulation.analysis.LDA;
-import com.github.ryuseiishida.pedestrian_simulation.agent.Agent;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.Cell;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.goal.Goal;
+import com.github.ryuseiishida.pedestrian_simulation.analysis.log.LoadLog;
+import com.github.ryuseiishida.pedestrian_simulation.analysis.log.WriterLog;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.*;
+import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Environment {
-    private int step = 0;
-    private boolean updateFlag = false;
-    private ArrayList<Goal> goals = Parameter.GOALS;
-    private ArrayList<Obstacle> obstacles = Parameter.OBSTACLES;
-    private Fire fire = new Fire(Parameter.FIRE_POINT, 0);
-    private ArrayList<Agent> agentList = new ArrayList<>();
+    private int step;
+    private static boolean updateFlag;
+    private ArrayList<Goal> goals;
+    private ArrayList<Obstacle> obstacles;
+    private HashSet<Vector2> obstaclePosition = new HashSet<>();
+    private ArrayList<Agent> agentList;
     private int goalAgentNum;
 
     private LDA ldaStepSplit;
@@ -33,33 +32,57 @@ public class Environment {
     private LoadLog loadLog;
     private WriterLog writerLog;
 
+    //flags
+    public static boolean spawnAgentsFlag;
+    public static boolean deleteAllAgentFlag;
+    public static boolean deleteAllGoalFlag;
+    public static boolean deleteAllObstacleFlag;
 
     public Environment() {
-        for (BoxLine box : Parameter.BOX_LIST) {
-            obstacles.addAll(box.getLines());
-        }
-//        LoadMap.setObstacle(obstacles);
-        spawnInitAgents();
-    }
+        step = 0;
+        updateFlag = false;
+        goals = new ArrayList<>();
+        obstacles = new ArrayList<>();
+        agentList = new ArrayList<>();
 
-    public Environment(boolean loopFlag) {
-        updateFlag = loopFlag;
-        for (BoxLine box : Parameter.BOX_LIST) {
-            obstacles.addAll(box.getLines());
-        }
+        addWallObstacles();
+        spawnAgentsFlag = false;
+        deleteAllAgentFlag = false;
+        deleteAllGoalFlag = false;
+        deleteAllObstacleFlag = false;
 //        LoadMap.setObstacle(obstacles);
-        spawnInitAgents();
     }
 
     public Environment(String logDirPath) {
+        step = 0;
+        updateFlag = false;
         loadLog = new LoadLog(logDirPath);
-        for (BoxLine box : Parameter.BOX_LIST) {
-            obstacles.addAll(box.getLines());
-        }
+        goals = new ArrayList<>();
+        obstacles = new ArrayList<>();
+        agentList = new ArrayList<>();
+        addWallObstacles();
+        spawnAgentsFlag = false;
+        deleteAllAgentFlag = false;
+        deleteAllGoalFlag = false;
+        deleteAllObstacleFlag = false;
+//        LoadMap.setObstacle(obstacles);
         spawnLogAgents();
     }
 
     public void update() {
+        if (spawnAgentsFlag) {
+            spawnInitAgents();
+        }
+        if (deleteAllAgentFlag) {
+            deleteAllAgent();
+        }
+        if (deleteAllGoalFlag) {
+            deleteAllGoal();
+        }
+        if (deleteAllObstacleFlag) {
+            deleteAllObstacle();
+        }
+
         if (updateFlag) {
             if (writerLog == null) {
                 initWriterLog();
@@ -71,8 +94,6 @@ public class Environment {
                     .parallel()
                     .forEach(Agent::action);
             ifAgentInGoal();
-            ifAgentInFire();
-            fire.spreadFire();
             ldaStepSplit.recordStepSplit(step);
             ldaGroupSizeSplit.recordGroupSizeSplit(step);
         }
@@ -90,15 +111,6 @@ public class Environment {
                 return;
             }
         }
-    }
-
-    public void saveLDA() {
-        ldaGroupSizeSplit.outPrint("group_size_split_corpus");
-        ldaStepSplit.outPrint("step_split_corpus");
-    }
-
-    public void setStep(int step) {
-        this.step = step;
     }
 
     public int getStep() {
@@ -121,39 +133,23 @@ public class Environment {
         agentList.removeIf(agent -> agent.getStateTag().equals(StateTag.escaped));
     }
 
-    private void ifAgentInFire() {
-        agentList.removeIf(agent -> fire.dstFireEdge(agent) < 0);
-    }
-
-    public void spawnObstacle(Vector2 pos) {
-        obstacles.add(new Box(pos.x, pos.y, Parameter.CELL_INTERVAL, Parameter.CELL_INTERVAL, Parameter.ENV_CELLS_MAP));
-    }
-
     public ArrayList<Obstacle> getObstacles() {
         return obstacles;
     }
 
-    public ArrayList<Vector2> getObstaclesPosition() {
-        ArrayList<Vector2> positionList = new ArrayList<>();
-        for (Obstacle obstacle : obstacles) {
-            for (Cell obstacleCell : obstacle.getObstacleCells()) {
-                positionList.add(obstacleCell.getCenterPoint());
-            }
-        }
-        return positionList;
+    public Set<Vector2> getObstaclesPosition() {
+        return obstaclePosition;
     }
 
-    //agent
+    public HashSet<Vector2> obstaclePosition() {
+        return obstaclePosition;
+    }
+
     public void spawnInitAgents() {
         for (int i = 0; i < Parameter.INIT_AGENT_NUM; i++) {
-            Vector2 position = getRandomPosition();
-            if (i < Parameter.GOAL_AGENT_NUM) {
-                agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position, goals.get(0)));
-            } else {
-                agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, position));
-            }
+            agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, getRandomPosition()));
         }
-
+        spawnAgentsFlag = false;
     }
 
     public Vector2 getRandomPosition() {
@@ -189,12 +185,31 @@ public class Environment {
         agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos));
     }
 
-    public void spawnAgent(Vector2 pos, int goalIndex) {
-        agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos, goals.get(goalIndex)));
+    public void spawnAgent(Vector2 pos, String goalID) {
+        for (Goal goal : goals) {
+            if (goal.exists(goalID)) {
+                agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos, goal));
+            }
+        }
     }
 
-    public void spawnFire(Vector2 pos) {
-        fire = new Fire(pos);
+    public void deleteAllAgent() {
+        agentList.clear();
+        deleteAllAgentFlag = false;
+    }
+
+    public void deleteAllGoal() {
+        goals.clear();
+        agentList.removeIf(agent -> agent.getStateTag().equals(StateTag.moveGoal));
+        deleteAllGoalFlag = false;
+    }
+
+    public void deleteAllObstacle() {
+        obstacles.clear();
+        for (Agent agent : agentList) {
+//            agent.setObstaclePositionMap();
+        }
+        deleteAllObstacleFlag = false;
     }
 
     public ArrayList<Agent> getAgentList() {
@@ -223,14 +238,6 @@ public class Environment {
         return null;
     }
 
-    public ArrayList<Vector2> getAgentsPosition() {
-        ArrayList<Vector2> agentVectorList = new ArrayList<>();
-        for (Agent agent : agentList) {
-            agentVectorList.add(agent.getPosition());
-        }
-        return agentVectorList;
-    }
-
     public ArrayList<Vector2> getAgentsPosition(Agent targetAgent) {
         ArrayList<Vector2> agentVectorList = new ArrayList<>();
         for (Agent agent : getAgentList(targetAgent)) {
@@ -251,16 +258,43 @@ public class Environment {
         updateFlag = !updateFlag;
     }
 
-    public void setUpdateFlag(boolean flag) {
+    public static void setUpdateFlag(boolean flag) {
         updateFlag = flag;
-    }
-
-    public Fire getFire() {
-        return this.fire;
     }
 
     public LoadLog getLoadLog() {
         return loadLog;
+    }
+
+    public void addObstacle(Obstacle obstacle) {
+        obstacles.add(obstacle);
+        addObstaclePosition(obstacle);
+    }
+
+    private void addObstaclePosition(Obstacle targetObstacle) {
+        for (Cell targetObstacleCell : targetObstacle.getObstacleCells()) {
+            obstaclePosition.add(targetObstacleCell.getCenterPoint());
+        }
+    }
+
+    private void addWallObstacles() {
+        //left
+        addObstacle(new Line(0, 0, 0, Parameter.SCALE.y, Parameter.ENV_CELLS_MAP));
+        //right
+        addObstacle(new Line(Parameter.SCALE.x, 0, Parameter.SCALE.x, Parameter.SCALE.y, Parameter.ENV_CELLS_MAP));
+        //top
+        addObstacle(new Line(0, Parameter.SCALE.y, Parameter.SCALE.x, Parameter.SCALE.y, Parameter.ENV_CELLS_MAP));
+        //bottom
+        addObstacle(new Line(0, 0, Parameter.SCALE.x, 0, Parameter.ENV_CELLS_MAP));
+    }
+
+    public void addGoal(Goal goal) {
+        for (Goal goalElement : goals) {
+            if (goalElement.getID().equals(goal.getID())) {
+                return;
+            }
+        }
+        goals.add(goal);
     }
 
 }

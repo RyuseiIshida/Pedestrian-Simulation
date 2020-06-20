@@ -1,12 +1,10 @@
-package com.github.ryuseiishida.pedestrian_simulation.agent;
+package com.github.ryuseiishida.pedestrian_simulation.environment.agent;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
-import com.github.ryuseiishida.pedestrian_simulation.cell.Cell;
-import com.github.ryuseiishida.pedestrian_simulation.goal.Goal;
-import com.github.ryuseiishida.pedestrian_simulation.obstacle.Obstacle;
-import com.github.ryuseiishida.pedestrian_simulation.potential.KimPotentialModel;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.goal.Goal;
+import com.github.ryuseiishida.pedestrian_simulation.environment.agent.potential.KimPotentialModel;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import com.github.ryuseiishida.pedestrian_simulation.util.UtilVector;
 import org.apache.commons.math3.analysis.function.Exp;
@@ -16,7 +14,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Agent {
     /**
@@ -70,16 +70,6 @@ public class Agent {
     private Vector2 velocity;
 
     /**
-     * the follow agent of this agent
-     */
-    private Agent followAgent;
-
-    /**
-     * the followers agent of this agent
-     */
-    private ArrayList<Agent> followers;
-
-    /**
      * the pedestrian_simulation {@link Environment} of this agent
      */
     private Environment env;
@@ -93,11 +83,6 @@ public class Agent {
      * 現在の視野内の他Agentリスト
      */
     private ArrayList<Agent> perceptionInViewAgentList = new ArrayList<>();
-
-    /**
-     * 現在のフォローされているAgentリスト
-     */
-    private ArrayList<Agent> perceptionFollowAgentList = new ArrayList<>();
 
     /**
      * 前Stepの状態Tag
@@ -139,8 +124,6 @@ public class Agent {
         this.perceptionBeforePos = position;
         this.movePos = position;
         this.velocity = new Vector2(0, 0);
-        this.followers = new ArrayList<>();
-        setObstaclePositionMap();
     }
 
     public Agent(String id, Environment env, Vector2 position, Goal goal) {
@@ -154,8 +137,19 @@ public class Agent {
         this.goal = goal.getCenter();
         this.movePos = goal.getCenter();
         this.velocity = new Vector2(0, 0);
-        this.followers = new ArrayList<>();
-        setObstaclePositionMap();
+    }
+
+    public Agent(String id, Environment env, Vector2 position, float speed) {
+        this.ID = id;
+        this.env = env;
+        this.potentialModel = new KimPotentialModel(env, this);
+        this.stateTag = StateTag.none;
+        this.perceptionBeforeStateTag = StateTag.none;
+        this.position = position;
+        this.perceptionBeforePos = position;
+        this.movePos = position;
+        this.velocity = new Vector2(0, 0);
+        this.speed = speed;
     }
 
     public Agent(File logFile, Environment env) {
@@ -190,8 +184,6 @@ public class Agent {
     private void perception() {
         setPerceptionContinue(); //同じルールをどれくらい継続しているのか
         setPerceptionAgent(); //視界にいるエージェント
-        setPerceptionFollowAgent(); //視野内にいる追従できそうなエージェント
-        resetPerceptionFollowAgent(); //追従を辞めた時の後処理
         setPerceptionGoal();
     }
 
@@ -213,25 +205,6 @@ public class Agent {
     private boolean isMoveGoalAgent() {
         for (Agent agent : perceptionInViewAgentList) {
             return agent.getStateTag().equals(StateTag.moveGoal);
-        }
-        return false;
-    }
-
-    private boolean isFollowNearGroup(ArrayList<Agent> tmpFollowAgents) {
-        ArrayList<Agent> isGroup = new ArrayList<>();
-        for (ArrayList<Agent> group : Group.getGroup3(env.getAgentList())) {
-            for (Agent agent : group) {
-                if (this.equals(agent)) {
-                    isGroup = group;
-                }
-            }
-        }
-        for (Agent tmpFollowAgent : tmpFollowAgents) {
-            if (tmpFollowAgent.getStateTag().equals(StateTag.follow)) {
-                if (isGroup.contains(tmpFollowAgent)) {
-                    return true;
-                }
-            }
         }
         return false;
     }
@@ -266,20 +239,6 @@ public class Agent {
         this.stateTag = valueList[1]; // tag
         this.position = UtilVector.strToVector(valueList[2]); // position
         this.velocity = UtilVector.strToVector(valueList[3]); // velocity
-//        this.movePos = UtilVector.strToVector(valueList[4]); // movePos
-//        this.goal = UtilVector.strToVector(valueList[5]); // goal
-//        if (!valueList[6].isEmpty()) {
-//            System.out.println("valueList = " + valueList[6]);
-//            this.followAgent = env.getAgent(valueList[6]); //followAgent
-//            System.out.println("follow = " + followAgent);
-//            this.followAgent.setFollower(this);
-//        }
-//        this.followers = strToAgentList(valueList[7]); //followers
-//        this.perceptionInViewAgentList = strToAgentList(valueList[9]);
-//        this.perceptionFollowAgentList = strToAgentList(valueList[11]);
-//        this.perceptionContinueStep = Float.parseFloat(valueList[13]);
-//        this.perceptionContinueDst = Float.parseFloat(valueList[14]);
-//        this.perceptionAllDst = Float.parseFloat(valueList[15]);
         this.perceptionBeforePos = this.position;
         this.perceptionBeforeStateTag = this.stateTag;
     }
@@ -329,27 +288,6 @@ public class Agent {
         env.getAgentList().stream()
                 .filter(agent -> !agent.equals(this) && isInView(agent.getPosition()))
                 .forEach(agent -> perceptionInViewAgentList.add(agent));
-    }
-
-    /**
-     * フォロワーを記憶する
-     */
-    private void setPerceptionFollowAgent() {
-        perceptionFollowAgentList = new ArrayList<>();
-        ArrayList<Agent> group = Group.getMyGroupAgents(this, env.getAgentList());
-        perceptionInViewAgentList.stream()
-                .filter(agent -> group == null)
-                .forEach(agent -> perceptionFollowAgentList.add(agent));
-    }
-
-    /**
-     * フォローする相手がいない時に情報をリセットする
-     */
-    private void resetPerceptionFollowAgent() {
-        if (!StateTag.follow.equals(stateTag) && followAgent != null) {
-            followAgent.followers.remove(this);
-            followAgent = null;
-        }
     }
 
     /**
@@ -414,7 +352,6 @@ public class Agent {
         }
     }
 
-
     private void setPotentialVector(Vector2 direction) {
         Vector2 pVector = new Vector2();
         float delta = 1f;
@@ -424,14 +361,13 @@ public class Agent {
         direction.set(pVector);
     }
 
-
     private float getPotential(float x, float y) {
         float cg = 200;
         float Ug = getGoalKIMPotential(x, y);
         //float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y);
         //float Uo = getAgentKIMPotential(x, y) + getFastObstacleKIMPotential(x, y);
 
-        float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y) + getFireKIMPotential(x, y);
+        float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y);
         //float U = (((1 / cg) * Uo) + 1) * Ug;
         float U = Ug + Uo;
         return U;
@@ -465,31 +401,17 @@ public class Agent {
         Vector2 pos = new Vector2(x, y);
         float potentialWeight = 0;
         float co = 1200;
-        float lo;
-        for (Map.Entry<Vector2, Float> entry : obstaclePositionMap.entrySet()) {
-            lo = entry.getValue();
-            double value = -1 * (pos.dst2(entry.getKey()) / (lo * lo));
+        float lo = radius;
+        for (Vector2 obstaclePosition : env.getObstaclesPosition()) {
+            double value = -1 * (pos.dst2(obstaclePosition) / (lo * lo));
             potentialWeight += co * new Exp().value(value);
         }
         return potentialWeight;
     }
 
-    private float getFireKIMPotential(float x, float y) {
-        Vector2 pos = new Vector2(x, y);
-        float potentialWeight = 0;
-        float co = 200;
-        float lo = env.getFire().getSpreadFireRange();
-        double value = -1 * (pos.dst2(env.getFire().getFirePoint()) / (lo * lo));
-        potentialWeight += co * new Exp().value(value);
-        return potentialWeight;
-    }
-
-    ArrayList<Agent> beforeFollowAgent;
-
     private void moveFollow() {
         velocityFollow();
         stateTag = StateTag.follow;
-        beforeFollowAgent = perceptionInViewAgentList;
         Vector2 direction = UtilVector.direction(position, movePos);
         setFollowPotentialVector(direction);
         Vector2 tmpPos = new Vector2(position);
@@ -524,7 +446,7 @@ public class Agent {
         float cg = goal == null ? 100 : 1000;
         //float Ug = getGoalKIMPotential(x, y) + getFollowKimPotential(x, y);
         float Ug = calcFollowKimPotential(x, y);
-        float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y) + getFireKIMPotential(x, y);
+        float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y);
         //float U = (((1 / cg) * Uo) + 1) * Ug;
         float U = Ug + Uo;
         return U;
@@ -543,21 +465,6 @@ public class Agent {
             }
         }
         return potentialWeight;
-    }
-
-    private float getAgentKIMPotential2(float x, float y) {
-        float potentialWight = 0;
-        float co = 1000;
-        float lo = Parameter.AGENT_RADIUS;
-        //float lo = Parameter.AGENT_RADIUS;
-        //System.out.println("lo = " + lo);
-        Vector2 pos = new Vector2(x, y);
-        for (Agent agent : env.getAgentList()) {
-            if (!agent.equals(this) && !StateTag.follow.equals(agent.getStateTag())) {
-                potentialWight += co * new Exp().value(-1 * (pos.dst2(agent.position) / (lo * lo)));
-            }
-        }
-        return potentialWight;
     }
 
     /**
@@ -583,143 +490,48 @@ public class Agent {
         return targetDistance < viewRadiusLength && differentDegree < viewDegree;
     }
 
-    /**
-     * フォローするAgentをセットする
-     *
-     * @param agent フォローするAgent
-     */
-    private void setFollower(Agent agent) {
-        if (agent.equals(this)) {
-            throw new IllegalArgumentException();
-        }
-        followers.add(agent);
-    }
-
-    /**
-     * AgentのIDを返す
-     *
-     * @return {@link #ID}
-     */
     public String getID() {
         return ID;
     }
 
-    /**
-     * Agentの状態タグを返す
-     *
-     * @return {@link #stateTag}
-     */
     public String getStateTag() {
         return stateTag;
     }
 
-    /**
-     * Agentの位置を返す
-     *
-     * @return {@link #position}
-     */
     public Vector2 getPosition() {
         return position;
     }
 
-    /**
-     * Agentの移動方向を返す
-     *
-     * @return {@link #velocity}
-     */
     public Vector2 getVelocity() {
         return velocity;
     }
 
-    /**
-     * Agentが知っている{@link Goal}を返す
-     *
-     * @return {@link Goal}
-     */
     public Vector2 getGoal() {
         return goal;
     }
 
-    /**
-     * Agentの移動先を返す
-     *
-     * @return {@link #movePos}
-     */
     public Vector2 getMovePos() {
         return movePos;
     }
 
-    /**
-     * AgentがフォローしているAgentを返す
-     *
-     * @return {@link #followAgent}
-     */
-    public Agent getFollowAgent() {
-        return followAgent;
-    }
-
-    /**
-     * 他Agentにフォローされているリストを返す
-     *
-     * @return {@link #followers}
-     */
-    public ArrayList<Agent> getFollowers() {
-        return followers;
-    }
-
-    /**
-     * @return {@link #perceptionInViewAgentList}
-     */
     public ArrayList<Agent> getPerceptionInViewAgentList() {
         return perceptionInViewAgentList;
     }
 
-    /**
-     * @return {@link #perceptionFollowAgentList}
-     */
-    public ArrayList<Agent> getPerceptionFollowAgentList() {
-        return perceptionFollowAgentList;
-    }
-
-
-    /**
-     * @return {@link #perceptionContinueStep}
-     */
     public float getPerceptionContinueStep() {
         return perceptionContinueStep;
     }
 
-    /**
-     * @return {@link #perceptionContinueDst}
-     */
     public float getPerceptionContinueDst() {
         return perceptionContinueDst;
     }
 
-    /**
-     * @return {@link #perceptionAllDst}
-     */
     public float getPerceptionAllDst() {
         return perceptionAllDst;
     }
 
-    /**
-     * @return {@link #ID}
-     */
     @Override
     public String toString() {
         return "agent" + ID;
-    }
-
-    private LinkedHashMap<Vector2, Float> obstaclePositionMap;
-    private float obstacleLo = radius;
-
-    private void setObstaclePositionMap() {
-        obstaclePositionMap = new LinkedHashMap<>();
-        for (Obstacle obstacle : env.getObstacles()) {
-            for (Cell obstacleCell : obstacle.getObstacleCells()) {
-                obstaclePositionMap.put(obstacleCell.getCenterPoint(), obstacleLo);
-            }
-        }
     }
 }
