@@ -1,5 +1,5 @@
 buildscript {
-    
+
 
     repositories {
         mavenLocal()
@@ -10,20 +10,19 @@ buildscript {
         google()
     }
     dependencies {
-        
+
 
     }
 }
 
 allprojects {
     apply plugin: "eclipse"
-    apply plugin: "idea"
 
     version = '1.0'
     ext {
-        appName = "Pedestrian Simulation"
+        appName = "pedestrian-simulation"
         gdxVersion = '1.9.10'
-        roboVMVersion = '2.3.7'
+        roboVMVersion = '2.3.8'
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
@@ -32,9 +31,24 @@ allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+        jcenter()
         google()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    }
+}
+
+project(":core") {
+    apply plugin: "java-library"
+
+
+    dependencies {
+        api "com.badlogicgames.gdx:gdx:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+        compile "org.apache.commons:commons-csv:1.6"
+        compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
+        compile group: 'org.apache.commons', name: 'commons-math3', version: '3.0'
+        compile group: 'org.jboss.netty', name: 'netty', version: '3.2.0.Final'
     }
 }
 
@@ -46,23 +60,7 @@ project(":desktop") {
         implementation project(":core")
         api "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
 
     }
-}
-
-project(":core") {
-    apply plugin: "java-library"
-
-
-    dependencies {
-        api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        compile "org.apache.commons:commons-csv:1.6"
-        compile group: 'org.apache.commons', name: 'commons-math3', version: '3.0'
-        compile group: 'org.jboss.netty', name: 'netty', version: '3.2.0.Final'
-
-    }
-}
-
-tasks.eclipse.doLast {
-    delete ".project"
 }
