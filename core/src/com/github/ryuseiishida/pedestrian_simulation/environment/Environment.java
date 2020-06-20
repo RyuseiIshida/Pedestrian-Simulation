@@ -258,6 +258,10 @@ public class Environment {
         updateFlag = !updateFlag;
     }
 
+    public static boolean getUpdateFlag() {
+        return updateFlag;
+    }
+
     public static void setUpdateFlag(boolean flag) {
         updateFlag = flag;
     }

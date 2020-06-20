@@ -7,9 +7,7 @@ import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
@@ -30,15 +28,33 @@ public class FXMLController implements Initializable {
     @FXML private void menuEventClose(ActionEvent event) {
         System.exit(0);
     }
+    @FXML private void menuEventAbout(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Pedestrian Simulation Version " + Parameter.version);
+        alert.setHeaderText("headerMessage");
+        alert.setContentText("infoMessage");
+        alert.showAndWait();
+    }
+
+    @FXML private void menuEventVersion(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("version");
+        alert.setHeaderText("Pedestrian Simulation Version " + Parameter.version);
+        alert.showAndWait();
+    }
 
     // Tool Bar
+    @FXML private Button startButton;
     @FXML void onStartButton(ActionEvent event) {
         if (GDXController.startFlag) {
-            Environment.setUpdateFlag(true);
+            if(Environment.getUpdateFlag()) {
+                startButton.setText("▶");
+                Environment.setUpdateFlag(false);
+            } else {
+                startButton.setText("||");
+                Environment.setUpdateFlag(true);
+            }
         }
-    }
-    @FXML void onStopButton(ActionEvent event) {
-        Environment.setUpdateFlag(false);
     }
     @FXML void eventNewButton(ActionEvent event) {
         GDXController.startFlag = true;

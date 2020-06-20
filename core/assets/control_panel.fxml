@@ -8,6 +8,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
@@ -31,42 +32,39 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#menuEventOpenSimulationLog" text="Open Simulation Log" />
+                  <MenuItem mnemonicParsing="false" onAction="#menuEventSave" text="Open Background Picture" />
                   <MenuItem mnemonicParsing="false" onAction="#menuEventSave" text="Save  Setttings" />
                   <MenuItem mnemonicParsing="false" onAction="#menuEventClose" text="Close" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-                  <MenuItem mnemonicParsing="false" text="Version" />
+              <MenuItem mnemonicParsing="false" onAction="#menuEventAbout" text="About" />
+                  <MenuItem mnemonicParsing="false" onAction="#menuEventVersion" text="Version" />
             </items>
           </Menu>
         </menus>
       </MenuBar>
       <ToolBar minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0">
          <items>
-            <Button mnemonicParsing="false" onAction="#onStartButton" prefHeight="30.0" prefWidth="50.0" text="▶︎" textAlignment="CENTER">
+            <Button fx:id="startButton" mnemonicParsing="false" onAction="#onStartButton" prefHeight="30.0" prefWidth="60.0" text="▶︎ / ||" textAlignment="CENTER">
                <font>
                   <Font size="12.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" onAction="#onStopButton" prefHeight="30.0" prefWidth="50.0" text="||" textAlignment="CENTER">
+            <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="50.0" text="●" textAlignment="CENTER">
                <font>
                   <Font size="12.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="78.0" text="●(未実装)" textAlignment="CENTER">
-               <font>
-                  <Font size="12.0" />
-               </font>
-            </Button>
-            <AnchorPane prefHeight="50.0" prefWidth="147.0">
+            <AnchorPane prefHeight="50.0" prefWidth="220.0">
                <children>
-                  <Button layoutX="83.0" layoutY="10.0" mnemonicParsing="false" onAction="#eventNewButton" prefHeight="30.0" prefWidth="50.0" text="New" textAlignment="CENTER">
+                  <Button layoutX="156.0" layoutY="10.0" mnemonicParsing="false" onAction="#eventNewButton" prefHeight="30.0" prefWidth="50.0" text="New" textAlignment="CENTER">
                      <font>
                         <Font size="12.0" />
                      </font>
                   </Button>
+                  <Slider layoutX="8.0" layoutY="17.0" prefHeight="16.0" prefWidth="141.0" visible="false" />
                </children>
             </AnchorPane>
          </items>
@@ -109,7 +107,7 @@
                                                 <Insets left="20.0" />
                                              </GridPane.margin>
                                           </Text>
-                                          <TextField promptText="speed(未実装)" GridPane.columnIndex="1">
+                                          <TextField alignment="CENTER_RIGHT" promptText="speed" GridPane.columnIndex="1">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -130,12 +128,12 @@
                                                 </LinearGradient>
                                              </fill>
                                           </Arc>
-                                          <TextField fx:id="goalAgentSpeedTextField" promptText="speed(未実装)" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                          <TextField fx:id="goalAgentSpeedTextField" alignment="CENTER_RIGHT" promptText="speed" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </TextField>
-                                          <TextField fx:id="goalAgentGoalIdTextField" promptText="goal_id" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                          <TextField fx:id="goalAgentGoalIdTextField" alignment="CENTER_RIGHT" promptText="goal_id" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -174,7 +172,7 @@
                                              </font>
                                           </Button>
                                           <ChoiceBox fx:id="randomAgentChoiceBox" prefWidth="163.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                          <TextField fx:id="randomSpawnAgentNumTextField" promptText="agent_num" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                          <TextField fx:id="randomSpawnAgentNumTextField" alignment="CENTER_RIGHT" promptText="agent_num" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -215,17 +213,17 @@
                                                 <Font size="12.0" />
                                              </font>
                                           </Text>
-                                          <TextField fx:id="goalIdTextField" promptText="goal_id" GridPane.columnIndex="1">
+                                          <TextField fx:id="goalIdTextField" alignment="CENTER_RIGHT" promptText="goal_id" GridPane.columnIndex="1">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </TextField>
-                                          <TextField fx:id="goalWidthTextField" promptText="width" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                          <TextField fx:id="goalWidthTextField" alignment="CENTER_RIGHT" promptText="width" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </TextField>
-                                          <TextField fx:id="goalHeightField" promptText="height" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                          <TextField fx:id="goalHeightField" alignment="CENTER_RIGHT" promptText="height" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -272,7 +270,7 @@
                <content>
                   <ScrollPane>
                      <content>
-                        <VBox depthTest="DISABLE" minHeight="-Infinity" minWidth="-Infinity" prefHeight="147.0" prefWidth="344.0" spacing="15.0">
+                        <VBox depthTest="DISABLE" minHeight="-Infinity" minWidth="-Infinity" prefHeight="353.0" prefWidth="344.0" spacing="15.0">
                            <children>
                               <RadioButton mnemonicParsing="false" onAction="#eventFontRadioButton" selected="true" text="font(未実装)">
                                  <font>
@@ -306,7 +304,7 @@
                   </ScrollPane>
                </content>
             </Tab>
-            <Tab text="Parameter(未実装)">
+            <Tab text="Parameter">
                <content>
                   <ScrollPane>
                      <content>
@@ -316,10 +314,12 @@
                                  <content>
                                     <GridPane minHeight="-Infinity" minWidth="-Infinity">
                                       <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="158.0" minWidth="10.0" prefWidth="154.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="162.0" minWidth="10.0" prefWidth="105.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="98.0" minWidth="10.0" prefWidth="48.0" />
                                       </columnConstraints>
                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -328,66 +328,132 @@
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="background picture">
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="background picture" GridPane.rowIndex="1">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </Text>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="scale_x" GridPane.rowIndex="3">
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="scale_x" GridPane.rowIndex="4">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </Text>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="scale_y" GridPane.rowIndex="4">
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="scale_y" GridPane.rowIndex="5">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </Text>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="cell_interval" GridPane.rowIndex="5">
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="cell_interval" GridPane.rowIndex="6">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </Text>
-                                          <Button mnemonicParsing="false" onAction="#onBackgroundButton" prefHeight="27.0" prefWidth="164.0" text="open" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="LEFT">
+                                          <Button mnemonicParsing="false" onAction="#onBackgroundButton" prefWidth="50.0" text="open" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin>
+                                          </Button>
+                                          <TextField fx:id="scaleXText" alignment="BOTTOM_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </TextField>
+                                          <TextField fx:id="scaleYText" alignment="BOTTOM_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </TextField>
+                                          <TextField fx:id="cellInterValText" alignment="BOTTOM_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </TextField>
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="background size_x" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Text>
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="background size_y" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Text>
+                                          <TextField fx:id="scaleXText" alignment="BOTTOM_RIGHT" prefWidth="58.0" promptText="pixel size_x" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </TextField>
+                                          <TextField fx:id="scaleYText" alignment="BOTTOM_RIGHT" promptText="pixel size_y" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </TextField>
+                                          <Button alignment="CENTER" mnemonicParsing="false" prefWidth="50.0" text="set" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin>
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </Button>
-                                          <TextField fx:id="scaleXText" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                          <Button alignment="CENTER" mnemonicParsing="false" prefWidth="50.0" text="set" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin>
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
-                                          </TextField>
-                                          <TextField fx:id="scaleYText" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                          </Button>
+                                          <Button alignment="CENTER" mnemonicParsing="false" prefWidth="50.0" text="set" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin>
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
-                                          </TextField>
-                                          <TextField fx:id="cellInterValText" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                          </Button>
+                                          <Button alignment="CENTER" mnemonicParsing="false" prefWidth="50.0" text="set" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin>
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
-                                          </TextField>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="background size_x" GridPane.rowIndex="1">
+                                          </Button>
+                                          <Button alignment="CENTER" mnemonicParsing="false" prefWidth="50.0" text="set" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin>
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Button>
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="not selected " textAlignment="RIGHT" wrappingWidth="103.22900390625" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin>
+                                          </Text>
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="simulation log file">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </Text>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="background size_y" GridPane.rowIndex="2">
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="not selected " textAlignment="RIGHT" wrappingWidth="103.22900390625" GridPane.columnIndex="1">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </Text>
-                                          <TextField fx:id="scaleXText" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                          <Button mnemonicParsing="false" onAction="#onBackgroundButton" prefWidth="50.0" text="open" textAlignment="CENTER" GridPane.columnIndex="2">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
-                                          </TextField>
-                                          <TextField fx:id="scaleYText" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                             <font>
-                                                <Font size="12.0" />
-                                             </font>
-                                          </TextField>
+                                          </Button>
                                        </children>
                                     </GridPane>
                                  </content>
@@ -396,12 +462,13 @@
                                  <content>
                                     <GridPane minHeight="-Infinity" minWidth="-Infinity">
                                        <columnConstraints>
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.0" minWidth="10.0" prefWidth="152.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="123.0" minWidth="10.0" prefWidth="107.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="98.0" minWidth="10.0" prefWidth="47.0" />
                                        </columnConstraints>
                                        <rowConstraints>
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -457,6 +524,31 @@
                                                 <Font size="12.0" />
                                              </font>
                                           </TextField>
+                                          <Button mnemonicParsing="false" prefWidth="50.0" text="set" GridPane.columnIndex="2">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Button>
+                                          <Button mnemonicParsing="false" prefWidth="50.0" text="set" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Button>
+                                          <Button mnemonicParsing="false" prefWidth="50.0" text="set" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Button>
+                                          <Button mnemonicParsing="false" prefWidth="50.0" text="set" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Button>
+                                          <Button mnemonicParsing="false" prefWidth="50.0" text="set" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Button>
                                        </children>
                                     </GridPane>
                                  </content>
@@ -465,12 +557,13 @@
                                  <content>
                                     <GridPane minHeight="-Infinity" minWidth="-Infinity">
                                        <columnConstraints>
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="158.0" minWidth="10.0" prefWidth="153.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="10.0" prefWidth="107.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="98.0" minWidth="10.0" prefWidth="46.0" />
                                        </columnConstraints>
                                        <rowConstraints>
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                        </rowConstraints>
@@ -507,6 +600,38 @@
                                                 <Font size="12.0" />
                                              </font>
                                           </TextField>
+                                          <Button mnemonicParsing="false" prefWidth="50.0" text="set" GridPane.columnIndex="2">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin>
+                                          </Button>
+                                          <Button mnemonicParsing="false" prefWidth="50.0" text="set" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin>
+                                          </Button>
+                                          <Button mnemonicParsing="false" prefWidth="50.0" text="set" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin>
+                                          </Button>
+                                          <Button mnemonicParsing="false" prefWidth="50.0" text="set" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin>
+                                          </Button>
                                        </children>
                                     </GridPane>
                                  </content>

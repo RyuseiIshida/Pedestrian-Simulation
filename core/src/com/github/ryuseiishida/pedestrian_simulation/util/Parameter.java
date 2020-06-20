@@ -10,6 +10,11 @@ import java.util.Arrays;
 
 public class Parameter {
     /**
+     * application version
+     */
+    public static String version = "1.02";
+
+    /**
      * シミュレーションの終了方法
      * not quit automatically -> "NONE"
      * Agents escape all -> "ESCAPED"
