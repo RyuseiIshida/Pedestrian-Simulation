@@ -41,7 +41,7 @@ public class Font {
         //文字の描画
         batch.begin();
 //        batch.draw(texture, 0, 0);
-        batch.draw(texture, 0, 0,Parameter.SCALE.x,Parameter.SCALE.y);
+        batch.draw(texture, 0, 0, Parameter.BACKGROUND_TEXTURE_SIZE.x, Parameter.BACKGROUND_TEXTURE_SIZE.y);
         bitmapFont.draw(batch,
                 "time " + environment.getStep()
                         + "  " + "agentNum = " + String.format(String.valueOf(environment.getAgentList().size())),

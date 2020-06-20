@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
@@ -46,7 +47,7 @@ public class FXMLController implements Initializable {
         alert.setTitle("About");
 //        alert.setHeaderText("Pedestrian Simulation Version " + Parameter.version);
         alert.setHeaderText(Parameter.message);
-        alert.setContentText("Pedestrian Simulation Version " + Parameter.version + "\n" +Parameter.versionMessage);
+        alert.setContentText("Pedestrian Simulation Version " + Parameter.version + "\n\n" +Parameter.versionMessage);
 //        alert.setContentText(Parameter.message + "\n" +Parameter.versionMessage);
         alert.showAndWait();
     }
@@ -73,18 +74,23 @@ public class FXMLController implements Initializable {
     // TabPane
     // Parameter Tab
     // Environment Title Pane
+    @FXML Text simulationLogText;
     @FXML void onSimulationLogButton(ActionEvent event) {
         final DirectoryChooser directoryChooser = new DirectoryChooser();
         File selectedDirectory = directoryChooser.showDialog(null);
         if (selectedDirectory != null) {
-            GDXController.setEnvironment(new Environment(String.valueOf(selectedDirectory)));
+            String path = String.valueOf(selectedDirectory);
+            GDXController.setEnvironment(new Environment(path));
+            simulationLogText.setText(path);
         }
     }
+    @FXML Text backgroundPathText;
     @FXML void onBackgroundButton(ActionEvent event) {
         final FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             GDXController.setBackgroundTexture(String.valueOf(file));
+            backgroundPathText.setText(String.valueOf(file));
         }
     }
     @FXML private TextField backgroundSizeXTextField, backgroundSizeYTextField;
@@ -98,7 +104,6 @@ public class FXMLController implements Initializable {
     @FXML private void eventBackgroundSizeYButton(ActionEvent event) {
         if(!backgroundSizeYTextField.getText().isEmpty()) {
             Parameter.BACKGROUND_TEXTURE_SIZE.y = Float.parseFloat(backgroundSizeYTextField.getText());
-            GDXController.setBackgroundTexture(null);
             GDXController.resetEnvironment();
         }
     }
@@ -122,7 +127,6 @@ public class FXMLController implements Initializable {
     @FXML private void eventCellIntervalButton(ActionEvent event) {
         if(!cellIntervalText.getText().isEmpty()) {
             Parameter.CELL_INTERVAL = Integer.parseInt(cellIntervalText.getText());
-            GDXController.setBackgroundTexture(null);
             GDXController.resetEnvironment();
         }
     }
@@ -131,7 +135,6 @@ public class FXMLController implements Initializable {
     @FXML private void eventActionIntervalButton(ActionEvent event) {
         if(!actionIntervalTextBox.getText().isEmpty()) {
             Parameter.AGENT_ACTION_INTERVAL = Integer.parseInt(actionIntervalTextBox.getText());
-            GDXController.setBackgroundTexture(null);
             GDXController.resetEnvironment();
         }
     }
@@ -139,7 +142,6 @@ public class FXMLController implements Initializable {
     @FXML private void eventRadiusButton(ActionEvent event) {
         if(!radiusTextBox.getText().isEmpty()) {
             Parameter.AGENT_RADIUS = Float.parseFloat(radiusTextBox.getText());
-            GDXController.setBackgroundTexture(null);
             GDXController.resetEnvironment();
         }
     }
@@ -147,7 +149,6 @@ public class FXMLController implements Initializable {
     @FXML private void eventSpeedButton(ActionEvent event) {
         if(!speedTextBox.getText().isEmpty()) {
             Parameter.AGENT_SPEED = Float.parseFloat(speedTextBox.getText());
-            GDXController.setBackgroundTexture(null);
             GDXController.resetEnvironment();
         }
     }
@@ -155,7 +156,6 @@ public class FXMLController implements Initializable {
     @FXML private void eventViewLengthButton(ActionEvent event) {
         if(!viewLengthTextBox.getText().isEmpty()) {
             Parameter.VIEW_RADIUS_LENGTH = Float.parseFloat(viewLengthTextBox.getText());
-            GDXController.setBackgroundTexture(null);
             GDXController.resetEnvironment();
         }
     }
@@ -163,7 +163,6 @@ public class FXMLController implements Initializable {
     @FXML private void eventAngleButton(ActionEvent event) {
         if(!viewAngleTextBox.getText().isEmpty()) {
             Parameter.VIEW_DEGREE = Float.parseFloat(viewAngleTextBox.getText());
-            GDXController.setBackgroundTexture(null);
             GDXController.resetEnvironment();
         }
     }
@@ -171,7 +170,6 @@ public class FXMLController implements Initializable {
     @FXML private void eventAgentPotentialWeightButton(ActionEvent event) {
         if(!agentPotentialWeightTextBox.getText().isEmpty()) {
             Parameter.AGENT_KIM_POTENTIAL_WEIGHT = Float.parseFloat(agentPotentialWeightTextBox.getText());
-            GDXController.setBackgroundTexture(null);
             GDXController.resetEnvironment();
         }
     }
@@ -179,7 +177,6 @@ public class FXMLController implements Initializable {
     @FXML private void eventAgentPotentialRangeButton(ActionEvent event) {
         if(!agentPotentialRangeTextBox.getText().isEmpty()) {
             Parameter.AGENT_KIM_POTENTIAL_RANGE = Float.parseFloat(agentPotentialRangeTextBox.getText());
-            GDXController.setBackgroundTexture(null);
             GDXController.resetEnvironment();
         }
     }
@@ -187,7 +184,6 @@ public class FXMLController implements Initializable {
     @FXML private void eventPotentialObstacleWeight(ActionEvent event) {
         if(!obstaclePotentialWeightTextBox.getText().isEmpty()) {
             Parameter.OBSTACLE_KIM_POTENTIAL_WEIGHT = Float.parseFloat(obstaclePotentialWeightTextBox.getText());
-            GDXController.setBackgroundTexture(null);
             GDXController.resetEnvironment();
         }
     }
@@ -195,7 +191,6 @@ public class FXMLController implements Initializable {
     @FXML private void eventPotentialObstacleRangeButton(ActionEvent event) {
         if(!obstaclePotentialRangeTextBox.getText().isEmpty()) {
             Parameter.OBSTACLE_KIM_POTENTIAL_RANGE = Float.parseFloat(obstaclePotentialRangeTextBox.getText());
-            GDXController.setBackgroundTexture(null);
             GDXController.resetEnvironment();
         }
     }

@@ -12,7 +12,7 @@ public class Parameter {
     /**
      * application version
      */
-    public static String version = "1.02";
+    public static String version = "1.03";
 
     /**
      *
@@ -26,11 +26,10 @@ public class Parameter {
     public static String versionMessage = "履歴\n" +
             "1.01\t基本的なシミュレーション機能を提供\n" +
             "1.02\t細かなバグを修正およびUIの更新\n" +
+            "1.03\tパラメーター変更機能を追加\n" +
             "\n" +
             "次回アップデート\n" +
-            "1.03\tパラメーター変更機能の提供";
-
-    public static Vector2 BACKGROUND_TEXTURE_SIZE = new Vector2(900,600);
+            "1.0x\tシミュレーションログ取得機能";
 
     /**
      * シミュレーションの終了方法
@@ -67,6 +66,8 @@ public class Parameter {
     private static float METER = 100f;
     public static Vector2 SCALE = new Vector2(100 * METER, 100 * METER);
     public static int CELL_INTERVAL = 10;
+
+    public static Vector2 BACKGROUND_TEXTURE_SIZE = SCALE;
 
     //Obstacles
     public static String OBSTACLE_MAP_PATH;
