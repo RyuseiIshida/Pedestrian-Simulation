@@ -126,6 +126,20 @@ public class Agent {
         this.velocity = new Vector2(0, 0);
     }
 
+    public Agent(String id, Environment env, Vector2 position, float speed) {
+        this.ID = id;
+        this.env = env;
+        this.speed = speed;
+        this.potentialModel = new KimPotentialModel(env, this);
+        this.stateTag = StateTag.none;
+        this.perceptionBeforeStateTag = StateTag.none;
+        this.position = position;
+        this.perceptionBeforePos = position;
+        this.movePos = position;
+        this.velocity = new Vector2(0, 0);
+        this.speed = speed;
+    }
+
     public Agent(String id, Environment env, Vector2 position, Goal goal) {
         this.ID = id;
         this.env = env;
@@ -139,17 +153,18 @@ public class Agent {
         this.velocity = new Vector2(0, 0);
     }
 
-    public Agent(String id, Environment env, Vector2 position, float speed) {
+    public Agent(String id, Environment env, Vector2 position, Goal goal, float speed) {
         this.ID = id;
         this.env = env;
+        this.speed = speed;
         this.potentialModel = new KimPotentialModel(env, this);
-        this.stateTag = StateTag.none;
-        this.perceptionBeforeStateTag = StateTag.none;
+        this.stateTag = StateTag.moveGoal;
+        this.perceptionBeforeStateTag = StateTag.moveGoal;
         this.position = position;
         this.perceptionBeforePos = position;
-        this.movePos = position;
+        this.goal = goal.getCenter();
+        this.movePos = goal.getCenter();
         this.velocity = new Vector2(0, 0);
-        this.speed = speed;
     }
 
     public Agent(File logFile, Environment env) {

@@ -24,22 +24,30 @@ public class FXMLController implements Initializable {
             GDXController.setEnvironment(new Environment(String.valueOf(selectedDirectory)));
         }
     }
-    @FXML private void menuEventSave(ActionEvent event) { }
+    @FXML private void menuEventBackground(ActionEvent event) {
+        final FileChooser fileChooser = new FileChooser();
+        File file = fileChooser.showOpenDialog(null);
+        if (file != null) {
+            GDXController.setBackgroundTexture(String.valueOf(file));
+        }
+    }
     @FXML private void menuEventClose(ActionEvent event) {
         System.exit(0);
     }
-    @FXML private void menuEventAbout(ActionEvent event) {
+    @FXML private void menuEventHowToUse(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Pedestrian Simulation Version " + Parameter.version);
-        alert.setHeaderText("headerMessage");
-        alert.setContentText("infoMessage");
+        alert.setTitle("help");
+        alert.setHeaderText("how to use Pedestrian Simulation");
+        alert.setContentText("また今度書きます。m(_ _)m");
         alert.showAndWait();
     }
-
-    @FXML private void menuEventVersion(ActionEvent event) {
+    @FXML private void menuEventAbout(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("version");
-        alert.setHeaderText("Pedestrian Simulation Version " + Parameter.version);
+        alert.setTitle("About");
+//        alert.setHeaderText("Pedestrian Simulation Version " + Parameter.version);
+        alert.setHeaderText(Parameter.message);
+        alert.setContentText("Pedestrian Simulation Version " + Parameter.version + "\n" +Parameter.versionMessage);
+//        alert.setContentText(Parameter.message + "\n" +Parameter.versionMessage);
         alert.showAndWait();
     }
 
@@ -65,6 +73,13 @@ public class FXMLController implements Initializable {
     // TabPane
     // Parameter Tab
     // Environment Title Pane
+    @FXML void onSimulationLogButton(ActionEvent event) {
+        final DirectoryChooser directoryChooser = new DirectoryChooser();
+        File selectedDirectory = directoryChooser.showDialog(null);
+        if (selectedDirectory != null) {
+            GDXController.setEnvironment(new Environment(String.valueOf(selectedDirectory)));
+        }
+    }
     @FXML void onBackgroundButton(ActionEvent event) {
         final FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(null);
@@ -72,18 +87,118 @@ public class FXMLController implements Initializable {
             GDXController.setBackgroundTexture(String.valueOf(file));
         }
     }
+    @FXML private TextField backgroundSizeXTextField, backgroundSizeYTextField;
+    @FXML private void eventBackgroundSizeXButton(ActionEvent event) {
+        if (!backgroundSizeXTextField.getText().isEmpty()) {
+            Parameter.BACKGROUND_TEXTURE_SIZE.x = Float.parseFloat(backgroundSizeXTextField.getText());
+            GDXController.setBackgroundTexture(null);
+            GDXController.resetEnvironment();
+        }
+    }
+    @FXML private void eventBackgroundSizeYButton(ActionEvent event) {
+        if(!backgroundSizeYTextField.getText().isEmpty()) {
+            Parameter.BACKGROUND_TEXTURE_SIZE.y = Float.parseFloat(backgroundSizeYTextField.getText());
+            GDXController.setBackgroundTexture(null);
+            GDXController.resetEnvironment();
+        }
+    }
     @FXML private TextField scaleXText, scaleYText;
+    @FXML private void eventScaleXButton(ActionEvent event) {
+        if(!scaleXText.getText().isEmpty()) {
+            Parameter.SCALE.x = Float.parseFloat(scaleXText.getText());
+            GDXController.setBackgroundTexture(null);
+            GDXController.resetEnvironment();
+        }
+    }
+    @FXML private void eventScaleYButton(ActionEvent event) {
+        if(!scaleYText.getText().isEmpty()) {
+            Parameter.SCALE.y = Float.parseFloat(scaleYText.getText());
+            GDXController.setBackgroundTexture(null);
+            GDXController.resetEnvironment();
+        }
+    }
+
     @FXML private TextField cellIntervalText;
+    @FXML private void eventCellIntervalButton(ActionEvent event) {
+        if(!cellIntervalText.getText().isEmpty()) {
+            Parameter.CELL_INTERVAL = Integer.parseInt(cellIntervalText.getText());
+            GDXController.setBackgroundTexture(null);
+            GDXController.resetEnvironment();
+        }
+    }
+
     @FXML private TextField actionIntervalTextBox;
+    @FXML private void eventActionIntervalButton(ActionEvent event) {
+        if(!actionIntervalTextBox.getText().isEmpty()) {
+            Parameter.AGENT_ACTION_INTERVAL = Integer.parseInt(actionIntervalTextBox.getText());
+            GDXController.setBackgroundTexture(null);
+            GDXController.resetEnvironment();
+        }
+    }
     @FXML private TextField radiusTextBox;
+    @FXML private void eventRadiusButton(ActionEvent event) {
+        if(!radiusTextBox.getText().isEmpty()) {
+            Parameter.AGENT_RADIUS = Float.parseFloat(radiusTextBox.getText());
+            GDXController.setBackgroundTexture(null);
+            GDXController.resetEnvironment();
+        }
+    }
     @FXML private TextField speedTextBox;
+    @FXML private void eventSpeedButton(ActionEvent event) {
+        if(!speedTextBox.getText().isEmpty()) {
+            Parameter.AGENT_SPEED = Float.parseFloat(speedTextBox.getText());
+            GDXController.setBackgroundTexture(null);
+            GDXController.resetEnvironment();
+        }
+    }
     @FXML private TextField viewLengthTextBox;
+    @FXML private void eventViewLengthButton(ActionEvent event) {
+        if(!viewLengthTextBox.getText().isEmpty()) {
+            Parameter.VIEW_RADIUS_LENGTH = Float.parseFloat(viewLengthTextBox.getText());
+            GDXController.setBackgroundTexture(null);
+            GDXController.resetEnvironment();
+        }
+    }
     @FXML private TextField viewAngleTextBox;
-    @FXML private TextField obstacleWeightTextBox, obstacleRangeTextBox;
+    @FXML private void eventAngleButton(ActionEvent event) {
+        if(!viewAngleTextBox.getText().isEmpty()) {
+            Parameter.VIEW_DEGREE = Float.parseFloat(viewAngleTextBox.getText());
+            GDXController.setBackgroundTexture(null);
+            GDXController.resetEnvironment();
+        }
+    }
     @FXML private TextField agentPotentialWeightTextBox;
+    @FXML private void eventAgentPotentialWeightButton(ActionEvent event) {
+        if(!agentPotentialWeightTextBox.getText().isEmpty()) {
+            Parameter.AGENT_KIM_POTENTIAL_WEIGHT = Float.parseFloat(agentPotentialWeightTextBox.getText());
+            GDXController.setBackgroundTexture(null);
+            GDXController.resetEnvironment();
+        }
+    }
     @FXML private TextField agentPotentialRangeTextBox;
+    @FXML private void eventAgentPotentialRangeButton(ActionEvent event) {
+        if(!agentPotentialRangeTextBox.getText().isEmpty()) {
+            Parameter.AGENT_KIM_POTENTIAL_RANGE = Float.parseFloat(agentPotentialRangeTextBox.getText());
+            GDXController.setBackgroundTexture(null);
+            GDXController.resetEnvironment();
+        }
+    }
     @FXML private TextField obstaclePotentialWeightTextBox;
+    @FXML private void eventPotentialObstacleWeight(ActionEvent event) {
+        if(!obstaclePotentialWeightTextBox.getText().isEmpty()) {
+            Parameter.OBSTACLE_KIM_POTENTIAL_WEIGHT = Float.parseFloat(obstaclePotentialWeightTextBox.getText());
+            GDXController.setBackgroundTexture(null);
+            GDXController.resetEnvironment();
+        }
+    }
     @FXML private TextField obstaclePotentialRangeTextBox;
+    @FXML private void eventPotentialObstacleRangeButton(ActionEvent event) {
+        if(!obstaclePotentialRangeTextBox.getText().isEmpty()) {
+            Parameter.OBSTACLE_KIM_POTENTIAL_RANGE = Float.parseFloat(obstaclePotentialRangeTextBox.getText());
+            GDXController.setBackgroundTexture(null);
+            GDXController.resetEnvironment();
+        }
+    }
 
     // View Tab
     @FXML void eventFontRadioButton(ActionEvent event) {
@@ -100,14 +215,23 @@ public class FXMLController implements Initializable {
 
     // create
     // Agent Title Pane
+    @FXML private TextField nonGoalAgentSpeedTextField;
     @FXML private void eventNonGoalAgentButton(ActionEvent event) {
-        Inputs.setFxCreateProperty("agentN");
+        if(nonGoalAgentSpeedTextField.getText().isEmpty()) {
+            Inputs.setFxCreateProperty("agentN");
+        } else {
+            Inputs.setFxCreateProperty("agentN" + "-" + nonGoalAgentSpeedTextField.getText());
+        }
     }
     @FXML private TextField goalAgentSpeedTextField;
     @FXML private TextField goalAgentGoalIdTextField;
     @FXML private void eventGoalAgentButton(ActionEvent event) {
         if (!goalAgentGoalIdTextField.getText().isEmpty()) {
-            Inputs.setFxCreateProperty("agentG" + "-" + goalAgentGoalIdTextField.getText());
+            if(goalAgentSpeedTextField.getText().isEmpty()) {
+                Inputs.setFxCreateProperty("agentG" + "-" + goalAgentGoalIdTextField.getText());
+            } else {
+                Inputs.setFxCreateProperty("agentG" + "-" + goalAgentGoalIdTextField.getText() + "-" + goalAgentSpeedTextField.getText());
+            }
         }
     }
     @FXML private TextField randomSpawnAgentNumTextField;
@@ -130,6 +254,9 @@ public class FXMLController implements Initializable {
          Environment.deleteAllObstacleFlag = true;
     }
     // Goal Title Pane
+    @FXML private TextField goalIdTextField;
+    @FXML private TextField goalWidthTextField;
+    @FXML private TextField goalHeightField;
     @FXML private Button GoalButton;
     @FXML private void GoalButton(ActionEvent event) {
         if (!goalIdTextField.getText().isEmpty() && !goalWidthTextField.getText().isEmpty() && !goalHeightField.getText().isEmpty()) {
@@ -137,9 +264,6 @@ public class FXMLController implements Initializable {
             Inputs.setFxCreateProperty(fxProperty);
         }
     }
-    @FXML private TextField goalIdTextField;
-    @FXML private TextField goalWidthTextField;
-    @FXML private TextField goalHeightField;
     @FXML private void eventDeleteGoalButton(ActionEvent event) {
          Environment.deleteAllGoalFlag = true;
     }

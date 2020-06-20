@@ -46,25 +46,34 @@ public class Inputs {
         touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(touchPos);
         shapeRenderer.setProjectionMatrix(camera.combined);
-
-        if (fxCreateProperty.equals("agentN")) {
+        if (fxCreateProperty.contains("agentN")) {
+            String[] element = fxCreateProperty.split("-");
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.setColor(RenderAgent.nonGoalAgentColor);
             shapeRenderer.circle(touchPos.x, touchPos.y, Parameter.AGENT_RADIUS);
             if (Gdx.input.justTouched()) {
-                environment.spawnAgent(new Vector2(touchPos.x, touchPos.y));
+                if (element.length == 2) {
+                    environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), Float.parseFloat(element[1]));
+                } else {
+                    environment.spawnAgent(new Vector2(touchPos.x, touchPos.y));
+                }
             }
             shapeRenderer.end();
         }
 
 
         if (fxCreateProperty.contains("agentG")) {
+            String[] element = fxCreateProperty.split("-");
             String goalID = fxCreateProperty.split("-")[1];
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.setColor(RenderAgent.goalAgentColor);
             shapeRenderer.circle(touchPos.x, touchPos.y, Parameter.AGENT_RADIUS);
             if (Gdx.input.justTouched()) {
-                environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), goalID);
+                if (element.length == 3) {
+                    environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), goalID, Float.parseFloat(element[2]));
+                } else {
+                    environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), goalID);
+                }
             }
             shapeRenderer.end();
         }

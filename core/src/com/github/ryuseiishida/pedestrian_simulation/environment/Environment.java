@@ -185,10 +185,23 @@ public class Environment {
         agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos));
     }
 
+    public void spawnAgent(Vector2 pos, float speed) {
+        agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos, speed));
+    }
+
+
     public void spawnAgent(Vector2 pos, String goalID) {
         for (Goal goal : goals) {
             if (goal.exists(goalID)) {
                 agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos, goal));
+            }
+        }
+    }
+
+    public void spawnAgent(Vector2 pos, String goalID, float speed) {
+        for (Goal goal : goals) {
+            if (goal.exists(goalID)) {
+                agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos, goal, speed));
             }
         }
     }
