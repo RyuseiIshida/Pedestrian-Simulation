@@ -23,15 +23,17 @@ public class FXMLController implements Initializable {
         File selectedDirectory = directoryChooser.showDialog(null);
         if (selectedDirectory != null) {
             GDXController.setEnvironment(new Environment(String.valueOf(selectedDirectory)));
-            simulationLogText.setText(String.valueOf(selectedDirectory));
+            simulationLogText.setText(selectedDirectory.getName());
         }
     }
     @FXML private void menuEventBackground(ActionEvent event) {
-        final FileChooser fileChooser = new FileChooser();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG","*.png"));
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
-            GDXController.setBackgroundTexture(String.valueOf(file));
-            backgroundPathText.setText(String.valueOf(file));
+            String path = String.valueOf(file);
+            GDXController.setBackgroundTexture(path);
+            backgroundPathText.setText(file.getName());
         }
     }
     @FXML private void menuEventClose(ActionEvent event) {
@@ -48,8 +50,8 @@ public class FXMLController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("About");
 //        alert.setHeaderText("Pedestrian Simulation Version " + Parameter.version);
-        alert.setHeaderText(Parameter.message);
-        alert.setContentText("Pedestrian Simulation Version " + Parameter.version + "\n\n" +Parameter.versionMessage);
+        alert.setHeaderText(Parameter.ABOUT_MESSAGE);
+        alert.setContentText("Pedestrian Simulation Version " + Parameter.version + "\n\n" +Parameter.VERSION_Message);
 //        alert.setContentText(Parameter.message + "\n" +Parameter.versionMessage);
         alert.showAndWait();
     }
@@ -83,16 +85,18 @@ public class FXMLController implements Initializable {
         if (selectedDirectory != null) {
             String path = String.valueOf(selectedDirectory);
             GDXController.setEnvironment(new Environment(path));
-            simulationLogText.setText(path);
+            simulationLogText.setText(selectedDirectory.getName());
         }
     }
     @FXML Text backgroundPathText;
     @FXML void onBackgroundButton(ActionEvent event) {
-        final FileChooser fileChooser = new FileChooser();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG","*.png"));
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
-            GDXController.setBackgroundTexture(String.valueOf(file));
-            backgroundPathText.setText(String.valueOf(file));
+            String path = String.valueOf(file);
+            GDXController.setBackgroundTexture(path);
+            backgroundPathText.setText(file.getName());
         }
     }
     @FXML private TextField backgroundSizeXTextField, backgroundSizeYTextField;
@@ -268,6 +272,22 @@ public class FXMLController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        backgroundSizeXTextField.setPromptText(String.valueOf(Parameter.BACKGROUND_TEXTURE_SIZE.x));
+        backgroundSizeYTextField.setPromptText(String.valueOf(Parameter.BACKGROUND_TEXTURE_SIZE.y));
+        scaleXText.setPromptText(String.valueOf(Parameter.SCALE.x));
+        scaleYText.setPromptText(String.valueOf(Parameter.SCALE.y));
+        cellIntervalText.setPromptText(String.valueOf(Parameter.CELL_INTERVAL));
+        actionIntervalTextBox.setPromptText(String.valueOf(Parameter.AGENT_ACTION_INTERVAL));
+        radiusTextBox.setPromptText(String.valueOf(Parameter.AGENT_RADIUS));
+        speedTextBox.setPromptText(String.valueOf(Parameter.AGENT_SPEED));
+        viewLengthTextBox.setPromptText(String.valueOf(Parameter.VIEW_RADIUS_LENGTH));
+        viewAngleTextBox.setPromptText(String.valueOf(Parameter.VIEW_DEGREE));
+        agentPotentialRangeTextBox.setPromptText(String.valueOf(Parameter.AGENT_KIM_POTENTIAL_RANGE));
+        agentPotentialWeightTextBox.setPromptText(String.valueOf(Parameter.AGENT_KIM_POTENTIAL_WEIGHT));
+        obstaclePotentialRangeTextBox.setPromptText(String.valueOf(Parameter.OBSTACLE_KIM_POTENTIAL_RANGE));
+        obstaclePotentialWeightTextBox.setPromptText(String.valueOf(Parameter.OBSTACLE_KIM_POTENTIAL_WEIGHT));
+
         randomAgentChoiceBox.getItems().addAll("select Agent(未実装)", "non_goal","goal");
         randomAgentChoiceBox.getSelectionModel().select(0);
     }

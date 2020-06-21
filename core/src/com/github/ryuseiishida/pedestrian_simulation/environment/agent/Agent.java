@@ -369,7 +369,7 @@ public class Agent {
 
     private void setPotentialVector(Vector2 direction) {
         Vector2 pVector = new Vector2();
-        float delta = 1f;
+        float delta = Parameter.POTENTIAL_DELTA;
         pVector.x = -1 * (getPotential(position.x + delta, position.y) - getPotential(position.x, position.y)) / delta;
         pVector.y = -1 * (getPotential(position.x, position.y + delta) - getPotential(position.x, position.y)) / delta;
         pVector.nor();
