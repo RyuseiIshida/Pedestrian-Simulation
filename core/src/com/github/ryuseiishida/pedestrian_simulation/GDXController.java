@@ -34,7 +34,7 @@ public class GDXController extends ApplicationAdapter {
         shapeRenderer = new ShapeRenderer();
         bitmapFont = new BitmapFont();
         bitmapFont.setColor(Color.BLACK);
-        bitmapFont.getData().setScale(15);
+        bitmapFont.getData().setScale(10);
         environment = new Environment();
         titleBackgroundTexture = new Texture("PedSimAsset.png");
     }
@@ -60,6 +60,7 @@ public class GDXController extends ApplicationAdapter {
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
             batch.draw(titleBackgroundTexture, 0, 0, Parameter.SCALE.x, Parameter.SCALE.y);
+            bitmapFont.draw(batch, "version" + Parameter.version, Parameter.SCALE.x - 900, 200);
             batch.end();
         }
     }

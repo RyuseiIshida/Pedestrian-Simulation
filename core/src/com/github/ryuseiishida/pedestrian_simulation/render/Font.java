@@ -26,7 +26,7 @@ public class Font {
         batch.begin();
         bitmapFont.draw(batch,
                 "step " + environment.getStep()
-                        + "  " + "agentNum = " + String.format(String.valueOf(environment.getAgentList().size())),
+                        + "  " + "agent = " + String.format(String.valueOf(environment.getAgentList().size())),
 //                        + "  " + "groupNum= " + String.format(String.valueOf(Group.getGroupNum(environment.getAgentList())))
 //                        + "  " + "goalNum= " + String.format(String.valueOf(environment.getGoalAgentNum())),
                 30, Parameter.SCALE.y - 10);
@@ -44,7 +44,7 @@ public class Font {
         batch.draw(texture, 0, 0, Parameter.BACKGROUND_TEXTURE_SIZE.x, Parameter.BACKGROUND_TEXTURE_SIZE.y);
         bitmapFont.draw(batch,
                 "time " + environment.getStep()
-                        + "  " + "agentNum = " + String.format(String.valueOf(environment.getAgentList().size())),
+                        + "  " + "agent = " + String.format(String.valueOf(environment.getAgentList().size())),
 //                        + "  " + "groupNum= " + String.format(String.valueOf(Group.getGroupNum(environment.getAgentList())))
 //                        + "  " + "goalNum= " + String.format(String.valueOf(environment.getGoalAgentNum())),
                 30, Parameter.SCALE.y - 10);
