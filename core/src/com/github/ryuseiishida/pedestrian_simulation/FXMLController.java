@@ -1,5 +1,7 @@
 package com.github.ryuseiishida.pedestrian_simulation;
 
+import com.github.ryuseiishida.pedestrian_simulation.analysis.log.LoadLog;
+import com.github.ryuseiishida.pedestrian_simulation.analysis.log.WriterLog;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.render.RenderAgent;
 import com.github.ryuseiishida.pedestrian_simulation.util.Inputs;
@@ -8,6 +10,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -26,7 +30,7 @@ public class FXMLController implements Initializable {
             simulationLogText.setText(selectedDirectory.getName());
         }
     }
-    @FXML private void menuEventBackground(ActionEvent event) {
+    @FXML private void menuEventOpenBackground(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG","*.png"));
         File file = fileChooser.showOpenDialog(null);
@@ -36,6 +40,23 @@ public class FXMLController implements Initializable {
             backgroundPathText.setText(file.getName());
         }
     }
+    @FXML private void menuEventOpenObstacle(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("OBS","*.obs"));
+        File file = fileChooser.showOpenDialog(null);
+        if (file != null) {
+            String path = String.valueOf(file);
+            LoadLog.setObstacle(path);
+        }
+    }
+    @FXML private void menuEventSaveObstacleLog(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Obstacle Log");
+        File file = fileChooser.showSaveDialog(null);
+        if (file != null) {
+            WriterLog.writeObstacleLog(String.valueOf(file));
+        }
+    }
     @FXML private void menuEventClose(ActionEvent event) {
         System.exit(0);
     }
@@ -43,16 +64,18 @@ public class FXMLController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("help");
         alert.setHeaderText("how to use Pedestrian Simulation");
-        alert.setContentText("また今度書きます。m(_ _)m");
+        alert.setContentText("使い方\n詳細を表示してください。");
+        TextArea area = new TextArea(help());
+        area.setWrapText(true);
+        area.setEditable(false);
+        alert.getDialogPane().setExpandableContent(area);
         alert.showAndWait();
     }
     @FXML private void menuEventAbout(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("About");
-//        alert.setHeaderText("Pedestrian Simulation Version " + Parameter.version);
         alert.setHeaderText(Parameter.ABOUT_MESSAGE);
-        alert.setContentText("Pedestrian Simulation Version " + Parameter.version + "\n\n" +Parameter.VERSION_Message);
-//        alert.setContentText(Parameter.message + "\n" +Parameter.versionMessage);
+        alert.setContentText("Pedestrian Simulation Version " + Parameter.VERSION + "\n\n" +Parameter.VERSION_MESSAGE);
         alert.showAndWait();
     }
 
@@ -69,6 +92,18 @@ public class FXMLController implements Initializable {
             }
         }
     }
+
+    @FXML void eventSaveSimulationButton(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Obstacle Log");
+        File file = fileChooser.showSaveDialog(null);
+        if (file != null) {
+            Environment.step = 0;
+            Parameter.WRITE_LOG_PATH = String.valueOf(file);
+            Parameter.IS_WRITE_LOG = true;
+        }
+    }
+
     @FXML void eventNewButton(ActionEvent event) {
         GDXController.startFlag = true;
         GDXController.setBackgroundTexture(null);
@@ -137,13 +172,6 @@ public class FXMLController implements Initializable {
         }
     }
 
-    @FXML private TextField actionIntervalTextBox;
-    @FXML private void eventActionIntervalButton(ActionEvent event) {
-        if(!actionIntervalTextBox.getText().isEmpty()) {
-            Parameter.AGENT_ACTION_INTERVAL = Integer.parseInt(actionIntervalTextBox.getText());
-            GDXController.resetEnvironment();
-        }
-    }
     @FXML private TextField radiusTextBox;
     @FXML private void eventRadiusButton(ActionEvent event) {
         if(!radiusTextBox.getText().isEmpty()) {
@@ -236,7 +264,6 @@ public class FXMLController implements Initializable {
         }
     }
     @FXML private TextField randomSpawnAgentNumTextField;
-    @FXML private ChoiceBox<String> randomAgentChoiceBox;
     @FXML private void eventRandomSpawnButton(ActionEvent event) {
         if (!randomSpawnAgentNumTextField.getText().isEmpty()) {
             Parameter.INIT_AGENT_NUM = Integer.parseInt(randomSpawnAgentNumTextField.getText());
@@ -278,7 +305,6 @@ public class FXMLController implements Initializable {
         scaleXText.setPromptText(String.valueOf(Parameter.SCALE.x));
         scaleYText.setPromptText(String.valueOf(Parameter.SCALE.y));
         cellIntervalText.setPromptText(String.valueOf(Parameter.CELL_INTERVAL));
-        actionIntervalTextBox.setPromptText(String.valueOf(Parameter.AGENT_ACTION_INTERVAL));
         radiusTextBox.setPromptText(String.valueOf(Parameter.AGENT_RADIUS));
         speedTextBox.setPromptText(String.valueOf(Parameter.AGENT_SPEED));
         viewLengthTextBox.setPromptText(String.valueOf(Parameter.VIEW_RADIUS_LENGTH));
@@ -287,9 +313,62 @@ public class FXMLController implements Initializable {
         agentPotentialWeightTextBox.setPromptText(String.valueOf(Parameter.AGENT_KIM_POTENTIAL_WEIGHT));
         obstaclePotentialRangeTextBox.setPromptText(String.valueOf(Parameter.OBSTACLE_KIM_POTENTIAL_RANGE));
         obstaclePotentialWeightTextBox.setPromptText(String.valueOf(Parameter.OBSTACLE_KIM_POTENTIAL_WEIGHT));
+    }
 
-        randomAgentChoiceBox.getItems().addAll("select Agent(未実装)", "non_goal","goal");
-        randomAgentChoiceBox.getSelectionModel().select(0);
+    public String help() {
+        String message = "Pedestrian Simulation(ver 1.0x)の使い方\n" +
+                "\n" +
+                "ver 1.0xの説明\n" +
+                "マウス操作による簡単なシミュレーションを行うことができる。\n" +
+                "\n" +
+                "実行の仕方\n" +
+                "jarをダブルクリックして起動 or ターミナルで \"java -jar PedestrianSimulation-1.0.jar\"\n" +
+                "\n" +
+                "はじめかた\n" +
+                "Newボタンでスタート画面からシミュレーション画面へ移行する\n" +
+                "またこのボタンはリセット機能も持っている\n" +
+                "\n" +
+                "- ▶/||ボタン シミュレーションの開始・一時停止\n" +
+                "- ●ボタン シミュレーションの記録(まだ実装していない)\n" +
+                "\n" +
+                "\n" +
+                "↓↓Mouse Setの説明\n" +
+                "\n" +
+                "MouseSetはマウス操作によってシミュレーション空間にオブジェクトの設置できる機能\n" +
+                "パラメータを入力し、setボタンを押すことでアクティブになる\n" +
+                "\n" +
+                "non_goal_agent\n" +
+                "- speed 歩行速度(空の場合は初期パラメータが適用される)\n" +
+                "\n" +
+                "goal_agent\n" +
+                "- speed 歩行速度(空の場合は初期パラメータが適用される)\n" +
+                "- goal_id 設置済みのGoalのIDと同じ値を入力する(idが正しくないとアクティブにできない)\n" +
+                "\n" +
+                "random_spawn_agent\n" +
+                "- agent_num 設置するエージェント数\n" +
+                "- selectAgent まだ実装していない、全てnon_goal_agentが設置される\n" +
+                "- random_spawn このボタンで空間にエージェントがランダムに設置される\n" +
+                "\n" +
+                "goal\n" +
+                "- goal_id 出口に紐付けるID(何でもOK)\n" +
+                "- width 横幅サイズ\n" +
+                "- height 縦幅サイズ\n" +
+                "\n" +
+                "line\n" +
+                "1回のクリックで始点を設定し、2回目のクリックで終点を設定する\n" +
+                "\n" +
+                "\n" +
+                "↓↓避難エージェントモデルの説明\n" +
+                "\n" +
+                "出口を知らないエージェント(non_goal_agent)\n" +
+                "行動ルール\n" +
+                "- ランダム行動(ランダムな方向に移動し、壁が視野に入ると方向を変更)\n" +
+                "- 追従行動(視野内にgoal_agentがいれば、追従する)\n" +
+                "\n" +
+                "出口を知っているエージェント(goal_agent)\n" +
+                "- 出口移動(自分の知っている出口へ移動するエージェント)\n" +
+                "\n";
+        return message;
     }
 
 

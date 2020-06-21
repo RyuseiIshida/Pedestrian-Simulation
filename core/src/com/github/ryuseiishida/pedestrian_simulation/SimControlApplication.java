@@ -7,15 +7,22 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Paths;
 
 public class SimControlApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 //        String path ="control_panel.fxml";
-        String path ="desktop/build/libs/control_panel.fxml";
-        FXMLLoader loader = new FXMLLoader(Paths.get(path).toUri().toURL());
+//        String path ="control_panel.fxml";
+//        FXMLLoader loader = new FXMLLoader(Paths.get(path).toUri().toURL());
+//        URL ul = getClass().getResource("￿/help.txt");
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/control_panel.fxml"));
         FXMLController fxmlController = new FXMLController();
         loader.setController(fxmlController);
 

@@ -5,6 +5,7 @@ import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Group;
 import com.github.ryuseiishida.pedestrian_simulation.environment.agent.StateTag;
 import com.github.ryuseiishida.pedestrian_simulation.analysis.LDA;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Obstacle;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -16,43 +17,40 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class WriterLog {
-    private String path = "core/assets/out";
-    private Environment env;
+    private String path = Parameter.WRITE_LOG_PATH;
+    private static Environment environment;
     private ArrayList<Agent> agents;
+    private boolean isInitialized = false;
 
     public WriterLog(Environment env) {
-        if (Parameter.IS_WRITE_LOG) {
-            this.env = env;
-            this.agents = env.getAgentList();
-            makeDir();
-            writeSourceCodeToParameter();
-        }
-    }
-
-    private void makeDir() {
-        new File(path).mkdir();
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
-        String time = format.format(Calendar.getInstance().getTime());
-        path = path + "/SIM_LOG_" + time;
-        new File(path).mkdir();
+        environment = env;
     }
 
     public String getPath() {
         return path;
     }
 
-    public void ifWriteLog(boolean writeFlag) {
-        if (writeFlag) {
+    public void writeLog() {
+        if (Parameter.IS_WRITE_LOG) {
+            if(!isInitialized) {
+                initialize();
+            }
             writeAgentLog();
             writeMacroLog();
         }
+    }
 
+    public void initialize() {
+        path = Parameter.WRITE_LOG_PATH;
+        new File(path).mkdir();
+        agents = environment.getAgentList();
+        writeSourceCodeToParameter();
+        writeObstacleLog(path + "/obstacle");
+        isInitialized = true;
     }
 
     public void writeSourceCodeToParameter() {
@@ -72,18 +70,6 @@ public class WriterLog {
             for (String s : readList) {
                 bufferedWriter.append(s);
                 bufferedWriter.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void writeAgentInitPosition() {
-        String path = this.path + "/agent_init_position.txt";
-        try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path))) {
-            for (Agent agent : agents) {
-                bw.append(agent.getPosition().toString());
-                bw.newLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -110,7 +96,7 @@ public class WriterLog {
                     printer.printRecord(csvRecord.get(0), csvRecord.get(1), csvRecord.get(2), csvRecord.get(3));
                 }
                 printer.printRecord(
-                        env.getStep(), //0
+                        environment.getStep(), //0
                         agent.getStateTag(), //1
                         agent.getPosition().toString().replace(",", ":"),
                         agent.getVelocity().toString().replace(",", ":")
@@ -133,6 +119,9 @@ public class WriterLog {
     }
 
     public void writeMacroLog() {
+        if (agents.size()==0) {
+            return;
+        }
         try {
             String path = this.path + "/macro" + ".txt";
             if (!(new File(path).exists())) {
@@ -157,13 +146,13 @@ public class WriterLog {
                 );
             }
             int follow = 0;
-            for (Agent agent : env.getAgentList()) {
+            for (Agent agent : environment.getAgentList()) {
                 if (agent.getStateTag().equals(StateTag.follow)) {
                     follow++;
                 }
             }
 
-            ArrayList<ArrayList<Agent>> group = Group.getGroup(env.getAgentList());
+            ArrayList<ArrayList<Agent>> group = Group.getGroup(environment.getAgentList());
             StringBuilder groupList = new StringBuilder();
             for (ArrayList<Agent> agents : group) {
                 for (Agent agent : agents) {
@@ -173,10 +162,10 @@ public class WriterLog {
             }
             groupList.setLength(groupList.length() - 2);//末尾削除
             printer.printRecord(
-                    env.getStep(), //0
-                    env.getGoalAgentNum(), //1
+                    environment.getStep(), //0
+                    environment.getGoalAgentNum(), //1
                     groupList.toString(), //2
-                    Group.getGroup(env.getAgentList()).size(), //3
+                    Group.getGroup(environment.getAgentList()).size(), //3
                     follow //4
             );
             printer.close();
@@ -215,6 +204,26 @@ public class WriterLog {
             e.printStackTrace();
         }
     }
+
+    public static void writeObstacleLog(String saveFilePath) {
+        if (environment == null) return;
+        try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(saveFilePath + ".obs"))) {
+            bw.append(String.valueOf(Parameter.SCALE.x)).append(",");
+            bw.append(String.valueOf(Parameter.SCALE.y));
+            bw.newLine();
+            for (Obstacle obstacle : environment.getObstacles()) {
+                bw.append(String.valueOf(obstacle.getStartPoint().x)).append(",");
+                bw.append(String.valueOf(obstacle.getStartPoint().y)).append(",");
+                bw.append(String.valueOf(obstacle.getEndPoint().x)).append(",");
+                bw.append(String.valueOf(obstacle.getEndPoint().y));
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
 
 

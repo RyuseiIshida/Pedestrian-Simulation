@@ -14,6 +14,11 @@ import com.github.ryuseiishida.pedestrian_simulation.util.Inputs;
 import com.github.ryuseiishida.pedestrian_simulation.render.*;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class GDXController extends ApplicationAdapter {
     //libGdx
     private static OrthographicCamera camera;
@@ -37,6 +42,18 @@ public class GDXController extends ApplicationAdapter {
         bitmapFont.getData().setScale(10);
         environment = new Environment();
         titleBackgroundTexture = new Texture("PedSimAsset.png");
+//        load();
+    }
+
+    public void load() {
+        try (BufferedReader br = Files.newBufferedReader(Paths.get("load.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -60,7 +77,7 @@ public class GDXController extends ApplicationAdapter {
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
             batch.draw(titleBackgroundTexture, 0, 0, Parameter.SCALE.x, Parameter.SCALE.y);
-            bitmapFont.draw(batch, "version" + Parameter.version, Parameter.SCALE.x - 900, 200);
+            bitmapFont.draw(batch, "version" + Parameter.VERSION, Parameter.SCALE.x - 900, 200);
             batch.end();
         }
     }
@@ -75,6 +92,7 @@ public class GDXController extends ApplicationAdapter {
             @Override
             public void run() {
                 environment = new Environment();
+                Parameter.IS_WRITE_LOG = false;
             }
         });
     }

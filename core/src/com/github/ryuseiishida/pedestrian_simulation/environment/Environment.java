@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Environment {
-    private int step;
+    public static int step;
     private static boolean updateFlag;
     private ArrayList<Goal> goals;
     private ArrayList<Obstacle> obstacles;
@@ -41,16 +41,16 @@ public class Environment {
     public Environment() {
         step = 0;
         updateFlag = false;
+        LoadLog.setEnvironment(this);
         goals = new ArrayList<>();
         obstacles = new ArrayList<>();
         agentList = new ArrayList<>();
-
+        writerLog = new WriterLog(this);
         addWallObstacles();
         spawnAgentsFlag = false;
         deleteAllAgentFlag = false;
         deleteAllGoalFlag = false;
         deleteAllObstacleFlag = false;
-//        LoadMap.setObstacle(obstacles);
     }
 
     public Environment(String logDirPath) {
@@ -60,42 +60,34 @@ public class Environment {
         goals = new ArrayList<>();
         obstacles = new ArrayList<>();
         agentList = new ArrayList<>();
+        writerLog = new WriterLog(this);
         addWallObstacles();
         spawnAgentsFlag = false;
         deleteAllAgentFlag = false;
         deleteAllGoalFlag = false;
         deleteAllObstacleFlag = false;
-//        LoadMap.setObstacle(obstacles);
         spawnLogAgents();
     }
 
     public void update() {
-        if (spawnAgentsFlag) {
-            spawnInitAgents();
-        }
-        if (deleteAllAgentFlag) {
-            deleteAllAgent();
-        }
-        if (deleteAllGoalFlag) {
-            deleteAllGoal();
-        }
-        if (deleteAllObstacleFlag) {
-            deleteAllObstacle();
-        }
+        if (spawnAgentsFlag) spawnInitAgents();
+        if (deleteAllAgentFlag) deleteAllAgent();
+        if (deleteAllGoalFlag) deleteAllGoal();
+        if (deleteAllObstacleFlag) deleteAllObstacle();
 
         if (updateFlag) {
             if (writerLog == null) {
                 initWriterLog();
             }
             ifLoadLog();
-            writerLog.ifWriteLog(Parameter.IS_WRITE_LOG);
+            writerLog.writeLog();
             step++;
             agentList.stream()
                     .parallel()
                     .forEach(Agent::action);
             ifAgentInGoal();
-            ldaStepSplit.recordStepSplit(step);
-            ldaGroupSizeSplit.recordGroupSizeSplit(step);
+//            ldaStepSplit.recordStepSplit(step);
+//            ldaGroupSizeSplit.recordGroupSizeSplit(step);
         }
     }
 
@@ -219,9 +211,6 @@ public class Environment {
 
     public void deleteAllObstacle() {
         obstacles.clear();
-        for (Agent agent : agentList) {
-//            agent.setObstaclePositionMap();
-        }
         deleteAllObstacleFlag = false;
     }
 

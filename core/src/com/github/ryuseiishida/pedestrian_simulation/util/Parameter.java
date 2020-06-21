@@ -12,25 +12,26 @@ public class Parameter {
     /**
      * application version
      */
-    public static String version = "1.04";
+    public static String VERSION = "1.06";
 
     /**
      * application about message
      */
-    public static String ABOUT_MESSAGE = "GitHub @RyuseiIshida\n" +
-            "https://github.com/RyuseiIshida/Pedestrian-Simulation";
+    public static String ABOUT_MESSAGE = "GitHub @RyuseiIshida\n" + "https://github.com/RyuseiIshida/Pedestrian-Simulation";
 
     /**
      * application version message
      */
-    public static String VERSION_Message = "履歴\n" +
+    public static String VERSION_MESSAGE = "履歴\n" +
             "1.01\t基本的なシミュレーション機能を提供\n" +
             "1.02\t細かなバグを修正およびUIの更新\n" +
             "1.03\tパラメーター変更機能を追加\n" +
             "1.04\t軽微なUIの修正\n" +
+            "1.05\t障害物の保存および読み込み機能を追加\n" +
+            "1.06\tシミュレーションログの書き出し機能を追加\n" +
             "\n" +
             "次回アップデート\n" +
-            "1.0x\tシミュレーションログ取得機能";
+            "1.0x\t軽微な修正";
 
     /**
      * シミュレーションの終了方法
@@ -49,6 +50,9 @@ public class Parameter {
      * ログの記録
      */
     public static boolean IS_WRITE_LOG = false;
+
+    /** ログの出力先 */
+    public static String WRITE_LOG_PATH;
 
     /**
      * LDA コーパス保存ステップ
@@ -89,7 +93,6 @@ public class Parameter {
     public static int GOAL_AGENT_NUM = 0;
     public static Tuple<Float> INIT_RANDOM_X = new Tuple<>(0f, SCALE.x);
     public static Tuple<Float> INIT_RANDOM_Y = new Tuple<>(0f, SCALE.y);
-    public static int AGENT_ACTION_INTERVAL = 60; //1stepあたり何回行動できるか
     //public static float AGENT_SPEED = 75f / AGENT_ACTION_INTERVAL; //1.5m/s
     public static float AGENT_SPEED = 4.1f; //2.5m/s
     public static float AGENT_RADIUS = 25; //50cm

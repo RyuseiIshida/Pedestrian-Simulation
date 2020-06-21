@@ -1,6 +1,10 @@
 package com.github.ryuseiishida.pedestrian_simulation.analysis.log;
 
 import com.badlogic.gdx.math.Vector2;
+import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Line;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Obstacle;
+import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -12,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class LoadLog {
+    private static Environment environment;
+
     private String simulationLogPath;
     private ArrayList<File> agentFileList;
 
@@ -19,6 +25,10 @@ public class LoadLog {
 //        setSimulationLogPath(loadPath);
         simulationLogPath = loadPath;
         setAgentFileList();
+    }
+
+    public static void setEnvironment(Environment targetEnvironment) {
+        environment = targetEnvironment;
     }
 
     private void setSimulationLogPath(String parentPath) {
@@ -134,21 +144,22 @@ public class LoadLog {
         //throw new IllegalArgumentException("line you specified could not be found");
     }
 
-    private void print(ArrayList<Vector2> vec) {
-        for (Vector2 vector2 : vec) {
-            System.out.println("vector2 = " + vector2);
+    public static void setObstacle(String filePath) {
+        if (environment == null) return;
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(filePath))) {
+            br.readLine();
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] points = line.split(",");
+                environment.addObstacle(new Line(
+                                Float.parseFloat(points[0]),
+                                Float.parseFloat(points[1]),
+                                Float.parseFloat(points[2]),
+                                Float.parseFloat(points[3]),
+                                Parameter.ENV_CELLS_MAP));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
-
-    public String getSimulationLogPath() {
-        return simulationLogPath;
-    }
-
-    public static void main(String[] args) {
-        LoadLog loadlog = new LoadLog("core/assets/out/2020-04-07_075459/");
-        for (String stepLine : loadlog.getStepLines(0)) {
-            System.out.println(stepLine);
-        }
-    }
-
 }
