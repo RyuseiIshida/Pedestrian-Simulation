@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Paths;
 
@@ -21,7 +22,10 @@ public class SimControlApplication extends Application {
         Parent root = loader.load();
         stage.setX(1);
         stage.setY(1);
-        stage.setScene(new Scene(root));
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double desktopWidth = screenSize.getWidth();
+        double desktopHeight = screenSize.getHeight();
+        stage.setScene(new Scene(root,350,desktopHeight));
         stage.show();
     }
 

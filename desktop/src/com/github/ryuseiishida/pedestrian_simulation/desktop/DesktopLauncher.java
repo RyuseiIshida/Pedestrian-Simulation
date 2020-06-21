@@ -6,12 +6,17 @@ import com.github.ryuseiishida.pedestrian_simulation.GDXController;
 import com.github.ryuseiishida.pedestrian_simulation.SimControlApplication;
 import javafx.application.Application;
 
+import java.awt.*;
+
 public class DesktopLauncher {
     public static void main(String[] arg) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double desktopWidth = screenSize.getWidth();
+        double desktopHeight = screenSize.getHeight();
         config.title = "Pedestrian Simulation";
-        config.width = 900;
-        config.height = 600;
+        config.width = (int)desktopHeight;
+        config.height = (int)desktopHeight;
         config.x = 350;
         config.y = 0;
         GDXController gdxController = new GDXController();

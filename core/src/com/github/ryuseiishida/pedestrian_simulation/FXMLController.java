@@ -23,6 +23,7 @@ public class FXMLController implements Initializable {
         File selectedDirectory = directoryChooser.showDialog(null);
         if (selectedDirectory != null) {
             GDXController.setEnvironment(new Environment(String.valueOf(selectedDirectory)));
+            simulationLogText.setText(String.valueOf(selectedDirectory));
         }
     }
     @FXML private void menuEventBackground(ActionEvent event) {
@@ -30,6 +31,7 @@ public class FXMLController implements Initializable {
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             GDXController.setBackgroundTexture(String.valueOf(file));
+            backgroundPathText.setText(String.valueOf(file));
         }
     }
     @FXML private void menuEventClose(ActionEvent event) {
