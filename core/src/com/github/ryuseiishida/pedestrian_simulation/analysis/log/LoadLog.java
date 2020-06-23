@@ -5,7 +5,6 @@ import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.goal.Goal;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Line;
-import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Obstacle;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
