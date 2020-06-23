@@ -2,6 +2,7 @@ package com.github.ryuseiishida.pedestrian_simulation.analysis.log;
 
 import com.badlogic.gdx.math.Vector2;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
+import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Line;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Obstacle;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
@@ -17,43 +18,26 @@ import java.util.Arrays;
 
 public class LoadLog {
     private static Environment environment;
-
     private String simulationLogPath;
     private ArrayList<File> agentFileList;
 
-    public LoadLog(String loadPath) {
-//        setSimulationLogPath(loadPath);
+    public LoadLog(Environment environment) {
+        this.environment = environment;
+    }
+
+    public LoadLog(Environment environment, String loadPath) {
+        this.environment = environment;
         simulationLogPath = loadPath;
-        setAgentFileList();
+        setAgentFileList(loadPath);
     }
 
-    public static void setEnvironment(Environment targetEnvironment) {
-        environment = targetEnvironment;
+    public LoadLog(String loadPath) {
+        this.environment = environment;
+        simulationLogPath = loadPath;
+        setAgentFileList(loadPath);
     }
 
-    private void setSimulationLogPath(String parentPath) {
-        FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File file, String str) {
-                //指定文字列でフィルタする
-                if (str.indexOf("SIM_LOG") != -1) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        };
-        File[] files = new File(parentPath).listFiles(filter);
-        if (files.length == 0) {
-            throw new IllegalArgumentException("simulation log file is not included");
-        } else if (files.length != 1) {
-            throw new IllegalArgumentException("Multiple log files detected.\n" +
-                    "There should be only one specified directory.");
-        }
-        simulationLogPath = files[0].getPath();
-        System.out.println(simulationLogPath);
-    }
-
-    private void setAgentFileList() {
+    private void setAgentFileList(String dirPath) {
         agentFileList = new ArrayList<>();
         FilenameFilter filter = new FilenameFilter() {
             public boolean accept(File file, String str) {
@@ -66,7 +50,7 @@ public class LoadLog {
             }
         };
 
-        File[] files = new File(simulationLogPath).listFiles(filter);
+        File[] files = new File(dirPath).listFiles(filter);
         this.agentFileList.addAll(Arrays.asList(files));
     }
 
@@ -144,6 +128,12 @@ public class LoadLog {
         //throw new IllegalArgumentException("line you specified could not be found");
     }
 
+    public void setAgents(String filePath) {
+        for (File AgentLogFile : getAgentFileList()) {
+            environment.addAgent(new Agent(AgentLogFile, environment));
+        }
+    }
+
     public static void setObstacle(String filePath) {
         if (environment == null) return;
         try (BufferedReader br = Files.newBufferedReader(Paths.get(filePath))) {
@@ -152,11 +142,11 @@ public class LoadLog {
             while ((line = br.readLine()) != null) {
                 String[] points = line.split(",");
                 environment.addObstacle(new Line(
-                                Float.parseFloat(points[0]),
-                                Float.parseFloat(points[1]),
-                                Float.parseFloat(points[2]),
-                                Float.parseFloat(points[3]),
-                                Parameter.ENV_CELLS_MAP));
+                        Float.parseFloat(points[0]),
+                        Float.parseFloat(points[1]),
+                        Float.parseFloat(points[2]),
+                        Float.parseFloat(points[3]),
+                        Parameter.ENV_CELLS_MAP));
             }
         } catch (IOException e) {
             e.printStackTrace();

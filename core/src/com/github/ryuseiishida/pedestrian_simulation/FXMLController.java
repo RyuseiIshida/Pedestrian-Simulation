@@ -98,7 +98,7 @@ public class FXMLController implements Initializable {
         fileChooser.setTitle("Save Obstacle Log");
         File file = fileChooser.showSaveDialog(null);
         if (file != null) {
-            Environment.step = 0;
+            Environment.setStep(0);
             Parameter.WRITE_LOG_PATH = String.valueOf(file);
             Parameter.IS_WRITE_LOG = true;
         }
@@ -267,11 +267,11 @@ public class FXMLController implements Initializable {
     @FXML private void eventRandomSpawnButton(ActionEvent event) {
         if (!randomSpawnAgentNumTextField.getText().isEmpty()) {
             Parameter.INIT_AGENT_NUM = Integer.parseInt(randomSpawnAgentNumTextField.getText());
-            Environment.spawnAgentsFlag = true;
+            Environment.spawnRandomAgents();
         }
     }
     @FXML private void eventDeleteAgentButton(ActionEvent event) {
-        Environment.deleteAllAgentFlag = true;
+        Environment.deleteAllAgent();
     }
 
     // Obstacle Title Pane
@@ -279,7 +279,7 @@ public class FXMLController implements Initializable {
         Inputs.setFxCreateProperty("ObstacleLine");
     }
     @FXML private void eventDeleteLineButton(ActionEvent event) {
-         Environment.deleteAllObstacleFlag = true;
+        Environment.deleteAllObstacle();
     }
     // Goal Title Pane
     @FXML private TextField goalIdTextField;
@@ -293,7 +293,7 @@ public class FXMLController implements Initializable {
         }
     }
     @FXML private void eventDeleteGoalButton(ActionEvent event) {
-         Environment.deleteAllGoalFlag = true;
+        Environment.deleteAllGoal();
     }
 
 

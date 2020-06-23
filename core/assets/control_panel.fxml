@@ -351,6 +351,11 @@
                      <content>
                         <VBox depthTest="DISABLE" minHeight="-Infinity" minWidth="-Infinity" prefHeight="353.0" prefWidth="344.0" spacing="15.0">
                            <children>
+                              <RadioButton mnemonicParsing="false" selected="true" text="background(未実装)">
+                                 <font>
+                                    <Font size="12.0" />
+                                 </font>
+                              </RadioButton>
                               <RadioButton mnemonicParsing="false" onAction="#eventFontRadioButton" selected="true" text="font(未実装)">
                                  <font>
                                     <Font size="12.0" />
@@ -367,6 +372,11 @@
                                  </font>
                               </RadioButton>
                               <RadioButton mnemonicParsing="false" onAction="#eventObstacleRadioButton" selected="true" text="obstacle(未実装)">
+                                 <font>
+                                    <Font size="12.0" />
+                                 </font>
+                              </RadioButton>
+                              <RadioButton mnemonicParsing="false" selected="true" text="goal(未実装)">
                                  <font>
                                     <Font size="12.0" />
                                  </font>

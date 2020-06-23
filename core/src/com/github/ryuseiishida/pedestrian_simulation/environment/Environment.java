@@ -12,17 +12,16 @@ import com.github.ryuseiishida.pedestrian_simulation.analysis.log.WriterLog;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.*;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 public class Environment {
-    public static int step;
+    private static int step;
     private static boolean updateFlag;
     private ArrayList<Goal> goals;
     private ArrayList<Obstacle> obstacles;
-    private HashSet<Vector2> obstaclePosition = new HashSet<>();
+    private HashSet<Vector2> obstaclePosition;
     private ArrayList<Agent> agentList;
     private int goalAgentNum;
 
@@ -32,127 +31,103 @@ public class Environment {
     private LoadLog loadLog;
     private WriterLog writerLog;
 
-    //flags
-    public static boolean spawnAgentsFlag;
-    public static boolean deleteAllAgentFlag;
-    public static boolean deleteAllGoalFlag;
-    public static boolean deleteAllObstacleFlag;
+    //control flags
+    private static boolean spawnRandomAgentsFlag = false;
+    private static boolean deleteAllAgentFlag = false;
+    private static boolean deleteAllGoalFlag = false;
+    private static boolean deleteAllObstacleFlag = false;
 
     public Environment() {
-        step = 0;
-        updateFlag = false;
-        LoadLog.setEnvironment(this);
-        goals = new ArrayList<>();
-        obstacles = new ArrayList<>();
-        agentList = new ArrayList<>();
-        writerLog = new WriterLog(this);
-        addWallObstacles();
-        spawnAgentsFlag = false;
-        deleteAllAgentFlag = false;
-        deleteAllGoalFlag = false;
-        deleteAllObstacleFlag = false;
+        initEnvironment();
     }
 
     public Environment(String logDirPath) {
+        initEnvironment();
+        loadLog = new LoadLog(this, logDirPath);
+        loadLog.setAgents(logDirPath);
+        loadLog.setObstacle(logDirPath + "/obstacle.obs");
+    }
+
+    public void initEnvironment() {
         step = 0;
         updateFlag = false;
-        loadLog = new LoadLog(logDirPath);
         goals = new ArrayList<>();
         obstacles = new ArrayList<>();
+        obstaclePosition = new HashSet<>();
         agentList = new ArrayList<>();
         writerLog = new WriterLog(this);
-        addWallObstacles();
-        spawnAgentsFlag = false;
+        setWallObstacles();
+        spawnRandomAgentsFlag = false;
         deleteAllAgentFlag = false;
         deleteAllGoalFlag = false;
         deleteAllObstacleFlag = false;
-        spawnLogAgents();
     }
 
     public void update() {
-        if (spawnAgentsFlag) spawnInitAgents();
-        if (deleteAllAgentFlag) deleteAllAgent();
-        if (deleteAllGoalFlag) deleteAllGoal();
-        if (deleteAllObstacleFlag) deleteAllObstacle();
-
+        ifSpawnRandomAgents();
+        ifDeleteAllAgent();
+        ifDeleteAllGoal();
+        ifDeleteAllObstacle();
+        ifAgentInGoal();
         if (updateFlag) {
-            if (writerLog == null) {
-                initWriterLog();
-            }
-            ifLoadLog();
+            ifInitWriterLog();
             writerLog.writeLog();
             step++;
-            agentList.stream()
-                    .parallel()
-                    .forEach(Agent::action);
-            ifAgentInGoal();
+            agentList.stream().parallel().forEach(Agent::action);
 //            ldaStepSplit.recordStepSplit(step);
 //            ldaGroupSizeSplit.recordGroupSizeSplit(step);
         }
     }
 
-    public void initWriterLog() {
-        writerLog = new WriterLog(this);
-        ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
-        ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
-    }
-
-    public void ifLoadLog() {
-        if (loadLog != null) {
-            if (step == loadLog.endStep()) {
-                return;
-            }
-        }
-    }
-
-    public int getStep() {
+    public static int getStep() {
         return step;
     }
 
-    public ArrayList<Goal> getGoals() {
-        return goals;
+    public static void setStep(int stepNum) {
+        step = stepNum;
+    }
+
+    public static boolean getUpdateFlag() {
+        return updateFlag;
+    }
+
+    public static void setUpdateFlag(boolean flag) {
+        updateFlag = flag;
+    }
+
+    public void switchUpdateFlag() {
+        updateFlag = !updateFlag;
     }
 
     private void ifAgentInGoal() {
         for (Goal goal : goals) {
             for (Agent agent : agentList) {
-                if (goal.isAgentInGoal(agent)) {
-                    goalAgentNum++;
-                }
+                if (goal.isAgentInGoal(agent)) goalAgentNum++;
             }
             agentList.removeIf(goal::isAgentInGoal);
         }
         agentList.removeIf(agent -> agent.getStateTag().equals(StateTag.escaped));
     }
 
-    public ArrayList<Obstacle> getObstacles() {
-        return obstacles;
+    public static void spawnRandomAgents() {
+        spawnRandomAgentsFlag = true;
     }
 
-    public Set<Vector2> getObstaclesPosition() {
-        return obstaclePosition;
-    }
-
-    public HashSet<Vector2> obstaclePosition() {
-        return obstaclePosition;
-    }
-
-    public void spawnInitAgents() {
-        for (int i = 0; i < Parameter.INIT_AGENT_NUM; i++) {
-            agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, getRandomPosition()));
+    private void ifSpawnRandomAgents() {
+        if (spawnRandomAgentsFlag) {
+            for (int i = 0; i < Parameter.INIT_AGENT_NUM; i++) {
+                agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, getRandomPosition()));
+            }
+            spawnRandomAgentsFlag = false;
         }
-        spawnAgentsFlag = false;
     }
 
     public Vector2 getRandomPosition() {
-        float x;
-        float y;
+        float x, y;
         while (true) {
             x = MathUtils.random(Parameter.INIT_RANDOM_X.valueA, Parameter.INIT_RANDOM_X.valueB);
             y = MathUtils.random(Parameter.INIT_RANDOM_Y.valueA, Parameter.INIT_RANDOM_Y.valueB);
-            if (checkInBoxes(x, y)) {
-                continue;
-            }
+            if (checkInBoxes(x, y)) continue;
             break;
         }
         return new Vector2(x, y);
@@ -160,17 +135,13 @@ public class Environment {
 
     public Boolean checkInBoxes(float x, float y) {
         for (BoxLine box : Parameter.BOX_LIST) {
-            if (box.isPositionInBox(x, y)) {
-                return true;
-            }
+            if (box.isPositionInBox(x, y)) return true;
         }
         return false;
     }
 
-    private void spawnLogAgents() {
-        for (File AgentLogFile : loadLog.getAgentFileList()) {
-            agentList.add(new Agent(AgentLogFile, this));
-        }
+    public void addAgent(Agent agent) {
+        agentList.add(agent);
     }
 
     public void spawnAgent(Vector2 pos) {
@@ -180,7 +151,6 @@ public class Environment {
     public void spawnAgent(Vector2 pos, float speed) {
         agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos, speed));
     }
-
 
     public void spawnAgent(Vector2 pos, String goalID) {
         for (Goal goal : goals) {
@@ -198,20 +168,15 @@ public class Environment {
         }
     }
 
-    public void deleteAllAgent() {
-        agentList.clear();
-        deleteAllAgentFlag = false;
+    public static void deleteAllAgent() {
+        deleteAllAgentFlag = true;
     }
 
-    public void deleteAllGoal() {
-        goals.clear();
-        agentList.removeIf(agent -> agent.getStateTag().equals(StateTag.moveGoal));
-        deleteAllGoalFlag = false;
-    }
-
-    public void deleteAllObstacle() {
-        obstacles.clear();
-        deleteAllObstacleFlag = false;
+    private void ifDeleteAllAgent() {
+        if (deleteAllAgentFlag) {
+            agentList.clear();
+            deleteAllAgentFlag = false;
+        }
     }
 
     public ArrayList<Agent> getAgentList() {
@@ -252,29 +217,20 @@ public class Environment {
         return goalAgentNum;
     }
 
-    public void setGoalAgentNum(int num) {
-        goalAgentNum = num;
-    }
-
-    public void switchUpdateFlag() {
-        updateFlag = !updateFlag;
-    }
-
-    public static boolean getUpdateFlag() {
-        return updateFlag;
-    }
-
-    public static void setUpdateFlag(boolean flag) {
-        updateFlag = flag;
-    }
-
-    public LoadLog getLoadLog() {
-        return loadLog;
-    }
-
     public void addObstacle(Obstacle obstacle) {
         obstacles.add(obstacle);
         addObstaclePosition(obstacle);
+    }
+
+    public static void deleteAllObstacle() {
+        deleteAllObstacleFlag = true;
+    }
+
+    private void ifDeleteAllObstacle() {
+        if (deleteAllObstacleFlag) {
+            obstacles.clear();
+            deleteAllObstacleFlag = false;
+        }
     }
 
     private void addObstaclePosition(Obstacle targetObstacle) {
@@ -283,7 +239,15 @@ public class Environment {
         }
     }
 
-    private void addWallObstacles() {
+    public ArrayList<Obstacle> getObstacles() {
+        return obstacles;
+    }
+
+    public Set<Vector2> getObstaclesPosition() {
+        return obstaclePosition;
+    }
+
+    private void setWallObstacles() {
         //left
         addObstacle(new Line(0, 0, 0, Parameter.SCALE.y, Parameter.ENV_CELLS_MAP));
         //right
@@ -303,4 +267,27 @@ public class Environment {
         goals.add(goal);
     }
 
+    public static void deleteAllGoal() {
+        deleteAllGoalFlag = true;
+    }
+
+    private void ifDeleteAllGoal() {
+        if (deleteAllGoalFlag) {
+            goals.clear();
+            agentList.removeIf(agent -> agent.getStateTag().equals(StateTag.moveGoal));
+            deleteAllGoalFlag = false;
+        }
+    }
+
+    public ArrayList<Goal> getGoals() {
+        return goals;
+    }
+
+    public void ifInitWriterLog() {
+        if (writerLog == null) {
+            writerLog = new WriterLog(this);
+            ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
+            ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
+        }
+    }
 }

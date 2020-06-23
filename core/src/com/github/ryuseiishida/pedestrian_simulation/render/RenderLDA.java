@@ -24,6 +24,7 @@ public class RenderLDA {
     private static int topicK = 18;
     private static String ldaFilePath;
 
+    //TODO refactor
     public RenderLDA(Batch batch, BitmapFont bitmapFont, ShapeRenderer shapeRenderer, Camera camera, String filePath) {
         if (renderFlag) {
             ldaFilePath = filePath;
