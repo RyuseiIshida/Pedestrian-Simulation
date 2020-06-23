@@ -3,7 +3,7 @@ package com.github.ryuseiishida.pedestrian_simulation;
 import com.github.ryuseiishida.pedestrian_simulation.analysis.log.LoadLog;
 import com.github.ryuseiishida.pedestrian_simulation.analysis.log.WriterLog;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
-import com.github.ryuseiishida.pedestrian_simulation.render.RenderAgent;
+import com.github.ryuseiishida.pedestrian_simulation.render.*;
 import com.github.ryuseiishida.pedestrian_simulation.util.Inputs;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import javafx.event.ActionEvent;
@@ -108,6 +108,7 @@ public class FXMLController implements Initializable {
         GDXController.startFlag = true;
         GDXController.setBackgroundTexture(null);
         GDXController.resetEnvironment();
+        startButton.setText("▶");
     }
 
     // TabPane
@@ -230,7 +231,11 @@ public class FXMLController implements Initializable {
     }
 
     // View Tab
+    @FXML void eventBackgroundRadioButton(ActionEvent event) {
+        RenderBackground.switchRenderFlag();
+    }
     @FXML void eventFontRadioButton(ActionEvent event) {
+        RenderFont.switchRenderFlag();
     }
     @FXML void eventAgentViewRadioButton(ActionEvent event) {
         RenderAgent.switchViewFlag();
@@ -239,7 +244,10 @@ public class FXMLController implements Initializable {
         RenderAgent.switchMoveGoalLineFlag();
     }
     @FXML void eventObstacleRadioButton(ActionEvent event) {
-//        Main.setDrawView();
+        RenderObstacle.switchRenderFlag();
+    }
+    @FXML void eventGoalRadioButton(ActionEvent event) {
+        RenderGoal.switchRenderFlag();
     }
 
     // create

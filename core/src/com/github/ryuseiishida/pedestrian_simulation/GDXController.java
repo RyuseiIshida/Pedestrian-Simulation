@@ -39,12 +39,12 @@ public class GDXController extends ApplicationAdapter {
     public void render() {
         if (startFlag) {
             environment.update();
-            if (backgroundTexture != null) new RenderBackground(backgroundTexture);
+            new RenderBackground(backgroundTexture);
             new RenderFont();
             new RenderAgent();
             new RenderGoal();
             new RenderObstacle();
-            // new RenderLDA(batch, bitmapFont, shapeRenderer, camera, environment.getLoadLog().getSimulationLogPath());
+//             new RenderLDA(batch, bitmapFont, shapeRenderer, camera, environment.getLoadLog().getSimulationLogPath());
             new Inputs(camera, shapeRenderer, environment);
         } else new RenderBackground(titleBackgroundTexture);
     }

@@ -11,16 +11,22 @@ import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
 public class RenderFont {
+    private static boolean renderFlag = true;
+
     public RenderFont() {
-        Gdx.gl.glClearColor(255, 255, 255, 255);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        GDXController.getCamera().update();
-        GDXController.getBatch().setProjectionMatrix(GDXController.getCamera().combined);
-        GDXController.getBatch().begin();
-        GDXController.getBitmapFont().draw(GDXController.getBatch(),
-                "step " + GDXController.getEnvironment().getStep()
-                        + "  " + "agent = " + String.format(String.valueOf(GDXController.getEnvironment().getAgentList().size())),
-                30, Parameter.SCALE.y - 10);
-        GDXController.getBatch().end();
+        if(renderFlag) {
+            GDXController.getCamera().update();
+            GDXController.getBatch().setProjectionMatrix(GDXController.getCamera().combined);
+            GDXController.getBatch().begin();
+            GDXController.getBitmapFont().draw(GDXController.getBatch(),
+                    "step " + GDXController.getEnvironment().getStep()
+                            + "  " + "agent = " + String.format(String.valueOf(GDXController.getEnvironment().getAgentList().size())),
+                    30, Parameter.SCALE.y - 10);
+            GDXController.getBatch().end();
+        }
+    }
+
+    public static void switchRenderFlag() {
+        RenderFont.renderFlag = !RenderFont.renderFlag;
     }
 }

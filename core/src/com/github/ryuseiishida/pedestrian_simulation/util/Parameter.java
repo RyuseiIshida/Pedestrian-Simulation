@@ -12,7 +12,7 @@ public class Parameter {
     /**
      * application version
      */
-    public static String VERSION = "1.06";
+    public static String VERSION = "1.07";
 
     /**
      * application about message
@@ -29,6 +29,8 @@ public class Parameter {
             "1.04\t軽微なUIの修正\n" +
             "1.05\t障害物の保存および読み込み機能を追加\n" +
             "1.06\tシミュレーションログの書き出し機能を追加\n" +
+            "1.07\t軽微なバグの修正およびシミュレーションログの書き出し・読み込み機能にゴールオブジェクトと障害物オブジェクトが対応\n" +
+            "1.08\t表示設定機能を更新\n" +
             "\n" +
             "次回アップデート\n" +
             "1.0x\t軽微な修正";
