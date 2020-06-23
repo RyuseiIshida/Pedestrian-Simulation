@@ -18,10 +18,6 @@ import java.nio.file.Paths;
 public class SimControlApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-//        String path ="control_panel.fxml";
-//        String path ="control_panel.fxml";
-//        FXMLLoader loader = new FXMLLoader(Paths.get(path).toUri().toURL());
-//        URL ul = getClass().getResource("￿/help.txt");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/control_panel.fxml"));
         FXMLController fxmlController = new FXMLController();
         loader.setController(fxmlController);

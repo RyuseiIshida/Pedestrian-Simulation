@@ -12,6 +12,7 @@ import com.github.ryuseiishida.pedestrian_simulation.analysis.log.WriterLog;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.*;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,6 +47,7 @@ public class Environment {
         loadLog = new LoadLog(this, logDirPath);
         loadLog.setAgents(logDirPath);
         loadLog.setObstacle(logDirPath + "/obstacle.obs");
+        loadLog.setGoal(logDirPath + "/goal.gl");
     }
 
     public void initEnvironment() {

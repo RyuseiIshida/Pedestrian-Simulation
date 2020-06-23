@@ -5,6 +5,7 @@ import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Group;
 import com.github.ryuseiishida.pedestrian_simulation.environment.agent.StateTag;
 import com.github.ryuseiishida.pedestrian_simulation.analysis.LDA;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.goal.Goal;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Obstacle;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import org.apache.commons.csv.CSVFormat;
@@ -36,7 +37,7 @@ public class WriterLog {
 
     public void writeLog() {
         if (Parameter.IS_WRITE_LOG) {
-            if(!isInitialized) {
+            if (!isInitialized) {
                 initialize();
             }
             writeAgentLog();
@@ -48,8 +49,9 @@ public class WriterLog {
         path = Parameter.WRITE_LOG_PATH;
         new File(path).mkdir();
         agents = environment.getAgentList();
-        writeSourceCodeToParameter();
+//        writeSourceCodeToParameter();
         writeObstacleLog(path + "/obstacle");
+        writeGoalLog(path + "/goal");
         isInitialized = true;
     }
 
@@ -119,7 +121,7 @@ public class WriterLog {
     }
 
     public void writeMacroLog() {
-        if (agents.size()==0) {
+        if (agents.size() == 0) {
             return;
         }
         try {
@@ -223,6 +225,21 @@ public class WriterLog {
         }
     }
 
+    public static void writeGoalLog(String saveFilePath) {
+        if (environment == null) return;
+        try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(saveFilePath + ".gl"))) {
+            for (Goal goal : environment.getGoals()) {
+                bw.append(goal.getID()).append(",");
+                bw.append(String.valueOf(goal.getPositionX())).append(",");
+                bw.append(String.valueOf(goal.getPositionY())).append(",");
+                bw.append(String.valueOf(goal.getWidth())).append(",");
+                bw.append(String.valueOf(goal.getHeight())).append(",");
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
 

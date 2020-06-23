@@ -3,6 +3,7 @@ package com.github.ryuseiishida.pedestrian_simulation.analysis.log;
 import com.badlogic.gdx.math.Vector2;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.goal.Goal;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Line;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Obstacle;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
@@ -147,6 +148,24 @@ public class LoadLog {
                         Float.parseFloat(points[2]),
                         Float.parseFloat(points[3]),
                         Parameter.ENV_CELLS_MAP));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setGoal(String filePath) {
+        if (environment == null) return;
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] points = line.split(",");
+                environment.addGoal(new Goal(
+                        points[0],
+                        Float.parseFloat(points[1]),
+                        Float.parseFloat(points[2]),
+                        Float.parseFloat(points[3]),
+                        Float.parseFloat(points[4])));
             }
         } catch (IOException e) {
             e.printStackTrace();
