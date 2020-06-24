@@ -1,4 +1,4 @@
-package com.github.ryuseiishida.pedestrian_simulation;
+package com.github.ryuseiishida.pedestrian_simulation.controller;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -7,13 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
 
 public class SimControlApplication extends Application {
     @Override

@@ -8,10 +8,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
-import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
-import com.github.ryuseiishida.pedestrian_simulation.environment.object.goal.Goal;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Agent;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.Goal;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.CreateLineFromMouse;
-import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Line;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Obstacle;
 import com.github.ryuseiishida.pedestrian_simulation.render.*;
 
@@ -64,6 +63,7 @@ public class Inputs {
                         break;
                     }
                 }
+                environment.resetObstaclePosition();
                 // goal
                 // TODO 更新
                 Goal deleteGoal;
@@ -71,10 +71,21 @@ public class Inputs {
                     if (eraserStartPoint.x <= goal.getPositionX() && eraserStartPoint.y <= goal.getPositionY()
                             && eraserEndPoint.x >= goal.getPositionX() && eraserEndPoint.y <= goal.getPositionY()) {
                         environment.getGoals().remove(goal);
+                        ArrayList<Agent> deleteGoalAgentList = new ArrayList<>();
+                        for (Agent agent : environment.getAgentList()) {
+                            if (agent.getGoal().equals(goal)) deleteGoalAgentList.add(agent);
+                        }
+                        environment.getAgentList().removeAll(deleteGoalAgentList);
                         break;
                     }
                     if (eraserStartPoint.x <= goal.getRightTop().x && eraserStartPoint.y <= goal.getRightTop().y
                             && eraserEndPoint.x >= goal.getRightTop().x && eraserEndPoint.y <= goal.getRightTop().y) {
+                        environment.getGoals().remove(goal);
+                        ArrayList<Agent> deleteGoalAgentList = new ArrayList<>();
+                        for (Agent agent : environment.getAgentList()) {
+                            if (agent.getGoal().equals(goal)) deleteGoalAgentList.add(agent);
+                        }
+                        environment.getAgentList().removeAll(deleteGoalAgentList);
                         environment.getGoals().remove(goal);
                         break;
                     }

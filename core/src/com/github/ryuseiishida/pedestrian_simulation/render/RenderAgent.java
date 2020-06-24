@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.github.ryuseiishida.pedestrian_simulation.GDXController;
-import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
-import com.github.ryuseiishida.pedestrian_simulation.environment.agent.StateTag;
+import com.github.ryuseiishida.pedestrian_simulation.controller.GDXController;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Agent;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.StateTag;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
 public class RenderAgent {

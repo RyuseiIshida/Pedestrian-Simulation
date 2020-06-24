@@ -2,7 +2,7 @@ package com.github.ryuseiishida.pedestrian_simulation.analysis;
 
 import com.badlogic.gdx.math.Vector2;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.CellsMap;
-import com.github.ryuseiishida.pedestrian_simulation.analysis.log.LoadLog;
+import com.github.ryuseiishida.pedestrian_simulation.util.log.LoadLog;
 import com.github.ryuseiishida.pedestrian_simulation.util.UtilVector;
 
 import java.io.BufferedWriter;

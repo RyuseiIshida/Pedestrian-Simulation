@@ -3,7 +3,7 @@ package com.github.ryuseiishida.pedestrian_simulation.render;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.github.ryuseiishida.pedestrian_simulation.GDXController;
+import com.github.ryuseiishida.pedestrian_simulation.controller.GDXController;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
 public class RenderEraser {

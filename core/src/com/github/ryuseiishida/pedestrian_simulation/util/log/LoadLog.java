@@ -1,9 +1,9 @@
-package com.github.ryuseiishida.pedestrian_simulation.analysis.log;
+package com.github.ryuseiishida.pedestrian_simulation.util.log;
 
 import com.badlogic.gdx.math.Vector2;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
-import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
-import com.github.ryuseiishida.pedestrian_simulation.environment.object.goal.Goal;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Agent;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.Goal;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Line;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import org.apache.commons.csv.CSVFormat;

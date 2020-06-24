@@ -1,4 +1,4 @@
-package com.github.ryuseiishida.pedestrian_simulation;
+package com.github.ryuseiishida.pedestrian_simulation.controller;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;

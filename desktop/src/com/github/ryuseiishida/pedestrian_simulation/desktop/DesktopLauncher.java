@@ -2,8 +2,8 @@ package com.github.ryuseiishida.pedestrian_simulation.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.github.ryuseiishida.pedestrian_simulation.GDXController;
-import com.github.ryuseiishida.pedestrian_simulation.SimControlApplication;
+import com.github.ryuseiishida.pedestrian_simulation.controller.GDXController;
+import com.github.ryuseiishida.pedestrian_simulation.controller.SimControlApplication;
 import javafx.application.Application;
 
 import java.awt.*;

@@ -1,9 +1,9 @@
 package com.github.ryuseiishida.pedestrian_simulation.analysis;
 
 import com.badlogic.gdx.math.Vector2;
-import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
-import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Group;
-import com.github.ryuseiishida.pedestrian_simulation.environment.agent.StateTag;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Agent;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Group;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.StateTag;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.CellsMap;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 

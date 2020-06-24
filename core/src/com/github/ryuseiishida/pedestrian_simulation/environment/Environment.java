@@ -2,13 +2,13 @@ package com.github.ryuseiishida.pedestrian_simulation.environment;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
-import com.github.ryuseiishida.pedestrian_simulation.environment.agent.StateTag;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Agent;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.StateTag;
 import com.github.ryuseiishida.pedestrian_simulation.analysis.LDA;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.Cell;
-import com.github.ryuseiishida.pedestrian_simulation.environment.object.goal.Goal;
-import com.github.ryuseiishida.pedestrian_simulation.analysis.log.LoadLog;
-import com.github.ryuseiishida.pedestrian_simulation.analysis.log.WriterLog;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.Goal;
+import com.github.ryuseiishida.pedestrian_simulation.util.log.LoadLog;
+import com.github.ryuseiishida.pedestrian_simulation.util.log.WriterLog;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.*;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
@@ -231,6 +231,7 @@ public class Environment {
     private void ifDeleteAllObstacle() {
         if (deleteAllObstacleFlag) {
             obstacles.clear();
+            obstaclePosition.clear();
             deleteAllObstacleFlag = false;
         }
     }
@@ -238,6 +239,13 @@ public class Environment {
     private void addObstaclePosition(Obstacle targetObstacle) {
         for (Cell targetObstacleCell : targetObstacle.getObstacleCells()) {
             obstaclePosition.add(targetObstacleCell.getCenterPoint());
+        }
+    }
+
+    public void resetObstaclePosition() {
+        obstaclePosition.clear();
+        for (Obstacle obstacle : obstacles) {
+            addObstaclePosition(obstacle);
         }
     }
 

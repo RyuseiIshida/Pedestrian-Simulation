@@ -1,4 +1,4 @@
-package com.github.ryuseiishida.pedestrian_simulation.environment.agent;
+package com.github.ryuseiishida.pedestrian_simulation.environment.object.agent;
 
 import java.util.ArrayList;
 

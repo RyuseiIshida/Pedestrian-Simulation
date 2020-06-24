@@ -1,4 +1,4 @@
-package com.github.ryuseiishida.pedestrian_simulation.analysis.log;
+package com.github.ryuseiishida.pedestrian_simulation.util.log;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;

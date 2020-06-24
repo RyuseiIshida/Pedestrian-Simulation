@@ -1,7 +1,7 @@
-package com.github.ryuseiishida.pedestrian_simulation.environment.object.goal;
+package com.github.ryuseiishida.pedestrian_simulation.environment.object;
 
 import com.badlogic.gdx.math.Vector2;
-import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Agent;
 
 public class Goal {
     private String ID;
