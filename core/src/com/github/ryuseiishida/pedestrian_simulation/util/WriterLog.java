@@ -24,7 +24,6 @@ import java.util.List;
 public class WriterLog {
     private String path = Parameter.WRITE_LOG_PATH;
     private static Environment environment;
-    private ArrayList<Agent> agents;
     private boolean isInitialized = false;
 
     public WriterLog(Environment env) {
@@ -48,7 +47,6 @@ public class WriterLog {
     public void initialize() {
         path = Parameter.WRITE_LOG_PATH;
         new File(path).mkdir();
-        agents = environment.getAgentList();
 //        writeSourceCodeToParameter();
         writeObstacleLog(path + "/obstacle");
         writeGoalLog(path + "/goal");
@@ -79,7 +77,7 @@ public class WriterLog {
     }
 
     public void writeAgentLog() {
-        agents.stream().parallel().forEach(agent -> {
+        environment.getAgentList().stream().parallel().forEach(agent -> {
             String path = this.path + "/agent" + agent.getID() + ".txt";
             if (!(new File(path).exists())) {
                 initWriteAgentLog(path);
@@ -121,7 +119,7 @@ public class WriterLog {
     }
 
     public void writeMacroLog() {
-        if (agents.size() == 0) {
+        if (environment.getAgentList().size() == 0) {
             return;
         }
         try {
@@ -177,18 +175,6 @@ public class WriterLog {
         }
     }
 
-    public void writeGroup(ArrayList<String> logText) {
-        String path = "core/assets/group.txt";
-        try (BufferedWriter br = Files.newBufferedWriter(Paths.get(path))) {
-            for (String str : logText) {
-                br.append(str);
-                br.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void writeLDACorpus(LDA lda, ArrayList<ArrayList<String>> dataList, String fileName) {
         String path = this.path + fileName + ".txt";
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path))) {
@@ -215,7 +201,7 @@ public class WriterLog {
                 bw.append(String.valueOf(agent.getPosition().x)).append(",");
                 bw.append(String.valueOf(agent.getPosition().y)).append(",");
                 bw.append(String.valueOf(agent.getSpeed()));
-                if(agent.getGoal() != null) bw.append(",").append(agent.getGoal().getID());
+                if (agent.getGoal() != null) bw.append(",").append(agent.getGoal().getID());
                 bw.newLine();
             }
         } catch (IOException e) {

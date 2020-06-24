@@ -41,21 +41,12 @@ public class LoadLog {
         agentFileList = new ArrayList<>();
         FilenameFilter filter = new FilenameFilter() {
             public boolean accept(File file, String str) {
-                //指定文字列でフィルタする
-                if (str.indexOf("agent") != -1) {
-                    return true;
-                } else {
-                    return false;
-                }
+                if (str.indexOf("agent") != -1) return true;
+                 else return false;
             }
         };
-
         File[] files = new File(dirPath).listFiles(filter);
         this.agentFileList.addAll(Arrays.asList(files));
-    }
-
-    public ArrayList<File> getAgentFileList() {
-        return agentFileList;
     }
 
     public int endStep() {
@@ -71,35 +62,6 @@ public class LoadLog {
             e.printStackTrace();
         }
         return endStep;
-    }
-
-    public int getAgentNum() {
-        return agentFileList.size();
-    }
-
-    public ArrayList<Vector2> getPosList(int ID) {
-        ArrayList<Vector2> posList = new ArrayList<>();
-        String agentID = "agent" + ID + ".txt";
-        String agentPath = "";
-        for (File file : agentFileList) {
-            if (file.getPath().contains(agentID)) {
-                agentPath = file.getPath();
-                break;
-            }
-        }
-        try {
-            Reader reader = Files.newBufferedReader(Paths.get(agentPath));
-            CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
-            for (CSVRecord csvRecord : csvParser) {
-                if (!csvRecord.get(2).equals("position")) {
-                    String[] pos = csvRecord.get(2).replace("(", "").replace(")", "").split(":");
-                    posList.add(new Vector2(Float.parseFloat(pos[0]), Float.parseFloat(pos[1])));
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return posList;
     }
 
     public ArrayList<String> getStepLines(int step) {
@@ -125,11 +87,10 @@ public class LoadLog {
             e.printStackTrace();
         }
         return null;
-        //throw new IllegalArgumentException("line you specified could not be found");
     }
 
     public void setAgents(String filePath) {
-        for (File AgentLogFile : getAgentFileList()) {
+        for (File AgentLogFile : agentFileList) {
             environment.addAgent(new Agent(AgentLogFile, environment));
         }
     }
@@ -140,13 +101,13 @@ public class LoadLog {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] element = line.split(",");
-                if(element.length == 4) {
+                if (element.length == 4) {
                     environment.addAgent(new Agent(element[0],
                             environment,
                             new Vector2(Float.parseFloat(element[1]), Float.parseFloat(element[2])),
                             Float.parseFloat(element[3])
-                            ));
-                } else if(element.length == 5) {
+                    ));
+                } else if (element.length == 5) {
                     environment.addAgent(new Agent(
                             element[0],
                             environment,
@@ -167,12 +128,12 @@ public class LoadLog {
             br.readLine();
             String line;
             while ((line = br.readLine()) != null) {
-                String[] points = line.split(",");
+                String[] element = line.split(",");
                 environment.addObstacle(new Line(
-                        Float.parseFloat(points[0]),
-                        Float.parseFloat(points[1]),
-                        Float.parseFloat(points[2]),
-                        Float.parseFloat(points[3]),
+                        Float.parseFloat(element[0]),
+                        Float.parseFloat(element[1]),
+                        Float.parseFloat(element[2]),
+                        Float.parseFloat(element[3]),
                         Parameter.ENV_CELLS_MAP));
             }
         } catch (IOException e) {
@@ -185,13 +146,13 @@ public class LoadLog {
         try (BufferedReader br = Files.newBufferedReader(Paths.get(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] points = line.split(",");
+                String[] element = line.split(",");
                 environment.addGoal(new Goal(
-                        points[0],
-                        Float.parseFloat(points[1]),
-                        Float.parseFloat(points[2]),
-                        Float.parseFloat(points[3]),
-                        Float.parseFloat(points[4])));
+                        element[0],
+                        Float.parseFloat(element[1]),
+                        Float.parseFloat(element[2]),
+                        Float.parseFloat(element[3]),
+                        Float.parseFloat(element[4])));
             }
         } catch (IOException e) {
             e.printStackTrace();
