@@ -12,7 +12,7 @@ public class Parameter {
     /**
      * application version
      */
-    public static String VERSION = "1.07";
+    public static String VERSION = "1.08";
 
     /**
      * application about message
