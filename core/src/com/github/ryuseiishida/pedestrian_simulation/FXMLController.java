@@ -122,6 +122,10 @@ public class FXMLController implements Initializable {
         }
     }
 
+    @FXML void eventEraserButton(ActionEvent event) {
+        Inputs.setFxCreateProperty("eraser");
+    }
+
     @FXML void eventNewButton(ActionEvent event) {
         GDXController.startFlag = true;
         GDXController.setBackgroundTexture(null);

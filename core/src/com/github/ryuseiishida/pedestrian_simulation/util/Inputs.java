@@ -11,7 +11,11 @@ import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.environment.agent.Agent;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.goal.Goal;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.CreateLineFromMouse;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Line;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Obstacle;
 import com.github.ryuseiishida.pedestrian_simulation.render.*;
+
+import java.util.ArrayList;
 
 public class Inputs {
     private Camera camera;
@@ -45,6 +49,48 @@ public class Inputs {
         touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(touchPos);
         shapeRenderer.setProjectionMatrix(camera.combined);
+
+        if (fxCreateProperty.contains("eraser")) {
+            new RenderEraser(touchPos.x, touchPos.y);
+            if (Gdx.input.isTouched()) {
+                Vector2 eraserStartPoint = new Vector2(touchPos.x - RenderEraser.width / 2, touchPos.y - RenderEraser.height / 2);
+                Vector2 eraserEndPoint = new Vector2(eraserStartPoint.x + RenderEraser.width, eraserStartPoint.y + RenderEraser.height);
+                // delete objects
+                // obstacle
+                Obstacle deleteObstacle;
+                for (Obstacle obstacle : environment.getObstacles()) {
+                    if (UtilVector.judgeIntersected(eraserStartPoint, eraserEndPoint, obstacle.getStartPoint(), obstacle.getEndPoint())) {
+                        environment.getObstacles().remove(obstacle);
+                        break;
+                    }
+                }
+                // goal
+                // TODO 更新
+                Goal deleteGoal;
+                for (Goal goal : environment.getGoals()) {
+                    if (eraserStartPoint.x <= goal.getPositionX() && eraserStartPoint.y <= goal.getPositionY()
+                            && eraserEndPoint.x >= goal.getPositionX() && eraserEndPoint.y <= goal.getPositionY()) {
+                        environment.getGoals().remove(goal);
+                        break;
+                    }
+                    if (eraserStartPoint.x <= goal.getRightTop().x && eraserStartPoint.y <= goal.getRightTop().y
+                            && eraserEndPoint.x >= goal.getRightTop().x && eraserEndPoint.y <= goal.getRightTop().y) {
+                        environment.getGoals().remove(goal);
+                        break;
+                    }
+                }
+                // agent
+                Agent deleteAgent;
+                for (Agent agent : environment.getAgentList()) {
+                    if (eraserStartPoint.x <= agent.getPosition().x && eraserStartPoint.y <= agent.getPosition().y
+                            && eraserEndPoint.x >= agent.getPosition().x && eraserEndPoint.y >= agent.getPosition().y) {
+                        environment.getAgentList().remove(agent);
+                        break;
+                    }
+                }
+            }
+            shapeRenderer.end();
+        }
 
         if (fxCreateProperty.contains("agentN")) {
             String[] element = fxCreateProperty.split("-");

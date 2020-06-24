@@ -61,9 +61,14 @@
                   <Font size="12.0" />
                </font>
             </Button>
-            <AnchorPane prefHeight="50.0" prefWidth="220.0">
+            <Button mnemonicParsing="false" onAction="#eventEraserButton" prefHeight="30.0" prefWidth="50.0" text="eraser" textAlignment="CENTER">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </Button>
+            <AnchorPane prefHeight="50.0" prefWidth="155.0">
                <children>
-                  <Button layoutX="156.0" layoutY="10.0" mnemonicParsing="false" onAction="#eventNewButton" prefHeight="30.0" prefWidth="50.0" text="New" textAlignment="CENTER">
+                  <Button layoutX="99.0" layoutY="10.0" mnemonicParsing="false" onAction="#eventNewButton" prefHeight="30.0" prefWidth="50.0" text="New" textAlignment="CENTER">
                      <font>
                         <Font size="12.0" />
                      </font>
