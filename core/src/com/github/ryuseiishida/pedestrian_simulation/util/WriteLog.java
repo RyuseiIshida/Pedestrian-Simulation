@@ -7,7 +7,6 @@ import com.github.ryuseiishida.pedestrian_simulation.analysis.LDA;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.Goal;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Obstacle;
-import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -21,12 +20,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WriterLog {
+public class WriteLog {
     private String path = Parameter.WRITE_LOG_PATH;
     private static Environment environment;
     private boolean isInitialized = false;
 
-    public WriterLog(Environment env) {
+    public WriteLog(Environment env) {
         environment = env;
     }
 
@@ -36,9 +35,7 @@ public class WriterLog {
 
     public void writeLog() {
         if (Parameter.IS_WRITE_LOG) {
-            if (!isInitialized) {
-                initialize();
-            }
+            if (!isInitialized) initialize();
             writeAgentLog();
             writeMacroLog();
         }

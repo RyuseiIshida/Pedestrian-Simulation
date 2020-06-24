@@ -8,7 +8,8 @@ import com.github.ryuseiishida.pedestrian_simulation.analysis.LDA;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.Cell;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.Goal;
 import com.github.ryuseiishida.pedestrian_simulation.util.LoadLog;
-import com.github.ryuseiishida.pedestrian_simulation.util.WriterLog;
+import com.github.ryuseiishida.pedestrian_simulation.util.UtilVector;
+import com.github.ryuseiishida.pedestrian_simulation.util.WriteLog;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.*;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
@@ -29,7 +30,7 @@ public class Environment {
     private LDA ldaGroupSizeSplit;
 
     private LoadLog loadLog;
-    private WriterLog writerLog;
+    private WriteLog writeLog;
 
     //control flags
     private static boolean spawnRandomAgentsFlag = false;
@@ -57,7 +58,7 @@ public class Environment {
         obstaclePosition = new HashSet<>();
         agentList = new ArrayList<>();
         loadLog = new LoadLog(this);
-        writerLog = new WriterLog(this);
+        writeLog = new WriteLog(this);
         setWallObstacles();
         spawnRandomAgentsFlag = false;
         removeAllAgentFlag = false;
@@ -66,14 +67,13 @@ public class Environment {
     }
 
     public void update() {
-        ifSpawnRandomAgents();
         ifRemoveAllAgent();
         ifRemoveAllGoal();
         ifRemoveAllObstacle();
         ifAgentInGoal();
         if (updateFlag) {
             ifInitWriterLog();
-            writerLog.writeLog();
+            writeLog.writeLog();
             step++;
             agentList.stream().parallel().forEach(Agent::action);
 //            ldaStepSplit.recordStepSplit(step);
@@ -111,35 +111,10 @@ public class Environment {
         agentList.removeIf(agent -> agent.getStateTag().equals(StateTag.escaped));
     }
 
-    public static void spawnRandomAgents() {
-        spawnRandomAgentsFlag = true;
-    }
-
-    private void ifSpawnRandomAgents() {
-        if (spawnRandomAgentsFlag) {
-            for (int i = 0; i < Parameter.INIT_AGENT_NUM; i++) {
-                agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, getRandomPosition()));
-            }
-            spawnRandomAgentsFlag = false;
+    public void spawnRandomAgents(float startX, float startY, float endX, float endY, int num) {
+        for (int i = 0; i < num; i++) {
+            agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, UtilVector.getRandomPosition(startX, startY, endX, endY)));
         }
-    }
-
-    public Vector2 getRandomPosition() {
-        float x, y;
-        while (true) {
-            x = MathUtils.random(Parameter.INIT_RANDOM_X.valueA, Parameter.INIT_RANDOM_X.valueB);
-            y = MathUtils.random(Parameter.INIT_RANDOM_Y.valueA, Parameter.INIT_RANDOM_Y.valueB);
-            if (checkInBoxes(x, y)) continue;
-            break;
-        }
-        return new Vector2(x, y);
-    }
-
-    public Boolean checkInBoxes(float x, float y) {
-        for (BoxLine box : Parameter.BOX_LIST) {
-            if (box.isPositionInBox(x, y)) return true;
-        }
-        return false;
     }
 
     public void addAgent(Agent agent) {
@@ -277,12 +252,14 @@ public class Environment {
         goals.add(goal);
     }
 
-    public void removeGoal(Goal goal) {
+    public void removeGoalAll(ArrayList<Goal> removeGoalList) {
         ArrayList<Agent> removeGoalAgentList = new ArrayList<>();
-        for (Agent agent : agentList) {
-            if (agent.getGoal().equals(goal)) removeGoalAgentList.add(agent);
+        for (Goal goal : removeGoalList) {
+            for (Agent agent : agentList) {
+                if (agent.getGoal().equals(goal)) removeGoalAgentList.add(agent);
+            }
         }
-        goals.remove(goal);
+        goals.removeAll(removeGoalList);
         agentList.removeAll(removeGoalAgentList);
     }
 
@@ -312,10 +289,10 @@ public class Environment {
     }
 
     public void ifInitWriterLog() {
-        if (writerLog == null) {
-            writerLog = new WriterLog(this);
-            ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
-            ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writerLog.getPath());
+        if (writeLog == null) {
+            writeLog = new WriteLog(this);
+            ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writeLog.getPath());
+            ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writeLog.getPath());
         }
     }
 }

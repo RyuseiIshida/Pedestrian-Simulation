@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Agent;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.Goal;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.StateTag;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.CreateLineFromMouse;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Obstacle;
 import com.github.ryuseiishida.pedestrian_simulation.render.*;
@@ -50,6 +51,7 @@ public class Inputs {
         if (fxCreateProperty.contains("eraser")) eraser(touchPos);
         else if (fxCreateProperty.contains("agentN")) createNonGoalAgent(touchPos);
         else if (fxCreateProperty.contains("agentG")) createGoalAgent(touchPos);
+        else if (fxCreateProperty.contains("RandomSpawn")) createRandomAgent(touchPos);
         else if (fxCreateProperty.contains("Goal")) createGoal(touchPos);
         else if (fxCreateProperty.equals("ObstacleLine")) createObstacle(touchPos);
 
@@ -71,23 +73,23 @@ public class Inputs {
             environment.resetObstaclePosition();
 
             // goal
+            ArrayList<Goal> removeGoalList = new ArrayList<>();
             for (Goal goal : environment.getGoals()) {
-                if (UtilVector.judgeInside(eraserStartPoint, eraserEndPoint, goal.getPosition())) {
-                    environment.removeGoal(goal);
-                    break;
-                }
-                if (UtilVector.judgeInside(eraserStartPoint, eraserEndPoint, goal.getRightTop())) {
-                    environment.removeGoal(goal);
-                    break;
+                if (touchPos.x > goal.getPositionX() && touchPos.y > goal.getPositionY()
+                        && touchPos.x < goal.getRightTop().x && touchPos.y < goal.getRightTop().y) {
+                    removeGoalList.add(goal);
                 }
             }
+            environment.removeGoalAll(removeGoalList);
+
             // agent
+            ArrayList<Agent> removeAgentList = new ArrayList<>();
             for (Agent agent : environment.getAgentList()) {
                 if (UtilVector.judgeInside(eraserStartPoint, eraserEndPoint, agent.getPosition())) {
-                    environment.getAgentList().remove(agent);
-                    break;
+                    removeAgentList.add(agent);
                 }
             }
+            environment.getAgentList().removeAll(removeAgentList);
         }
     }
 
@@ -118,6 +120,19 @@ public class Inputs {
             } else {
                 environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), goalID);
             }
+        }
+        shapeRenderer.end();
+    }
+
+    private void createRandomAgent(Vector3 touchPos) {
+        float random_range = Float.parseFloat(fxCreateProperty.split("-")[1]);
+        int num = Integer.parseInt(fxCreateProperty.split("-")[2]);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.BLUE);
+        shapeRenderer.rect(touchPos.x - random_range / 2, touchPos.y - random_range / 2, random_range, random_range);
+        if (Gdx.input.justTouched()) {
+            environment.spawnRandomAgents(touchPos.x - random_range / 2, touchPos.y - random_range / 2,
+                    touchPos.x + random_range / 2, touchPos.y + random_range / 2, num);
         }
         shapeRenderer.end();
     }

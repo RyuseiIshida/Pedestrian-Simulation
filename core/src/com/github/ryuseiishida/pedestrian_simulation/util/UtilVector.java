@@ -1,5 +1,6 @@
 package com.github.ryuseiishida.pedestrian_simulation.util;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 public final class UtilVector extends Vector2 {
@@ -41,6 +42,12 @@ public final class UtilVector extends Vector2 {
         float tc = (ax - bx) * (cy - ay) + (ay - by) * (ax - cx);
         float td = (ax - bx) * (dy - ay) + (ay - by) * (ax - dx);
         return tc * td <= 0 && ta * tb <= 0;
+    }
+
+    public static Vector2 getRandomPosition(float startX, float startY, float endX, float endY) {
+        float x = MathUtils.random(startX, endX);
+        float y = MathUtils.random(startY, endY);
+        return new Vector2(x, y);
     }
 
 }

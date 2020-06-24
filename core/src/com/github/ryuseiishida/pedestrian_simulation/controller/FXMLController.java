@@ -1,7 +1,7 @@
 package com.github.ryuseiishida.pedestrian_simulation.controller;
 
 import com.github.ryuseiishida.pedestrian_simulation.util.LoadLog;
-import com.github.ryuseiishida.pedestrian_simulation.util.WriterLog;
+import com.github.ryuseiishida.pedestrian_simulation.util.WriteLog;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.render.*;
 import com.github.ryuseiishida.pedestrian_simulation.util.Inputs;
@@ -38,9 +38,9 @@ public class FXMLController implements Initializable {
         File dir = fileChooser.showSaveDialog(null);
         if (dir != null) {
             dir.mkdir();
-            WriterLog.writeAgentInitLog(dir + "/agent");
-            WriterLog.writeGoalLog(dir + "/goal");
-            WriterLog.writeObstacleLog(dir + "/obstacle");
+            WriteLog.writeAgentInitLog(dir + "/agent");
+            WriteLog.writeGoalLog(dir + "/goal");
+            WriteLog.writeObstacleLog(dir + "/obstacle");
         }
     }
 
@@ -307,11 +307,11 @@ public class FXMLController implements Initializable {
             }
         }
     }
+    @FXML private TextField randomSpawnRangeTextField;
     @FXML private TextField randomSpawnAgentNumTextField;
     @FXML private void eventRandomSpawnButton(ActionEvent event) {
-        if (!randomSpawnAgentNumTextField.getText().isEmpty()) {
-            Parameter.INIT_AGENT_NUM = Integer.parseInt(randomSpawnAgentNumTextField.getText());
-            Environment.spawnRandomAgents();
+        if (!randomSpawnRangeTextField.getText().isEmpty() && !randomSpawnAgentNumTextField.getText().isEmpty()) {
+            Inputs.setFxCreateProperty("RandomSpawn" + "-" + randomSpawnRangeTextField.getText() + "-" + randomSpawnAgentNumTextField.getText());
         }
     }
     @FXML private void eventDeleteAgentButton(ActionEvent event) {
