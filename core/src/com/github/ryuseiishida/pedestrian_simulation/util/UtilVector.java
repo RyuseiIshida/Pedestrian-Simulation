@@ -25,6 +25,11 @@ public final class UtilVector extends Vector2 {
         return new Vector2(x, y);
     }
 
+    public static boolean judgeInside(Vector2 startPoint, Vector2 endPoint, Vector2 targetPoint) {
+        return startPoint.x <= targetPoint.x && startPoint.y <= targetPoint.y
+                && endPoint.x >= targetPoint.x && endPoint.y >= targetPoint.y;
+    }
+
     public static boolean judgeIntersected(Vector2 startPoint, Vector2 endPoint, Vector2 targetStartPoint, Vector2 targetEndPoint) {
         return judgeIntersected(startPoint.x, startPoint.y, endPoint.x, endPoint.y,
                 targetStartPoint.x, targetStartPoint.y, targetEndPoint.x, targetEndPoint.y);

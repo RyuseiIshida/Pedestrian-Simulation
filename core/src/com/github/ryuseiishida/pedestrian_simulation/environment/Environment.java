@@ -33,9 +33,9 @@ public class Environment {
 
     //control flags
     private static boolean spawnRandomAgentsFlag = false;
-    private static boolean deleteAllAgentFlag = false;
-    private static boolean deleteAllGoalFlag = false;
-    private static boolean deleteAllObstacleFlag = false;
+    private static boolean removeAllAgentFlag = false;
+    private static boolean removeAllGoalFlag = false;
+    private static boolean removeAllObstacleFlag = false;
 
     public Environment() {
         initEnvironment();
@@ -60,16 +60,16 @@ public class Environment {
         writerLog = new WriterLog(this);
         setWallObstacles();
         spawnRandomAgentsFlag = false;
-        deleteAllAgentFlag = false;
-        deleteAllGoalFlag = false;
-        deleteAllObstacleFlag = false;
+        removeAllAgentFlag = false;
+        removeAllGoalFlag = false;
+        removeAllObstacleFlag = false;
     }
 
     public void update() {
         ifSpawnRandomAgents();
-        ifDeleteAllAgent();
-        ifDeleteAllGoal();
-        ifDeleteAllObstacle();
+        ifRemoveAllAgent();
+        ifRemoveAllGoal();
+        ifRemoveAllObstacle();
         ifAgentInGoal();
         if (updateFlag) {
             ifInitWriterLog();
@@ -170,14 +170,14 @@ public class Environment {
         }
     }
 
-    public static void deleteAllAgent() {
-        deleteAllAgentFlag = true;
+    public static void removeAllAgent() {
+        removeAllAgentFlag = true;
     }
 
-    private void ifDeleteAllAgent() {
-        if (deleteAllAgentFlag) {
+    private void ifRemoveAllAgent() {
+        if (removeAllAgentFlag) {
             agentList.clear();
-            deleteAllAgentFlag = false;
+            removeAllAgentFlag = false;
         }
     }
 
@@ -224,15 +224,15 @@ public class Environment {
         addObstaclePosition(obstacle);
     }
 
-    public static void deleteAllObstacle() {
-        deleteAllObstacleFlag = true;
+    public static void removeAllObstacle() {
+        removeAllObstacleFlag = true;
     }
 
-    private void ifDeleteAllObstacle() {
-        if (deleteAllObstacleFlag) {
+    private void ifRemoveAllObstacle() {
+        if (removeAllObstacleFlag) {
             obstacles.clear();
             obstaclePosition.clear();
-            deleteAllObstacleFlag = false;
+            removeAllObstacleFlag = false;
         }
     }
 
@@ -277,21 +277,30 @@ public class Environment {
         goals.add(goal);
     }
 
-    public static void deleteAllGoal() {
-        deleteAllGoalFlag = true;
+    public void removeGoal(Goal goal) {
+        ArrayList<Agent> removeGoalAgentList = new ArrayList<>();
+        for (Agent agent : agentList) {
+            if (agent.getGoal().equals(goal)) removeGoalAgentList.add(agent);
+        }
+        goals.remove(goal);
+        agentList.removeAll(removeGoalAgentList);
     }
 
-    private void ifDeleteAllGoal() {
-        if (deleteAllGoalFlag) {
+    public static void removeAllGoal() {
+        removeAllGoalFlag = true;
+    }
+
+    private void ifRemoveAllGoal() {
+        if (removeAllGoalFlag) {
             goals.clear();
             agentList.removeIf(agent -> agent.getStateTag().equals(StateTag.moveGoal));
-            deleteAllGoalFlag = false;
+            removeAllGoalFlag = false;
         }
     }
 
     public Goal getGoal(String id) {
         for (Goal goal : goals) {
-            if (goal.exists(id)){
+            if (goal.exists(id)) {
                 return goal;
             }
         }

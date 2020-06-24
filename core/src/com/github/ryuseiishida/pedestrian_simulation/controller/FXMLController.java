@@ -315,7 +315,7 @@ public class FXMLController implements Initializable {
         }
     }
     @FXML private void eventDeleteAgentButton(ActionEvent event) {
-        Environment.deleteAllAgent();
+        Environment.removeAllAgent();
     }
 
     // Obstacle Title Pane
@@ -323,7 +323,7 @@ public class FXMLController implements Initializable {
         Inputs.setFxCreateProperty("ObstacleLine");
     }
     @FXML private void eventDeleteLineButton(ActionEvent event) {
-        Environment.deleteAllObstacle();
+        Environment.removeAllObstacle();
     }
     // Goal Title Pane
     @FXML private TextField goalIdTextField;
@@ -337,7 +337,7 @@ public class FXMLController implements Initializable {
         }
     }
     @FXML private void eventDeleteGoalButton(ActionEvent event) {
-        Environment.deleteAllGoal();
+        Environment.removeAllGoal();
     }
 
 

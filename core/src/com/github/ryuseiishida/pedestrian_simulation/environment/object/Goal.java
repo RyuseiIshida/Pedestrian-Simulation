@@ -20,6 +20,10 @@ public class Goal {
         return ID;
     }
 
+    public Vector2 getPosition() {
+        return position;
+    }
+
     public float getPositionX() {
         return position.x;
     }

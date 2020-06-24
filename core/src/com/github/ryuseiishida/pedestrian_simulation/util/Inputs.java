@@ -22,7 +22,7 @@ public class Inputs {
     private Environment environment;
 
     // javafx flag
-    public static String fxCreateProperty = "";
+    private static String fxCreateProperty = "";
 
     public Inputs(Camera camera, ShapeRenderer shapeRenderer, Environment environment) {
         this.camera = camera;
@@ -42,124 +42,111 @@ public class Inputs {
         fxCreateProperty = propertyName;
     }
 
-    //TODO refactor
     private void mouseInput() {
         Vector3 touchPos = new Vector3();
         touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(touchPos);
         shapeRenderer.setProjectionMatrix(camera.combined);
+        if (fxCreateProperty.contains("eraser")) eraser(touchPos);
+        else if (fxCreateProperty.contains("agentN")) createNonGoalAgent(touchPos);
+        else if (fxCreateProperty.contains("agentG")) createGoalAgent(touchPos);
+        else if (fxCreateProperty.contains("Goal")) createGoal(touchPos);
+        else if (fxCreateProperty.equals("ObstacleLine")) createObstacle(touchPos);
 
-        if (fxCreateProperty.contains("eraser")) {
-            new RenderEraser(touchPos.x, touchPos.y);
-            if (Gdx.input.isTouched()) {
-                Vector2 eraserStartPoint = new Vector2(touchPos.x - RenderEraser.width / 2, touchPos.y - RenderEraser.height / 2);
-                Vector2 eraserEndPoint = new Vector2(eraserStartPoint.x + RenderEraser.width, eraserStartPoint.y + RenderEraser.height);
-                // delete objects
-                // obstacle
-                Obstacle deleteObstacle;
-                for (Obstacle obstacle : environment.getObstacles()) {
-                    if (UtilVector.judgeIntersected(eraserStartPoint, eraserEndPoint, obstacle.getStartPoint(), obstacle.getEndPoint())) {
-                        environment.getObstacles().remove(obstacle);
-                        break;
-                    }
-                }
-                environment.resetObstaclePosition();
-                // goal
-                // TODO 更新
-                Goal deleteGoal;
-                for (Goal goal : environment.getGoals()) {
-                    if (eraserStartPoint.x <= goal.getPositionX() && eraserStartPoint.y <= goal.getPositionY()
-                            && eraserEndPoint.x >= goal.getPositionX() && eraserEndPoint.y >= goal.getPositionY()) {
-                        environment.getGoals().remove(goal);
-                        ArrayList<Agent> deleteGoalAgentList = new ArrayList<>();
-                        for (Agent agent : environment.getAgentList()) {
-                            if (agent.getGoal().equals(goal)) deleteGoalAgentList.add(agent);
-                        }
-                        environment.getAgentList().removeAll(deleteGoalAgentList);
-                        break;
-                    }
-                    if (eraserStartPoint.x <= goal.getRightTop().x && eraserStartPoint.y <= goal.getRightTop().y
-                            && eraserEndPoint.x >= goal.getRightTop().x && eraserEndPoint.y >= goal.getRightTop().y) {
-                        environment.getGoals().remove(goal);
-                        ArrayList<Agent> deleteGoalAgentList = new ArrayList<>();
-                        for (Agent agent : environment.getAgentList()) {
-                            if (agent.getGoal().equals(goal)) deleteGoalAgentList.add(agent);
-                        }
-                        environment.getAgentList().removeAll(deleteGoalAgentList);
-                        environment.getGoals().remove(goal);
-                        break;
-                    }
-                }
-                // agent
-                Agent deleteAgent;
-                for (Agent agent : environment.getAgentList()) {
-                    if (eraserStartPoint.x <= agent.getPosition().x && eraserStartPoint.y <= agent.getPosition().y
-                            && eraserEndPoint.x >= agent.getPosition().x && eraserEndPoint.y >= agent.getPosition().y) {
-                        environment.getAgentList().remove(agent);
-                        break;
-                    }
+    }
+
+    private void eraser(Vector3 touchPos) {
+        new RenderEraser(touchPos.x, touchPos.y);
+        if (Gdx.input.isTouched()) {
+            Vector2 eraserStartPoint = new Vector2(touchPos.x - RenderEraser.width / 2, touchPos.y - RenderEraser.height / 2);
+            Vector2 eraserEndPoint = new Vector2(eraserStartPoint.x + RenderEraser.width, eraserStartPoint.y + RenderEraser.height);
+
+            // obstacle
+            for (Obstacle obstacle : environment.getObstacles()) {
+                if (UtilVector.judgeIntersected(eraserStartPoint, eraserEndPoint, obstacle.getStartPoint(), obstacle.getEndPoint())) {
+                    environment.getObstacles().remove(obstacle);
+                    break;
                 }
             }
-            shapeRenderer.end();
-        }
+            environment.resetObstaclePosition();
 
-        if (fxCreateProperty.contains("agentN")) {
-            String[] element = fxCreateProperty.split("-");
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            shapeRenderer.setColor(RenderAgent.nonGoalAgentColor);
-            shapeRenderer.circle(touchPos.x, touchPos.y, Parameter.AGENT_RADIUS);
-            if (Gdx.input.justTouched()) {
-                if (element.length == 2) {
-                    environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), Float.parseFloat(element[1]));
-                } else {
-                    environment.spawnAgent(new Vector2(touchPos.x, touchPos.y));
+            // goal
+            for (Goal goal : environment.getGoals()) {
+                if (UtilVector.judgeInside(eraserStartPoint, eraserEndPoint, goal.getPosition())) {
+                    environment.removeGoal(goal);
+                    break;
+                }
+                if (UtilVector.judgeInside(eraserStartPoint, eraserEndPoint, goal.getRightTop())) {
+                    environment.removeGoal(goal);
+                    break;
                 }
             }
-            shapeRenderer.end();
-        }
-
-        if (fxCreateProperty.contains("agentG")) {
-            String[] element = fxCreateProperty.split("-");
-            String goalID = fxCreateProperty.split("-")[1];
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            shapeRenderer.setColor(RenderAgent.goalAgentColor);
-            shapeRenderer.circle(touchPos.x, touchPos.y, Parameter.AGENT_RADIUS);
-            if (Gdx.input.justTouched()) {
-                if (element.length == 3) {
-                    environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), goalID, Float.parseFloat(element[2]));
-                } else {
-                    environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), goalID);
+            // agent
+            for (Agent agent : environment.getAgentList()) {
+                if (UtilVector.judgeInside(eraserStartPoint, eraserEndPoint, agent.getPosition())) {
+                    environment.getAgentList().remove(agent);
+                    break;
                 }
             }
-            shapeRenderer.end();
         }
+    }
 
-        if (fxCreateProperty.contains("Goal")) {
-            String[] goalProperty = fxCreateProperty.split("-");
-            touchPos.x -= Float.parseFloat(goalProperty[2]) / 2;
-            touchPos.y -= Float.parseFloat(goalProperty[3]) / 2;
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            shapeRenderer.setColor(Color.RED);
-            shapeRenderer.rect(touchPos.x, touchPos.y, Float.parseFloat(goalProperty[2]), Float.parseFloat(goalProperty[3]));
-            if (Gdx.input.justTouched()) {
-                environment.addGoal(new Goal(goalProperty[1], touchPos.x, touchPos.y, Float.parseFloat(goalProperty[2]), Float.parseFloat(goalProperty[3])));
+    private void createNonGoalAgent(Vector3 touchPos) {
+        String[] element = fxCreateProperty.split("-");
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(RenderAgent.nonGoalAgentColor);
+        shapeRenderer.circle(touchPos.x, touchPos.y, Parameter.AGENT_RADIUS);
+        if (Gdx.input.justTouched()) {
+            if (element.length == 2) {
+                environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), Float.parseFloat(element[1]));
+            } else {
+                environment.spawnAgent(new Vector2(touchPos.x, touchPos.y));
             }
-            shapeRenderer.end();
         }
+        shapeRenderer.end();
+    }
 
-        if (fxCreateProperty.equals("ObstacleLine")) {
-            if (Gdx.input.justTouched()) {
-                CreateLineFromMouse.setPoint(touchPos);
+    private void createGoalAgent(Vector3 touchPos) {
+        String[] element = fxCreateProperty.split("-");
+        String goalID = fxCreateProperty.split("-")[1];
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(RenderAgent.goalAgentColor);
+        shapeRenderer.circle(touchPos.x, touchPos.y, Parameter.AGENT_RADIUS);
+        if (Gdx.input.justTouched()) {
+            if (element.length == 3) {
+                environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), goalID, Float.parseFloat(element[2]));
+            } else {
+                environment.spawnAgent(new Vector2(touchPos.x, touchPos.y), goalID);
             }
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-            shapeRenderer.setColor(Color.BLACK);
-            if (CreateLineFromMouse.getStartPoint() != null) {
-                shapeRenderer.line(CreateLineFromMouse.getStartPoint().x, CreateLineFromMouse.getStartPoint().y, touchPos.x, touchPos.y);
-            }
-            if (CreateLineFromMouse.isCompleteLine()) {
-                environment.addObstacle(CreateLineFromMouse.getCompleteLine(Parameter.ENV_CELLS_MAP));
-            }
-            shapeRenderer.end();
         }
+        shapeRenderer.end();
+    }
+
+    private void createObstacle(Vector3 touchPos) {
+        if (Gdx.input.justTouched()) {
+            CreateLineFromMouse.setPoint(touchPos);
+        }
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.BLACK);
+        if (CreateLineFromMouse.getStartPoint() != null) {
+            shapeRenderer.line(CreateLineFromMouse.getStartPoint().x, CreateLineFromMouse.getStartPoint().y, touchPos.x, touchPos.y);
+        }
+        if (CreateLineFromMouse.isCompleteLine()) {
+            environment.addObstacle(CreateLineFromMouse.getCompleteLine(Parameter.ENV_CELLS_MAP));
+        }
+        shapeRenderer.end();
+    }
+
+    private void createGoal(Vector3 touchPos) {
+        String[] goalProperty = fxCreateProperty.split("-");
+        touchPos.x -= Float.parseFloat(goalProperty[2]) / 2;
+        touchPos.y -= Float.parseFloat(goalProperty[3]) / 2;
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.rect(touchPos.x, touchPos.y, Float.parseFloat(goalProperty[2]), Float.parseFloat(goalProperty[3]));
+        if (Gdx.input.justTouched()) {
+            environment.addGoal(new Goal(goalProperty[1], touchPos.x, touchPos.y, Float.parseFloat(goalProperty[2]), Float.parseFloat(goalProperty[3])));
+        }
+        shapeRenderer.end();
     }
 }
