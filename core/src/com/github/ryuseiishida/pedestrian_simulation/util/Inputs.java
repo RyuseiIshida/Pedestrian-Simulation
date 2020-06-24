@@ -69,7 +69,7 @@ public class Inputs {
                 Goal deleteGoal;
                 for (Goal goal : environment.getGoals()) {
                     if (eraserStartPoint.x <= goal.getPositionX() && eraserStartPoint.y <= goal.getPositionY()
-                            && eraserEndPoint.x >= goal.getPositionX() && eraserEndPoint.y <= goal.getPositionY()) {
+                            && eraserEndPoint.x >= goal.getPositionX() && eraserEndPoint.y >= goal.getPositionY()) {
                         environment.getGoals().remove(goal);
                         ArrayList<Agent> deleteGoalAgentList = new ArrayList<>();
                         for (Agent agent : environment.getAgentList()) {
@@ -79,7 +79,7 @@ public class Inputs {
                         break;
                     }
                     if (eraserStartPoint.x <= goal.getRightTop().x && eraserStartPoint.y <= goal.getRightTop().y
-                            && eraserEndPoint.x >= goal.getRightTop().x && eraserEndPoint.y <= goal.getRightTop().y) {
+                            && eraserEndPoint.x >= goal.getRightTop().x && eraserEndPoint.y >= goal.getRightTop().y) {
                         environment.getGoals().remove(goal);
                         ArrayList<Agent> deleteGoalAgentList = new ArrayList<>();
                         for (Agent agent : environment.getAgentList()) {
