@@ -12,7 +12,7 @@ public class Parameter {
     /**
      * application version
      */
-    public static String VERSION = "1.08";
+    public static String VERSION = "1.09";
 
     /**
      * application about message
@@ -31,6 +31,7 @@ public class Parameter {
             "1.06\tシミュレーションログの書き出し機能を追加\n" +
             "1.07\t軽微なバグの修正およびシミュレーションログの書き出し・読み込み機能にゴールオブジェクトと障害物オブジェクトが対応\n" +
             "1.08\t表示設定機能を更新\n" +
+            "1.09\tシミュレーション設定環境の保存・読み込み機能を追加(Open/Save Work Space)\n" +
             "\n" +
             "次回アップデート\n" +
             "1.0x\t軽微な修正";
@@ -83,13 +84,6 @@ public class Parameter {
     //非歩行領域
     public static ArrayList<BoxLine> BOX_LIST = new ArrayList<>(Arrays.asList());
 
-    //potential
-    public static float AGENT_KIM_POTENTIAL_WEIGHT = 200;
-    public static float AGENT_KIM_POTENTIAL_RANGE = 1000;
-    public static float OBSTACLE_KIM_POTENTIAL_WEIGHT = 700;
-    public static float OBSTACLE_KIM_POTENTIAL_RANGE = 20;
-    public static float POTENTIAL_DELTA = CELL_INTERVAL;
-
     //agent
     public static int INIT_AGENT_NUM = 100;
     public static int GOAL_AGENT_NUM = 0;
@@ -100,4 +94,13 @@ public class Parameter {
     public static float AGENT_RADIUS = 25; //50cm
     public static float VIEW_RADIUS_LENGTH = 5 * METER;
     public static float VIEW_DEGREE = 50f;
+
+    //potential
+    public static float GOAL_POTENTIAL_WEIGHT = 500;
+    public static float GOAL_POTENTIAL_RANGE = 10000;
+    public static float AGENT_POTENTIAL_WEIGHT = 1000;
+    public static float AGENT_POTENTIAL_RANGE = AGENT_RADIUS;
+    public static float OBSTACLE_POTENTIAL_WEIGHT = 1200;
+    public static float OBSTACLE_POTENTIAL_RANGE = AGENT_RADIUS;
+    public static float POTENTIAL_DELTA = CELL_INTERVAL;
 }

@@ -134,8 +134,35 @@ public class LoadLog {
         }
     }
 
+    public static void setInitAgent(String filePath) {
+        if (environment == null || !new File(filePath).exists()) return;
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] element = line.split(",");
+                if(element.length == 4) {
+                    environment.addAgent(new Agent(element[0],
+                            environment,
+                            new Vector2(Float.parseFloat(element[1]), Float.parseFloat(element[2])),
+                            Float.parseFloat(element[3])
+                            ));
+                } else if(element.length == 5) {
+                    environment.addAgent(new Agent(
+                            element[0],
+                            environment,
+                            new Vector2(Float.parseFloat(element[1]), Float.parseFloat(element[2])),
+                            Float.parseFloat(element[3]),
+                            environment.getGoal(element[4])
+                    ));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void setObstacle(String filePath) {
-        if (environment == null) return;
+        if (environment == null || !new File(filePath).exists()) return;
         try (BufferedReader br = Files.newBufferedReader(Paths.get(filePath))) {
             br.readLine();
             String line;
@@ -154,7 +181,7 @@ public class LoadLog {
     }
 
     public static void setGoal(String filePath) {
-        if (environment == null) return;
+        if (environment == null || !new File(filePath).exists()) return;
         try (BufferedReader br = Files.newBufferedReader(Paths.get(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {

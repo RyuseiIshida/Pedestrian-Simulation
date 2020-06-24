@@ -207,8 +207,24 @@ public class WriterLog {
         }
     }
 
+    public static void writeAgentInitLog(String saveFilePath) {
+        if (environment == null || environment.getAgentList().size() == 0) return;
+        try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(saveFilePath + ".ag"))) {
+            for (Agent agent : environment.getAgentList()) {
+                bw.append(agent.getID()).append(",");
+                bw.append(String.valueOf(agent.getPosition().x)).append(",");
+                bw.append(String.valueOf(agent.getPosition().y)).append(",");
+                bw.append(String.valueOf(agent.getSpeed()));
+                if(agent.getGoal() != null) bw.append(",").append(agent.getGoal().getID());
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void writeObstacleLog(String saveFilePath) {
-        if (environment == null) return;
+        if (environment == null || environment.getObstacles().size() == 0) return;
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(saveFilePath + ".obs"))) {
             bw.append(String.valueOf(Parameter.SCALE.x)).append(",");
             bw.append(String.valueOf(Parameter.SCALE.y));
@@ -226,14 +242,14 @@ public class WriterLog {
     }
 
     public static void writeGoalLog(String saveFilePath) {
-        if (environment == null) return;
+        if (environment == null || environment.getGoals().size() == 0) return;
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(saveFilePath + ".gl"))) {
             for (Goal goal : environment.getGoals()) {
                 bw.append(goal.getID()).append(",");
                 bw.append(String.valueOf(goal.getPositionX())).append(",");
                 bw.append(String.valueOf(goal.getPositionY())).append(",");
                 bw.append(String.valueOf(goal.getWidth())).append(",");
-                bw.append(String.valueOf(goal.getHeight())).append(",");
+                bw.append(String.valueOf(goal.getHeight()));
                 bw.newLine();
             }
         } catch (IOException e) {

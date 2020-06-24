@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.goal.Goal;
-import com.github.ryuseiishida.pedestrian_simulation.environment.agent.potential.KimPotentialModel;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import com.github.ryuseiishida.pedestrian_simulation.util.UtilVector;
 import org.apache.commons.math3.analysis.function.Exp;
@@ -57,7 +56,7 @@ public class Agent {
     /**
      * the position of {@link Goal}
      */
-    private Vector2 goal;
+    private Goal goal;
 
     /**
      * the move position of this agent
@@ -73,11 +72,6 @@ public class Agent {
      * the pedestrian_simulation {@link Environment} of this agent
      */
     private Environment env;
-
-    /**
-     * the Kim potential model is calculate the potential
-     */
-    private KimPotentialModel potentialModel;
 
     /**
      * 現在の視野内の他Agentリスト
@@ -117,7 +111,6 @@ public class Agent {
     public Agent(String id, Environment env, Vector2 position) {
         this.ID = id;
         this.env = env;
-        this.potentialModel = new KimPotentialModel(env, this);
         this.stateTag = StateTag.none;
         this.perceptionBeforeStateTag = StateTag.none;
         this.position = position;
@@ -130,7 +123,6 @@ public class Agent {
         this.ID = id;
         this.env = env;
         this.speed = speed;
-        this.potentialModel = new KimPotentialModel(env, this);
         this.stateTag = StateTag.none;
         this.perceptionBeforeStateTag = StateTag.none;
         this.position = position;
@@ -143,26 +135,24 @@ public class Agent {
     public Agent(String id, Environment env, Vector2 position, Goal goal) {
         this.ID = id;
         this.env = env;
-        this.potentialModel = new KimPotentialModel(env, this);
         this.stateTag = StateTag.moveGoal;
         this.perceptionBeforeStateTag = StateTag.moveGoal;
         this.position = position;
         this.perceptionBeforePos = position;
-        this.goal = goal.getCenter();
+        this.goal = goal;
         this.movePos = goal.getCenter();
         this.velocity = new Vector2(0, 0);
     }
 
-    public Agent(String id, Environment env, Vector2 position, Goal goal, float speed) {
+    public Agent(String id, Environment env, Vector2 position, float speed, Goal goal) {
         this.ID = id;
         this.env = env;
         this.speed = speed;
-        this.potentialModel = new KimPotentialModel(env, this);
         this.stateTag = StateTag.moveGoal;
         this.perceptionBeforeStateTag = StateTag.moveGoal;
         this.position = position;
         this.perceptionBeforePos = position;
-        this.goal = goal.getCenter();
+        this.goal = goal;
         this.movePos = goal.getCenter();
         this.velocity = new Vector2(0, 0);
     }
@@ -316,8 +306,8 @@ public class Agent {
                     || isInView(goal.getRightBottom())
                     || isInView(goal.getRightTop())
             ) {
-                this.goal = goal.getCenter();
-                this.movePos = this.goal;
+                this.goal = goal;
+                this.movePos = this.goal.getCenter();
                 break;
             }
         }
@@ -328,15 +318,15 @@ public class Agent {
      */
     private void moveGoal() {
         stateTag = StateTag.moveGoal;
-        movePos = goal;
-        move(goal);
+        movePos = goal.getCenter();
+        move(goal.getCenter());
     }
 
     /**
      * ランダムな方向に移動する
      */
     private void randomWalk() {
-        if (!stateTag.equals(StateTag.randomWalk) || potentialModel.repulsivePotential(position, env.getObstaclesPosition()) > 0) {
+        if (!stateTag.equals(StateTag.randomWalk) || calcObstaclePotential(position.x, position.y) > 0) {
             stateTag = StateTag.randomWalk;
             float posX = MathUtils.random(Parameter.SCALE.x);
             float posY = MathUtils.random(Parameter.SCALE.y);
@@ -354,7 +344,7 @@ public class Agent {
     private void move(Vector2 movePos) {
         Vector2 direction = UtilVector.direction(position, movePos);
         //setPotentialVector(direction);
-        setPotentialVector(direction);
+        calcPotentialVector(direction);
         direction.nor();
         velocity = direction.scl(speed);
         Vector2 tmpPos = new Vector2(position);
@@ -367,42 +357,36 @@ public class Agent {
         }
     }
 
-    private void setPotentialVector(Vector2 direction) {
+    private void calcPotentialVector(Vector2 direction) {
         Vector2 pVector = new Vector2();
         float delta = Parameter.POTENTIAL_DELTA;
-        pVector.x = -1 * (getPotential(position.x + delta, position.y) - getPotential(position.x, position.y)) / delta;
-        pVector.y = -1 * (getPotential(position.x, position.y + delta) - getPotential(position.x, position.y)) / delta;
+        pVector.x = -1 * (calcPotential(position.x + delta, position.y) - calcPotential(position.x, position.y)) / delta;
+        pVector.y = -1 * (calcPotential(position.x, position.y + delta) - calcPotential(position.x, position.y)) / delta;
         pVector.nor();
         direction.set(pVector);
     }
 
-    private float getPotential(float x, float y) {
-        float cg = 200;
-        float Ug = getGoalKIMPotential(x, y);
-        //float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y);
-        //float Uo = getAgentKIMPotential(x, y) + getFastObstacleKIMPotential(x, y);
-
-        float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y);
+    private float calcPotential(float x, float y) {
+        float Ug = calcGoalPotential(x, y);
+        float Uo = calcAgentPotential(x, y) + calcObstaclePotential(x, y);
         //float U = (((1 / cg) * Uo) + 1) * Ug;
         float U = Ug + Uo;
         return U;
     }
 
-    private float getGoalKIMPotential(float x, float y) {
-        float cg = 500;
-        float lg = Parameter.SCALE.x;
+    private float calcGoalPotential(float x, float y) {
+        float cg = Parameter.GOAL_POTENTIAL_WEIGHT;
+        float lg = Parameter.GOAL_POTENTIAL_RANGE;
         Vector2 pos = new Vector2(x, y);
         double len = pos.dst2(movePos);
         double potentialWeight = cg * (1 - new Exp().value(-1 * (len / (lg * lg))));
         return (float) potentialWeight;
     }
 
-    private float getAgentKIMPotential(float x, float y) {
+    private float calcAgentPotential(float x, float y) {
         float potentialWight = 0;
-        float co = stateTag.equals(StateTag.moveGoal) ? 1000 : 1000000;
-        float lo = Parameter.AGENT_RADIUS;
-        //float lo = Parameter.AGENT_RADIUS;
-        //System.out.println("lo = " + lo);
+        float co = Parameter.AGENT_POTENTIAL_WEIGHT;
+        float lo = Parameter.AGENT_POTENTIAL_RANGE;
         Vector2 pos = new Vector2(x, y);
         for (Agent agent : env.getAgentList()) {
             if (!agent.equals(this)) {
@@ -412,11 +396,11 @@ public class Agent {
         return potentialWight;
     }
 
-    private float getObstacleKIMPotential(float x, float y) {
+    private float calcObstaclePotential(float x, float y) {
         Vector2 pos = new Vector2(x, y);
         float potentialWeight = 0;
-        float co = 1200;
-        float lo = radius;
+        float co = Parameter.OBSTACLE_POTENTIAL_WEIGHT;
+        float lo = Parameter.OBSTACLE_POTENTIAL_RANGE;
         for (Vector2 obstaclePosition : env.getObstaclesPosition()) {
             double value = -1 * (pos.dst2(obstaclePosition) / (lo * lo));
             potentialWeight += co * new Exp().value(value);
@@ -461,7 +445,7 @@ public class Agent {
         float cg = goal == null ? 100 : 1000;
         //float Ug = getGoalKIMPotential(x, y) + getFollowKimPotential(x, y);
         float Ug = calcFollowKimPotential(x, y);
-        float Uo = getAgentKIMPotential(x, y) + getObstacleKIMPotential(x, y);
+        float Uo = calcAgentPotential(x, y) + calcObstaclePotential(x, y);
         //float U = (((1 / cg) * Uo) + 1) * Ug;
         float U = Ug + Uo;
         return U;
@@ -517,11 +501,15 @@ public class Agent {
         return position;
     }
 
+    public float getSpeed() {
+        return speed;
+    }
+
     public Vector2 getVelocity() {
         return velocity;
     }
 
-    public Vector2 getGoal() {
+    public Goal getGoal() {
         return goal;
     }
 

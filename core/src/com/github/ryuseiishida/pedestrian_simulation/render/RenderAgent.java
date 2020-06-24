@@ -132,7 +132,7 @@ public class RenderAgent {
         shapeRenderer.setColor(Color.RED);
         for (Agent agent : GDXController.getEnvironment().getAgentList()) {
             if (agent.getStateTag().equals(StateTag.moveGoal)) {
-                shapeRenderer.line(agent.getPosition(), agent.getGoal());
+                shapeRenderer.line(agent.getPosition(), agent.getGoal().getCenter());
             }
         }
         shapeRenderer.end();
@@ -143,7 +143,7 @@ public class RenderAgent {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.RED);
         if (agent.getStateTag().equals(StateTag.moveGoal)) {
-            shapeRenderer.line(agent.getPosition(), agent.getGoal());
+            shapeRenderer.line(agent.getPosition(), agent.getGoal().getCenter());
         }
         shapeRenderer.end();
     }

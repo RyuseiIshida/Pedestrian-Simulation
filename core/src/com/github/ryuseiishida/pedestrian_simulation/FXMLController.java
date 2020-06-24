@@ -22,6 +22,28 @@ import java.util.ResourceBundle;
 
 public class FXMLController implements Initializable {
 
+    @FXML private void menuEventOpenWorkSpace(ActionEvent event) {
+        final DirectoryChooser directoryChooser = new DirectoryChooser();
+        File selectedDirectory = directoryChooser.showDialog(null);
+        if (selectedDirectory != null) {
+            LoadLog.setObstacle(selectedDirectory + "/obstacle.obs");
+            LoadLog.setGoal(selectedDirectory + "/goal.gl");
+            LoadLog.setInitAgent(selectedDirectory + "/agent.ag");
+        }
+    }
+
+    @FXML private void menuEventSaveWorkSpace(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Work Space");
+        File dir = fileChooser.showSaveDialog(null);
+        if (dir != null) {
+            dir.mkdir();
+            WriterLog.writeAgentInitLog(dir + "/agent");
+            WriterLog.writeGoalLog(dir + "/goal");
+            WriterLog.writeObstacleLog(dir + "/obstacle");
+        }
+    }
+
     @FXML private void menuEventOpenSimulationLog(ActionEvent event) {
         final DirectoryChooser directoryChooser = new DirectoryChooser();
         File selectedDirectory = directoryChooser.showDialog(null);
@@ -30,6 +52,18 @@ public class FXMLController implements Initializable {
             simulationLogText.setText(selectedDirectory.getName());
         }
     }
+
+    @FXML private void menuEventSaveSimulationLog(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Simulation Log");
+        File file = fileChooser.showSaveDialog(null);
+        if (file != null) {
+            Environment.setStep(0);
+            Parameter.WRITE_LOG_PATH = String.valueOf(file);
+            Parameter.IS_WRITE_LOG = true;
+        }
+    }
+
     @FXML private void menuEventOpenBackground(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG","*.png"));
@@ -40,23 +74,7 @@ public class FXMLController implements Initializable {
             backgroundPathText.setText(file.getName());
         }
     }
-    @FXML private void menuEventOpenObstacle(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("OBS","*.obs"));
-        File file = fileChooser.showOpenDialog(null);
-        if (file != null) {
-            String path = String.valueOf(file);
-            LoadLog.setObstacle(path);
-        }
-    }
-    @FXML private void menuEventSaveObstacleLog(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Obstacle Log");
-        File file = fileChooser.showSaveDialog(null);
-        if (file != null) {
-            WriterLog.writeObstacleLog(String.valueOf(file));
-        }
-    }
+
     @FXML private void menuEventClose(ActionEvent event) {
         System.exit(0);
     }
@@ -95,7 +113,7 @@ public class FXMLController implements Initializable {
 
     @FXML void eventSaveSimulationButton(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Obstacle Log");
+        fileChooser.setTitle("Save Simulation Log");
         File file = fileChooser.showSaveDialog(null);
         if (file != null) {
             Environment.setStep(0);
@@ -201,31 +219,45 @@ public class FXMLController implements Initializable {
             GDXController.resetEnvironment();
         }
     }
+    @FXML private TextField goalPotentialWeightTextBox;
+    @FXML private void eventGoalPotentialWeightButton(ActionEvent event) {
+        if(!goalPotentialWeightTextBox.getText().isEmpty()) {
+            Parameter.GOAL_POTENTIAL_WEIGHT = Float.parseFloat(goalPotentialWeightTextBox.getText());
+            GDXController.resetEnvironment();
+        }
+    }
+    @FXML private TextField goalPotentialRangeTextBox;
+    @FXML private void eventGoalPotentialRangeButton(ActionEvent event) {
+        if(!goalPotentialRangeTextBox.getText().isEmpty()) {
+            Parameter.GOAL_POTENTIAL_RANGE = Float.parseFloat(goalPotentialRangeTextBox.getText());
+            GDXController.resetEnvironment();
+        }
+    }
     @FXML private TextField agentPotentialWeightTextBox;
     @FXML private void eventAgentPotentialWeightButton(ActionEvent event) {
         if(!agentPotentialWeightTextBox.getText().isEmpty()) {
-            Parameter.AGENT_KIM_POTENTIAL_WEIGHT = Float.parseFloat(agentPotentialWeightTextBox.getText());
+            Parameter.AGENT_POTENTIAL_WEIGHT = Float.parseFloat(agentPotentialWeightTextBox.getText());
             GDXController.resetEnvironment();
         }
     }
     @FXML private TextField agentPotentialRangeTextBox;
     @FXML private void eventAgentPotentialRangeButton(ActionEvent event) {
         if(!agentPotentialRangeTextBox.getText().isEmpty()) {
-            Parameter.AGENT_KIM_POTENTIAL_RANGE = Float.parseFloat(agentPotentialRangeTextBox.getText());
+            Parameter.AGENT_POTENTIAL_RANGE = Float.parseFloat(agentPotentialRangeTextBox.getText());
             GDXController.resetEnvironment();
         }
     }
     @FXML private TextField obstaclePotentialWeightTextBox;
     @FXML private void eventPotentialObstacleWeight(ActionEvent event) {
         if(!obstaclePotentialWeightTextBox.getText().isEmpty()) {
-            Parameter.OBSTACLE_KIM_POTENTIAL_WEIGHT = Float.parseFloat(obstaclePotentialWeightTextBox.getText());
+            Parameter.OBSTACLE_POTENTIAL_WEIGHT = Float.parseFloat(obstaclePotentialWeightTextBox.getText());
             GDXController.resetEnvironment();
         }
     }
     @FXML private TextField obstaclePotentialRangeTextBox;
     @FXML private void eventPotentialObstacleRangeButton(ActionEvent event) {
         if(!obstaclePotentialRangeTextBox.getText().isEmpty()) {
-            Parameter.OBSTACLE_KIM_POTENTIAL_RANGE = Float.parseFloat(obstaclePotentialRangeTextBox.getText());
+            Parameter.OBSTACLE_POTENTIAL_RANGE = Float.parseFloat(obstaclePotentialRangeTextBox.getText());
             GDXController.resetEnvironment();
         }
     }
@@ -307,7 +339,6 @@ public class FXMLController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         backgroundSizeXTextField.setPromptText(String.valueOf(Parameter.BACKGROUND_TEXTURE_SIZE.x));
         backgroundSizeYTextField.setPromptText(String.valueOf(Parameter.BACKGROUND_TEXTURE_SIZE.y));
         scaleXText.setPromptText(String.valueOf(Parameter.SCALE.x));
@@ -317,10 +348,12 @@ public class FXMLController implements Initializable {
         speedTextBox.setPromptText(String.valueOf(Parameter.AGENT_SPEED));
         viewLengthTextBox.setPromptText(String.valueOf(Parameter.VIEW_RADIUS_LENGTH));
         viewAngleTextBox.setPromptText(String.valueOf(Parameter.VIEW_DEGREE));
-        agentPotentialRangeTextBox.setPromptText(String.valueOf(Parameter.AGENT_KIM_POTENTIAL_RANGE));
-        agentPotentialWeightTextBox.setPromptText(String.valueOf(Parameter.AGENT_KIM_POTENTIAL_WEIGHT));
-        obstaclePotentialRangeTextBox.setPromptText(String.valueOf(Parameter.OBSTACLE_KIM_POTENTIAL_RANGE));
-        obstaclePotentialWeightTextBox.setPromptText(String.valueOf(Parameter.OBSTACLE_KIM_POTENTIAL_WEIGHT));
+        goalPotentialWeightTextBox.setPromptText(String.valueOf(Parameter.GOAL_POTENTIAL_WEIGHT));
+        goalPotentialRangeTextBox.setPromptText(String.valueOf(Parameter.GOAL_POTENTIAL_RANGE));
+        agentPotentialRangeTextBox.setPromptText(String.valueOf(Parameter.AGENT_POTENTIAL_RANGE));
+        agentPotentialWeightTextBox.setPromptText(String.valueOf(Parameter.AGENT_POTENTIAL_WEIGHT));
+        obstaclePotentialRangeTextBox.setPromptText(String.valueOf(Parameter.OBSTACLE_POTENTIAL_RANGE));
+        obstaclePotentialWeightTextBox.setPromptText(String.valueOf(Parameter.OBSTACLE_POTENTIAL_WEIGHT));
     }
 
     public String help() {

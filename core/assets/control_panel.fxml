@@ -33,10 +33,11 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
+                  <MenuItem mnemonicParsing="false" onAction="#menuEventOpenWorkSpace" text="Open Work Space" />
               <MenuItem mnemonicParsing="false" onAction="#menuEventOpenSimulationLog" text="Open Simulation Log" />
                   <MenuItem mnemonicParsing="false" onAction="#menuEventOpenBackground" text="Open Background Picture" />
-                  <MenuItem mnemonicParsing="false" onAction="#menuEventOpenObstacle" text="Open Obstacle Log" />
-                  <MenuItem mnemonicParsing="false" onAction="#menuEventSaveObstacleLog" text="Save  Obstacle Log" />
+                  <MenuItem mnemonicParsing="false" onAction="#menuEventSaveWorkSpace" text="Save  Work Space" />
+                  <MenuItem mnemonicParsing="false" onAction="#menuEventSaveSimulationLog" text="Save  Simulation Log" />
                   <MenuItem mnemonicParsing="false" onAction="#menuEventClose" text="Close" />
             </items>
           </Menu>
@@ -114,7 +115,7 @@
                                                 <Insets left="20.0" />
                                              </GridPane.margin>
                                           </Text>
-                                          <TextField fx:id="nonGoalAgentSpeedTextField" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                          <TextField fx:id="nonGoalAgentSpeedTextField" alignment="CENTER_RIGHT" text="5" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -135,12 +136,12 @@
                                                 </LinearGradient>
                                              </fill>
                                           </Arc>
-                                          <TextField fx:id="goalAgentSpeedTextField" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                          <TextField fx:id="goalAgentSpeedTextField" alignment="CENTER_RIGHT" text="10" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </TextField>
-                                          <TextField fx:id="goalAgentGoalIdTextField" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                          <TextField fx:id="goalAgentGoalIdTextField" alignment="CENTER_RIGHT" text="a" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -178,7 +179,7 @@
                                                 <Font size="12.0" />
                                              </font>
                                           </Button>
-                                          <TextField fx:id="randomSpawnAgentNumTextField" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                                          <TextField fx:id="randomSpawnAgentNumTextField" alignment="CENTER_RIGHT" text="100" GridPane.columnIndex="1" GridPane.rowIndex="10">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -266,7 +267,7 @@
                                     </GridPane>
                                  </content>
                               </TitledPane>
-                              <TitledPane animated="false" text="Obstacle / Goal">
+                              <TitledPane animated="false" text="Goal">
                                  <content>
                                     <GridPane minHeight="-Infinity" minWidth="-Infinity">
                                        <columnConstraints>
@@ -275,10 +276,6 @@
                                        </columnConstraints>
                                        <rowConstraints>
                                           <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -295,17 +292,17 @@
                                                 <Insets left="20.0" />
                                              </GridPane.margin>
                                           </Text>
-                                          <TextField fx:id="goalIdTextField" alignment="CENTER_RIGHT" promptText="goal_id" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                          <TextField fx:id="goalIdTextField" alignment="CENTER_RIGHT" text="a" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </TextField>
-                                          <TextField fx:id="goalWidthTextField" alignment="CENTER_RIGHT" promptText="width" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                          <TextField fx:id="goalWidthTextField" alignment="CENTER_RIGHT" text="500" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </TextField>
-                                          <TextField fx:id="goalHeightField" alignment="CENTER_RIGHT" promptText="height" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                          <TextField fx:id="goalHeightField" alignment="CENTER_RIGHT" text="500" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -320,26 +317,6 @@
                                                 <Font size="12.0" />
                                              </font>
                                           </Button>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="line" GridPane.rowIndex="8">
-                                             <font>
-                                                <Font size="12.0" />
-                                             </font>
-                                             <GridPane.margin>
-                                                <Insets left="20.0" />
-                                             </GridPane.margin>
-                                          </Text>
-                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#eventObstacleLineButton" prefWidth="163.0" text="mouse set" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                                             <font>
-                                                <Font size="12.0" />
-                                             </font>
-                                          </Button>
-                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#eventDeleteLineButton" prefWidth="163.0" text="delete" GridPane.columnIndex="1" GridPane.rowIndex="10">
-                                             <font>
-                                                <Font size="12.0" />
-                                             </font>
-                                          </Button>
-                                          <Separator prefWidth="200.0" GridPane.rowIndex="7" />
-                                          <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                                           <Separator prefWidth="200.0" />
                                           <Separator prefWidth="200.0" GridPane.columnIndex="1" />
                                           <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="× delete goal" GridPane.rowIndex="6">
@@ -347,17 +324,79 @@
                                                 <Font size="12.0" />
                                              </font>
                                           </Text>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="× delete line" GridPane.rowIndex="10">
+                                          <Separator prefWidth="200.0" GridPane.rowIndex="5" />
+                                          <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ff1f1f" height="13.0" stroke="TRANSPARENT" strokeType="INSIDE" width="13.0" GridPane.rowIndex="1" />
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="id" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font size="11.0" />
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="30.0" />
+                                             </GridPane.margin>
+                                          </Text>
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="width" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font size="11.0" />
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="30.0" />
+                                             </GridPane.margin>
+                                          </Text>
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="height" GridPane.rowIndex="4">
+                                             <font>
+                                                <Font size="11.0" />
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="30.0" />
+                                             </GridPane.margin>
+                                          </Text>
+                                       </children>
+                                    </GridPane>
+                                 </content>
+                              </TitledPane>
+                              <TitledPane animated="false" text="Obstacle">
+                                 <content>
+                                    <GridPane>
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="× delete line" GridPane.rowIndex="3">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </Text>
-                                          <Separator prefWidth="200.0" GridPane.rowIndex="9" />
-                                          <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                                          <Separator prefWidth="200.0" GridPane.rowIndex="5" />
-                                          <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                          <Line endX="-86.70710754394531" endY="8.292893409729004" startX="-100.0" GridPane.rowIndex="8" />
-                                          <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ff1f1f" height="13.0" stroke="TRANSPARENT" strokeType="INSIDE" width="13.0" GridPane.rowIndex="1" />
+                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#eventDeleteLineButton" prefWidth="163.0" text="delete" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Button>
+                                          <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <Separator prefWidth="200.0" GridPane.rowIndex="2" />
+                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#eventObstacleLineButton" prefWidth="163.0" text="mouse set" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Button>
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="line" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="20.0" />
+                                             </GridPane.margin>
+                                          </Text>
+                                          <Line endX="-86.70710754394531" endY="8.292893409729004" startX="-100.0" GridPane.rowIndex="1" />
+                                          <Separator prefWidth="200.0" />
+                                          <Separator prefWidth="200.0" GridPane.columnIndex="1" />
                                        </children>
                                     </GridPane>
                                  </content>
@@ -660,49 +699,51 @@
                                        <rowConstraints>
                                           <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                        </rowConstraints>
                                        <children>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="agent_weight">
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="agent_weight" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </Text>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="agent_range" GridPane.rowIndex="1">
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="agent_range" GridPane.rowIndex="3">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </Text>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="obstacle_weight" GridPane.rowIndex="2">
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="obstacle_weight" GridPane.rowIndex="4">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </Text>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="obstacle_range" GridPane.rowIndex="3">
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="obstacle_range" GridPane.rowIndex="5">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </Text>
-                                          <TextField fx:id="obstaclePotentialWeightTextBox" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                          <TextField fx:id="obstaclePotentialWeightTextBox" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                              <font>
                                                 <Font size="12.0" />
                                              </font></TextField>
-                                          <TextField fx:id="obstaclePotentialRangeTextBox" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                          <TextField fx:id="obstaclePotentialRangeTextBox" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                              <font>
                                                 <Font size="12.0" />
                                              </font></TextField>
-                                          <TextField fx:id="agentPotentialWeightTextBox" alignment="CENTER_RIGHT" GridPane.columnIndex="1">
+                                          <TextField fx:id="agentPotentialWeightTextBox" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </TextField>
-                                          <TextField fx:id="agentPotentialRangeTextBox" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                          <TextField fx:id="agentPotentialRangeTextBox" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </TextField>
-                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#eventAgentPotentialWeightButton" prefWidth="50.0" text="set" GridPane.columnIndex="2">
+                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#eventAgentPotentialWeightButton" prefWidth="50.0" text="set" GridPane.columnIndex="2" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -710,7 +751,7 @@
                                                 <Insets />
                                              </GridPane.margin>
                                           </Button>
-                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#eventAgentPotentialRangeButton" prefWidth="50.0" text="set" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#eventAgentPotentialRangeButton" prefWidth="50.0" text="set" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -718,7 +759,7 @@
                                                 <Insets />
                                              </GridPane.margin>
                                           </Button>
-                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#eventPotentialObstacleWeight" prefWidth="50.0" text="set" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#eventPotentialObstacleWeight" prefWidth="50.0" text="set" GridPane.columnIndex="2" GridPane.rowIndex="4">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -726,7 +767,7 @@
                                                 <Insets />
                                              </GridPane.margin>
                                           </Button>
-                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#eventPotentialObstacleRangeButton" prefWidth="50.0" text="set" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#eventPotentialObstacleRangeButton" prefWidth="50.0" text="set" GridPane.columnIndex="2" GridPane.rowIndex="5">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -734,6 +775,36 @@
                                                 <Insets />
                                              </GridPane.margin>
                                           </Button>
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="goal_range" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Text>
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="goal_weight">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Text>
+                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#eventGoalPotentialWeightButton" prefWidth="50.0" text="set" GridPane.columnIndex="2">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Button>
+                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#eventGoalPotentialRangeButton" prefWidth="50.0" text="set" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Button>
+                                          <TextField fx:id="goalPotentialWeightTextBox" alignment="CENTER_RIGHT" GridPane.columnIndex="1">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </TextField>
+                                          <TextField fx:id="goalPotentialRangeTextBox" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </TextField>
                                        </children>
                                     </GridPane>
                                  </content>

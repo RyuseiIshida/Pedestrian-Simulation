@@ -165,7 +165,7 @@ public class Environment {
     public void spawnAgent(Vector2 pos, String goalID, float speed) {
         for (Goal goal : goals) {
             if (goal.exists(goalID)) {
-                agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos, goal, speed));
+                agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos, speed, goal));
             }
         }
     }
@@ -279,6 +279,15 @@ public class Environment {
             agentList.removeIf(agent -> agent.getStateTag().equals(StateTag.moveGoal));
             deleteAllGoalFlag = false;
         }
+    }
+
+    public Goal getGoal(String id) {
+        for (Goal goal : goals) {
+            if (goal.exists(id)){
+                return goal;
+            }
+        }
+        return null;
     }
 
     public ArrayList<Goal> getGoals() {
