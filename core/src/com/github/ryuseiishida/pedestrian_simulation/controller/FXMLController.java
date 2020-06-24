@@ -1,7 +1,7 @@
 package com.github.ryuseiishida.pedestrian_simulation.controller;
 
-import com.github.ryuseiishida.pedestrian_simulation.util.log.LoadLog;
-import com.github.ryuseiishida.pedestrian_simulation.util.log.WriterLog;
+import com.github.ryuseiishida.pedestrian_simulation.util.LoadLog;
+import com.github.ryuseiishida.pedestrian_simulation.util.WriterLog;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.render.*;
 import com.github.ryuseiishida.pedestrian_simulation.util.Inputs;

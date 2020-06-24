@@ -7,8 +7,8 @@ import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.St
 import com.github.ryuseiishida.pedestrian_simulation.analysis.LDA;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.Cell;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.Goal;
-import com.github.ryuseiishida.pedestrian_simulation.util.log.LoadLog;
-import com.github.ryuseiishida.pedestrian_simulation.util.log.WriterLog;
+import com.github.ryuseiishida.pedestrian_simulation.util.LoadLog;
+import com.github.ryuseiishida.pedestrian_simulation.util.WriterLog;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.*;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 

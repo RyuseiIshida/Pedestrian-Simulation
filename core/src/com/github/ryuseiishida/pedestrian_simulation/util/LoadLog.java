@@ -1,4 +1,4 @@
-package com.github.ryuseiishida.pedestrian_simulation.util.log;
+package com.github.ryuseiishida.pedestrian_simulation.util;
 
 import com.badlogic.gdx.math.Vector2;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;

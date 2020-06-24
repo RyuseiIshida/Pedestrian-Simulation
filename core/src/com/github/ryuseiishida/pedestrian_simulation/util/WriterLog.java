@@ -1,4 +1,4 @@
-package com.github.ryuseiishida.pedestrian_simulation.util.log;
+package com.github.ryuseiishida.pedestrian_simulation.util;
 
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Agent;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Group;
