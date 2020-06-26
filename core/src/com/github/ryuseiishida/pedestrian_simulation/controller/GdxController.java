@@ -11,7 +11,7 @@ import com.github.ryuseiishida.pedestrian_simulation.util.Inputs;
 import com.github.ryuseiishida.pedestrian_simulation.render.*;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
-public class GDXController extends ApplicationAdapter {
+public class GdxController extends ApplicationAdapter {
     private static OrthographicCamera camera;
     private static SpriteBatch batch;
     private static ShapeRenderer shapeRenderer;
@@ -85,7 +85,7 @@ public class GDXController extends ApplicationAdapter {
     }
 
     public static void setEnvironment(Environment env) {
-        GDXController.startFlag = true;
+        GdxController.startFlag = true;
         environment = env;
     }
 

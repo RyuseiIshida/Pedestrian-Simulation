@@ -141,9 +141,10 @@
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                        </rowConstraints>
                                        <children>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="non_goal_agent" GridPane.rowIndex="1">
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="non goal agent" GridPane.rowIndex="1">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -187,7 +188,7 @@
                                                 <Font size="12.0" />
                                              </font>
                                           </Button>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="goal_agent" GridPane.rowIndex="4">
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="goal agent" GridPane.rowIndex="4">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -205,7 +206,7 @@
                                                 </LinearGradient>
                                              </fill>
                                           </Arc>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="random_spawn_agent" GridPane.rowIndex="8">
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="random spawn agent" GridPane.rowIndex="8">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -218,17 +219,17 @@
                                                 <Font size="12.0" />
                                              </font>
                                           </Button>
-                                          <TextField fx:id="randomSpawnAgentNumTextField" alignment="CENTER_RIGHT" text="100" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                                          <TextField fx:id="randomSpawnAgentNumTextField" alignment="CENTER_RIGHT" text="100" GridPane.columnIndex="1" GridPane.rowIndex="12">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </TextField>
-                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#eventDeleteAgentButton" prefWidth="163.0" text="delete" GridPane.columnIndex="1" GridPane.rowIndex="13">
+                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#eventDeleteAgentButton" prefWidth="163.0" text="delete" GridPane.columnIndex="1" GridPane.rowIndex="14">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
                                           </Button>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="× delete_agent" GridPane.rowIndex="13">
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="× delete_agent" GridPane.rowIndex="14">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -237,8 +238,8 @@
                                           <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                           <Separator prefWidth="200.0" GridPane.rowIndex="7" />
                                           <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                                          <Separator prefWidth="200.0" GridPane.rowIndex="12" />
-                                          <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                                          <Separator prefWidth="200.0" GridPane.rowIndex="13" />
+                                          <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
                                           <Separator prefWidth="200.0" />
                                           <Separator prefWidth="200.0" GridPane.columnIndex="1" />
                                           <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="speed" GridPane.rowIndex="2">
@@ -273,7 +274,7 @@
                                                 <Insets left="30.0" />
                                              </GridPane.margin>
                                           </Text>
-                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text=" agent number" GridPane.rowIndex="11">
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text=" agent number" GridPane.rowIndex="12">
                                              <font>
                                                 <Font size="11.0" />
                                              </font>
@@ -290,12 +291,12 @@
                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                              <children>
-                                                <RadioButton mnemonicParsing="false" selected="true" text="non_goal">
+                                                <RadioButton fx:id="randomSpawnNonGoalRadioButton" mnemonicParsing="false" onAction="#randomSpawnNonGoalRadioButton" text="goal ×" textFill="BLUE">
                                                    <font>
                                                       <Font size="12.0" />
                                                    </font>
                                                 </RadioButton>
-                                                <RadioButton mnemonicParsing="false" text="goal_agent" textFill="#0000004c" GridPane.columnIndex="1">
+                                                <RadioButton fx:id="randomSpawnGoalRadioButton" mnemonicParsing="false" onAction="#randomSpawnGoalRadioButton" text="goal ○" textFill="#d00d0d" GridPane.columnIndex="1">
                                                    <font>
                                                       <Font size="12.0" />
                                                    </font>
@@ -315,7 +316,28 @@
                                                 <Font size="12.0" />
                                              </font>
                                           </TextField>
-                                          <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#0051ff00" height="13.0" stroke="#1a44ff" strokeType="INSIDE" width="13.0" GridPane.rowIndex="8" />
+                                          <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#0051ff00" height="13.0" strokeType="INSIDE" width="13.0" GridPane.rowIndex="8">
+                                             <stroke>
+                                                <LinearGradient endX="0.5107913669064749" endY="0.45323741007194246" startX="0.4940047961630696" startY="0.4364508393285372">
+                                                   <stops>
+                                                      <Stop color="#0015ff" />
+                                                      <Stop color="RED" offset="1.0" />
+                                                   </stops>
+                                                </LinearGradient>
+                                             </stroke></Rectangle>
+                                          <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="goal id" GridPane.rowIndex="11">
+                                             <font>
+                                                <Font size="11.0" />
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="30.0" />
+                                             </GridPane.margin>
+                                          </Text>
+                                          <TextField fx:id="randomSpawnGoalIDTextField" alignment="CENTER_RIGHT" text="a" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </TextField>
                                        </children>
                                     </GridPane>
                                  </content>

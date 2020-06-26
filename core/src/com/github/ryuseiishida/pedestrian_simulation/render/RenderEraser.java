@@ -3,12 +3,12 @@ package com.github.ryuseiishida.pedestrian_simulation.render;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.github.ryuseiishida.pedestrian_simulation.controller.GDXController;
+import com.github.ryuseiishida.pedestrian_simulation.controller.GdxController;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
 public class RenderEraser {
-    private static Camera camera = GDXController.getCamera();
-    private static ShapeRenderer shapeRenderer = GDXController.getShapeRenderer();
+    private static Camera camera = GdxController.getCamera();
+    private static ShapeRenderer shapeRenderer = GdxController.getShapeRenderer();
     public static float width = Parameter.SCALE.x * 0.03f;
     public static float height = Parameter.SCALE.y * 0.03f;
 

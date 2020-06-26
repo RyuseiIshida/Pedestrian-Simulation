@@ -3,12 +3,12 @@ package com.github.ryuseiishida.pedestrian_simulation.render;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.github.ryuseiishida.pedestrian_simulation.controller.GDXController;
+import com.github.ryuseiishida.pedestrian_simulation.controller.GdxController;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Obstacle;
 
 public class RenderObstacle {
-    private static Camera camera = GDXController.getCamera();
-    private static ShapeRenderer shapeRenderer = GDXController.getShapeRenderer();
+    private static Camera camera = GdxController.getCamera();
+    private static ShapeRenderer shapeRenderer = GdxController.getShapeRenderer();
 
     private static boolean renderFlag = true;
 
@@ -21,7 +21,7 @@ public class RenderObstacle {
             shapeRenderer.setProjectionMatrix(camera.combined);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(Color.BLACK);
-            for (Obstacle obstacle : GDXController.getEnvironment().getObstacles()) {
+            for (Obstacle obstacle : GdxController.getEnvironment().getObstacles()) {
                 shapeRenderer.line(obstacle.getStartPoint(), obstacle.getEndPoint());
             }
 

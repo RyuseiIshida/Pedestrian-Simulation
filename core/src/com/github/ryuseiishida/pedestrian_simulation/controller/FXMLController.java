@@ -21,6 +21,12 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class FXMLController implements Initializable {
+    private void reset() {
+        GdxController.startFlag = true;
+        GdxController.setBackgroundTexture(null);
+        GdxController.resetEnvironment();
+        startButton.setText("▶");
+    }
 
     @FXML private void menuEventOpenWorkSpace(ActionEvent event) {
         final DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -48,7 +54,7 @@ public class FXMLController implements Initializable {
         final DirectoryChooser directoryChooser = new DirectoryChooser();
         File selectedDirectory = directoryChooser.showDialog(null);
         if (selectedDirectory != null) {
-            GDXController.setEnvironment(new Environment(String.valueOf(selectedDirectory)));
+            GdxController.setEnvironment(new Environment(String.valueOf(selectedDirectory)));
             simulationLogText.setText(selectedDirectory.getName());
         }
     }
@@ -70,7 +76,7 @@ public class FXMLController implements Initializable {
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             String path = String.valueOf(file);
-            GDXController.setBackgroundTexture(path);
+            GdxController.setBackgroundTexture(path);
             backgroundPathText.setText(file.getName());
         }
     }
@@ -100,7 +106,7 @@ public class FXMLController implements Initializable {
     // Tool Bar
     @FXML private Button startButton;
     @FXML void onStartButton(ActionEvent event) {
-        if (GDXController.startFlag) {
+        if (GdxController.startFlag) {
             if(Environment.getUpdateFlag()) {
                 startButton.setText("▶");
                 Environment.setUpdateFlag(false);
@@ -127,10 +133,7 @@ public class FXMLController implements Initializable {
     }
 
     @FXML void eventNewButton(ActionEvent event) {
-        GDXController.startFlag = true;
-        GDXController.setBackgroundTexture(null);
-        GDXController.resetEnvironment();
-        startButton.setText("▶");
+        reset();
     }
 
     // TabPane
@@ -142,7 +145,7 @@ public class FXMLController implements Initializable {
         File selectedDirectory = directoryChooser.showDialog(null);
         if (selectedDirectory != null) {
             String path = String.valueOf(selectedDirectory);
-            GDXController.setEnvironment(new Environment(path));
+            GdxController.setEnvironment(new Environment(path));
             simulationLogText.setText(selectedDirectory.getName());
         }
     }
@@ -153,7 +156,7 @@ public class FXMLController implements Initializable {
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             String path = String.valueOf(file);
-            GDXController.setBackgroundTexture(path);
+            GdxController.setBackgroundTexture(path);
             backgroundPathText.setText(file.getName());
         }
     }
@@ -161,29 +164,27 @@ public class FXMLController implements Initializable {
     @FXML private void eventBackgroundSizeXButton(ActionEvent event) {
         if (!backgroundSizeXTextField.getText().isEmpty()) {
             Parameter.BACKGROUND_TEXTURE_SIZE.x = Float.parseFloat(backgroundSizeXTextField.getText());
-            GDXController.setBackgroundTexture(null);
-            GDXController.resetEnvironment();
+            reset();
         }
     }
     @FXML private void eventBackgroundSizeYButton(ActionEvent event) {
         if(!backgroundSizeYTextField.getText().isEmpty()) {
             Parameter.BACKGROUND_TEXTURE_SIZE.y = Float.parseFloat(backgroundSizeYTextField.getText());
-            GDXController.resetEnvironment();
+            reset();
         }
     }
     @FXML private TextField scaleXText, scaleYText;
     @FXML private void eventScaleXButton(ActionEvent event) {
         if(!scaleXText.getText().isEmpty()) {
             Parameter.SCALE.x = Float.parseFloat(scaleXText.getText());
-            GDXController.setBackgroundTexture(null);
-            GDXController.resetEnvironment();
+            reset();
         }
     }
     @FXML private void eventScaleYButton(ActionEvent event) {
         if(!scaleYText.getText().isEmpty()) {
             Parameter.SCALE.y = Float.parseFloat(scaleYText.getText());
-            GDXController.setBackgroundTexture(null);
-            GDXController.resetEnvironment();
+            GdxController.setBackgroundTexture(null);
+            reset();
         }
     }
 
@@ -191,7 +192,7 @@ public class FXMLController implements Initializable {
     @FXML private void eventCellIntervalButton(ActionEvent event) {
         if(!cellIntervalText.getText().isEmpty()) {
             Parameter.CELL_INTERVAL = Integer.parseInt(cellIntervalText.getText());
-            GDXController.resetEnvironment();
+            reset();
         }
     }
 
@@ -199,70 +200,70 @@ public class FXMLController implements Initializable {
     @FXML private void eventRadiusButton(ActionEvent event) {
         if(!radiusTextBox.getText().isEmpty()) {
             Parameter.AGENT_RADIUS = Float.parseFloat(radiusTextBox.getText());
-            GDXController.resetEnvironment();
+            reset();
         }
     }
     @FXML private TextField speedTextBox;
     @FXML private void eventSpeedButton(ActionEvent event) {
         if(!speedTextBox.getText().isEmpty()) {
             Parameter.AGENT_SPEED = Float.parseFloat(speedTextBox.getText());
-            GDXController.resetEnvironment();
+            reset();
         }
     }
     @FXML private TextField viewLengthTextBox;
     @FXML private void eventViewLengthButton(ActionEvent event) {
         if(!viewLengthTextBox.getText().isEmpty()) {
             Parameter.VIEW_RADIUS_LENGTH = Float.parseFloat(viewLengthTextBox.getText());
-            GDXController.resetEnvironment();
+            reset();
         }
     }
     @FXML private TextField viewAngleTextBox;
     @FXML private void eventAngleButton(ActionEvent event) {
         if(!viewAngleTextBox.getText().isEmpty()) {
             Parameter.VIEW_DEGREE = Float.parseFloat(viewAngleTextBox.getText());
-            GDXController.resetEnvironment();
+            reset();
         }
     }
     @FXML private TextField goalPotentialWeightTextBox;
     @FXML private void eventGoalPotentialWeightButton(ActionEvent event) {
         if(!goalPotentialWeightTextBox.getText().isEmpty()) {
             Parameter.GOAL_POTENTIAL_WEIGHT = Float.parseFloat(goalPotentialWeightTextBox.getText());
-            GDXController.resetEnvironment();
+            reset();
         }
     }
     @FXML private TextField goalPotentialRangeTextBox;
     @FXML private void eventGoalPotentialRangeButton(ActionEvent event) {
         if(!goalPotentialRangeTextBox.getText().isEmpty()) {
             Parameter.GOAL_POTENTIAL_RANGE = Float.parseFloat(goalPotentialRangeTextBox.getText());
-            GDXController.resetEnvironment();
+            reset();
         }
     }
     @FXML private TextField agentPotentialWeightTextBox;
     @FXML private void eventAgentPotentialWeightButton(ActionEvent event) {
         if(!agentPotentialWeightTextBox.getText().isEmpty()) {
             Parameter.AGENT_POTENTIAL_WEIGHT = Float.parseFloat(agentPotentialWeightTextBox.getText());
-            GDXController.resetEnvironment();
+            reset();
         }
     }
     @FXML private TextField agentPotentialRangeTextBox;
     @FXML private void eventAgentPotentialRangeButton(ActionEvent event) {
         if(!agentPotentialRangeTextBox.getText().isEmpty()) {
             Parameter.AGENT_POTENTIAL_RANGE = Float.parseFloat(agentPotentialRangeTextBox.getText());
-            GDXController.resetEnvironment();
+            reset();
         }
     }
     @FXML private TextField obstaclePotentialWeightTextBox;
     @FXML private void eventPotentialObstacleWeight(ActionEvent event) {
         if(!obstaclePotentialWeightTextBox.getText().isEmpty()) {
             Parameter.OBSTACLE_POTENTIAL_WEIGHT = Float.parseFloat(obstaclePotentialWeightTextBox.getText());
-            GDXController.resetEnvironment();
+            reset();
         }
     }
     @FXML private TextField obstaclePotentialRangeTextBox;
     @FXML private void eventPotentialObstacleRangeButton(ActionEvent event) {
         if(!obstaclePotentialRangeTextBox.getText().isEmpty()) {
             Parameter.OBSTACLE_POTENTIAL_RANGE = Float.parseFloat(obstaclePotentialRangeTextBox.getText());
-            GDXController.resetEnvironment();
+            reset();
         }
     }
 
@@ -308,10 +309,38 @@ public class FXMLController implements Initializable {
         }
     }
     @FXML private TextField randomSpawnRangeTextField;
+    @FXML private TextField randomSpawnGoalIDText;
+    @FXML private TextField randomSpawnGoalIDTextField;
     @FXML private TextField randomSpawnAgentNumTextField;
+    @FXML private RadioButton randomSpawnNonGoalRadioButton;
+    @FXML private void randomSpawnNonGoalRadioButton(ActionEvent event) {
+        if (randomSpawnNonGoalRadioButton.isSelected()) {
+            randomSpawnGoalRadioButton.setSelected(false);
+            randomSpawnGoalIDTextField.setDisable(true);
+        } else randomSpawnGoalRadioButton.setSelected(true);
+    }
+    @FXML private RadioButton randomSpawnGoalRadioButton;
+    @FXML private void randomSpawnGoalRadioButton(ActionEvent event) {
+        if (randomSpawnGoalRadioButton.isSelected()) {
+            randomSpawnNonGoalRadioButton.setSelected(false);
+            randomSpawnGoalIDTextField.setDisable(false);
+        } else randomSpawnNonGoalRadioButton.setSelected(true);
+    }
     @FXML private void eventRandomSpawnButton(ActionEvent event) {
         if (!randomSpawnRangeTextField.getText().isEmpty() && !randomSpawnAgentNumTextField.getText().isEmpty()) {
-            Inputs.setFxCreateProperty("RandomSpawn" + "-" + randomSpawnRangeTextField.getText() + "-" + randomSpawnAgentNumTextField.getText());
+            if (randomSpawnNonGoalRadioButton.isSelected()) {
+                Inputs.setFxCreateProperty("RandomNonGoalSpawn" + "-"
+                        + randomSpawnRangeTextField.getText() + "-"
+                        + randomSpawnAgentNumTextField.getText());
+            } else if(!randomSpawnGoalIDTextField.getText().isEmpty()) { //randomSpawnBGoalRadioButton.isSelected()
+                Inputs.setFxCreateProperty("RandomGoalSpawn" + "-"
+                        + randomSpawnRangeTextField.getText() + "-"
+                        + randomSpawnAgentNumTextField.getText() + "-"
+                        + randomSpawnGoalIDTextField.getText());
+            } else {
+                randomSpawnNonGoalRadioButton.setSelected(true);
+                randomSpawnGoalRadioButton.setSelected(false);
+            }
         }
     }
     @FXML private void eventDeleteAgentButton(ActionEvent event) {

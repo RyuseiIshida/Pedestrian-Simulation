@@ -5,14 +5,14 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.github.ryuseiishida.pedestrian_simulation.controller.GDXController;
+import com.github.ryuseiishida.pedestrian_simulation.controller.GdxController;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Agent;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.StateTag;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
 public class RenderAgent {
-    private static Camera camera = GDXController.getCamera();
-    private static ShapeRenderer shapeRenderer = GDXController.getShapeRenderer();
+    private static Camera camera = GdxController.getCamera();
+    private static ShapeRenderer shapeRenderer = GdxController.getShapeRenderer();
 
     public static Color nonGoalAgentColor = Color.BLACK;
     public static Color goalAgentColor = Color.RED;
@@ -35,7 +35,7 @@ public class RenderAgent {
     private void body() {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (Agent agent : GDXController.getEnvironment().getAgentList()) {
+        for (Agent agent : GdxController.getEnvironment().getAgentList()) {
             if (agent.getPosition() == null) {
                 shapeRenderer.end();
                 return;
@@ -98,7 +98,7 @@ public class RenderAgent {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(new Color(0, 1, 0, 0.5f));
-        for (Agent agent : GDXController.getEnvironment().getAgentList()) {
+        for (Agent agent : GdxController.getEnvironment().getAgentList()) {
             float moveDegree = agent.getDirectionDegree();
             moveDegree -= Parameter.VIEW_DEGREE / 2;
             shapeRenderer.arc(agent.getPosition().x, agent.getPosition().y, Parameter.VIEW_RADIUS_LENGTH, moveDegree, Parameter.VIEW_DEGREE);
@@ -130,7 +130,7 @@ public class RenderAgent {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.RED);
-        for (Agent agent : GDXController.getEnvironment().getAgentList()) {
+        for (Agent agent : GdxController.getEnvironment().getAgentList()) {
             if (agent.getStateTag().equals(StateTag.moveGoal)) {
                 shapeRenderer.line(agent.getPosition(), agent.getGoal().getCenter());
             }

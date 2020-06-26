@@ -1,6 +1,5 @@
 package com.github.ryuseiishida.pedestrian_simulation.environment;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Agent;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.StateTag;
@@ -111,9 +110,17 @@ public class Environment {
         agentList.removeIf(agent -> agent.getStateTag().equals(StateTag.escaped));
     }
 
-    public void spawnRandomAgents(float startX, float startY, float endX, float endY, int num) {
+    public void spawnRandomNonGoalAgents(float startX, float startY, float endX, float endY, int num) {
         for (int i = 0; i < num; i++) {
-            agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, UtilVector.getRandomPosition(startX, startY, endX, endY)));
+            Vector2 position = UtilVector.getRandomPosition(startX, startY, endX, endY);
+            spawnAgent(position);
+        }
+    }
+
+    public void spawnRandomGoalAgents(float startX, float startY, float endX, float endY, int num, String id) {
+        for (int i = 0; i < num; i++) {
+            Vector2 position = UtilVector.getRandomPosition(startX, startY, endX, endY);
+            spawnAgent(position, id);
         }
     }
 

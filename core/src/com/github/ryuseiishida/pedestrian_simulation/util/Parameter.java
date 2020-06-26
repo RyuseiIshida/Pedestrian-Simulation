@@ -12,7 +12,7 @@ public class Parameter {
     /**
      * application version
      */
-    public static String VERSION = "1.10";
+    public static String VERSION = "1.11";
 
     /**
      * application about message
@@ -29,10 +29,14 @@ public class Parameter {
             "1.04\t軽微なUIの修正\n" +
             "1.05\t障害物の保存および読み込み機能を追加\n" +
             "1.06\tシミュレーションログの書き出し機能を追加\n" +
-            "1.07\t軽微なバグの修正およびシミュレーションログの書き出し・読み込み機能にゴールオブジェクトと障害物オブジェクトが対応\n" +
+            "1.07\t軽微なバグの修正およびシミュレーションログの書き出し\n" +
+            "\t\t読込機能にゴールオブジェクトと障害物オブジェクトが対応\n" +
             "1.08\t表示設定機能を更新\n" +
-            "1.09\tシミュレーション設定環境の保存・読み込み機能を追加(Open/Save Work Space)\n" +
+            "1.09\tシミュレーション設定環境の保存・読み込み機能を追加\n" +
+            "\t\t(Open/Save Work Space)\n" +
             "1.10\t消しゴム機能の追加\n" +
+            "1.11\t\trandom spawn agent 機能を更新\n" +
+            "\t\t場所・範囲が指定できるようになった\n" +
             "\n" +
             "次回アップデート\n" +
             "1.1x\t軽微な修正";

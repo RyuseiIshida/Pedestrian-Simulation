@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Agent;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.Goal;
-import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.StateTag;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.CreateLineFromMouse;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Obstacle;
 import com.github.ryuseiishida.pedestrian_simulation.render.*;
@@ -51,7 +50,8 @@ public class Inputs {
         if (fxCreateProperty.contains("eraser")) eraser(touchPos);
         else if (fxCreateProperty.contains("agentN")) createNonGoalAgent(touchPos);
         else if (fxCreateProperty.contains("agentG")) createGoalAgent(touchPos);
-        else if (fxCreateProperty.contains("RandomSpawn")) createRandomAgent(touchPos);
+        else if (fxCreateProperty.contains("RandomNonGoalSpawn")) createRandomNonGoalAgent(touchPos);
+        else if (fxCreateProperty.contains("RandomGoalSpawn")) createRandomGoalAgent(touchPos);
         else if (fxCreateProperty.contains("Goal")) createGoal(touchPos);
         else if (fxCreateProperty.equals("ObstacleLine")) createObstacle(touchPos);
 
@@ -124,15 +124,29 @@ public class Inputs {
         shapeRenderer.end();
     }
 
-    private void createRandomAgent(Vector3 touchPos) {
+    private void createRandomNonGoalAgent(Vector3 touchPos) {
         float random_range = Float.parseFloat(fxCreateProperty.split("-")[1]);
         int num = Integer.parseInt(fxCreateProperty.split("-")[2]);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.BLUE);
         shapeRenderer.rect(touchPos.x - random_range / 2, touchPos.y - random_range / 2, random_range, random_range);
         if (Gdx.input.justTouched()) {
-            environment.spawnRandomAgents(touchPos.x - random_range / 2, touchPos.y - random_range / 2,
+            environment.spawnRandomNonGoalAgents(touchPos.x - random_range / 2, touchPos.y - random_range / 2,
                     touchPos.x + random_range / 2, touchPos.y + random_range / 2, num);
+        }
+        shapeRenderer.end();
+    }
+
+    private void createRandomGoalAgent(Vector3 touchPos) {
+        float random_range = Float.parseFloat(fxCreateProperty.split("-")[1]);
+        int num = Integer.parseInt(fxCreateProperty.split("-")[2]);
+        String id = fxCreateProperty.split("-")[3];
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.rect(touchPos.x - random_range / 2, touchPos.y - random_range / 2, random_range, random_range);
+        if (Gdx.input.justTouched()) {
+            environment.spawnRandomGoalAgents(touchPos.x - random_range / 2, touchPos.y - random_range / 2,
+                    touchPos.x + random_range / 2, touchPos.y + random_range / 2, num, id);
         }
         shapeRenderer.end();
     }
