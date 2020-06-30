@@ -172,14 +172,13 @@ public class Agent {
     public void action() {
         if (loadLogFile != null) {
             setLogToAgent(env.getStep());
+        }
+        else if (goal != null) {
+            perception();
+            moveGoal();
         } else {
             perception();
-            if (goal != null) {
-                moveGoal();
-            } else {
-                ex();
-            }
-
+            nonGoalRule();
         }
     }
 
@@ -192,7 +191,7 @@ public class Agent {
         setPerceptionGoal();
     }
 
-    private void ex() {
+    private void nonGoalRule() {
         if (isMoveGoalAgent()) {
             moveFollow();
         } else {

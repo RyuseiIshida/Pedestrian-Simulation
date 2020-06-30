@@ -35,7 +35,10 @@ public class WriteLog {
 
     public void writeLog() {
         if (Parameter.IS_WRITE_LOG) {
-            if (!isInitialized) initialize();
+            if (!isInitialized) {
+                initialize();
+                isInitialized = true;
+            }
             writeAgentLog();
             writeMacroLog();
         }
@@ -47,7 +50,6 @@ public class WriteLog {
 //        writeSourceCodeToParameter();
         writeObstacleLog(path + "/obstacle");
         writeGoalLog(path + "/goal");
-        isInitialized = true;
     }
 
     public void writeSourceCodeToParameter() {
