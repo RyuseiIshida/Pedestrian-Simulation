@@ -13,15 +13,14 @@ import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
 
 public class Environment {
     private static int step;
     private static boolean updateFlag;
     private ArrayList<Goal> goals;
     private ArrayList<Obstacle> obstacles;
-    private HashSet<Vector2> obstaclePosition;
+    private HashMap<Vector2, Float> obstaclePosition;
     private ArrayList<Agent> agentList;
     private int goalAgentNum;
 
@@ -54,7 +53,7 @@ public class Environment {
         updateFlag = false;
         goals = new ArrayList<>();
         obstacles = new ArrayList<>();
-        obstaclePosition = new HashSet<>();
+        obstaclePosition = new HashMap<>();
         agentList = new ArrayList<>();
         loadLog = new LoadLog(this);
         writeLog = new WriteLog(this);
@@ -220,7 +219,7 @@ public class Environment {
 
     private void addObstaclePosition(Obstacle targetObstacle) {
         for (Cell targetObstacleCell : targetObstacle.getObstacleCells()) {
-            obstaclePosition.add(targetObstacleCell.getCenterPoint());
+            obstaclePosition.put(targetObstacleCell.getCenterPoint(), Parameter.OBSTACLE_POTENTIAL_WEIGHT);
         }
     }
 
@@ -235,7 +234,7 @@ public class Environment {
         return obstacles;
     }
 
-    public Set<Vector2> getObstaclesPosition() {
+    public HashMap<Vector2, Float> getObstaclesPosition() {
         return obstaclePosition;
     }
 
