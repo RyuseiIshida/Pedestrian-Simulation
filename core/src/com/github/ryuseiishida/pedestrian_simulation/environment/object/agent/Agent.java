@@ -114,8 +114,6 @@ public class Agent {
      **/
     private File loadLogFile;
 
-    private HashSet<Vector2> stackPotential = new HashSet<>();
-
     public Agent(String id, Environment env, Vector2 position) {
         this.ID = id;
         this.env = env;
@@ -204,9 +202,6 @@ public class Agent {
         if(beforeVelocity != null) {
             Vector2 delta = new Vector2(beforeVelocity).add(velocity);
             delta = new Vector2(Math.abs(delta.x), Math.abs(delta.y));
-            if(delta.x < 0.1 && delta.y < 0.1) {
-                stackPotential.add(new Vector2(position));
-            }
         }
         beforeVelocity = velocity;
     }
@@ -387,7 +382,7 @@ public class Agent {
 
     private float calcPotential(float x, float y) {
         float Ug = calcGoalPotential(x, y);
-        float Uo = calcAgentPotential(x, y) + calcObstaclePotential(x, y) + calcStackPotential(x, y);
+        float Uo = calcAgentPotential(x, y) + calcObstaclePotential(x, y);
         //float U = (((1 / cg) * Uo) + 1) * Ug;
         float U = Ug + Uo;
         return U;
@@ -424,19 +419,6 @@ public class Agent {
             double value = -1 * (pos.dst2(obstaclePosition) / (lo * lo));
             potentialWeight += co * new Exp().value(value);
         }
-        return potentialWeight;
-    }
-
-    private float calcStackPotential(float x, float y) {
-        Vector2 pos = new Vector2(x, y);
-        float potentialWeight = 0;
-        float co = Parameter.AGENT_POTENTIAL_WEIGHT;
-        float lo = Parameter.AGENT_POTENTIAL_RANGE;
-        for (Vector2 vector2 : stackPotential) {
-            double value = -1 * (pos.dst2(vector2) / (lo * lo));
-            potentialWeight += co * new Exp().value(value);
-        }
-//        System.out.println("calcPotential = " + potentialWeight);
         return potentialWeight;
     }
 
