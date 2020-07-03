@@ -91,7 +91,7 @@ public class Agent {
     /**
      * 前stepの移動方向
      */
-    private Vector2 beforeVelocity;
+    private Vector2 perceptionBeforeVelocity;
 
     /**
      * 何Stepの同じルールを発火しているかを数える
@@ -109,6 +109,11 @@ public class Agent {
     private float perceptionAllDst = 0;
 
     /**
+     * 行動ログ
+     */
+    private ArrayList<String> logList = new ArrayList<>();
+
+    /**
      * シミュレーションログファイル
      **/
     private File loadLogFile;
@@ -122,6 +127,7 @@ public class Agent {
         this.perceptionBeforePos = position;
         this.movePos = position;
         this.velocity = new Vector2(0, 0);
+        this.perceptionBeforeVelocity = velocity;
     }
 
     public Agent(String id, Environment env, Vector2 position, float speed) {
@@ -134,6 +140,7 @@ public class Agent {
         this.perceptionBeforePos = position;
         this.movePos = position;
         this.velocity = new Vector2(0, 0);
+        this.perceptionBeforeVelocity = velocity;
         this.speed = speed;
     }
 
@@ -147,6 +154,7 @@ public class Agent {
         this.goal = goal;
         this.movePos = goal.getCenter();
         this.velocity = new Vector2(0, 0);
+        this.perceptionBeforeVelocity = velocity;
     }
 
     public Agent(String id, Environment env, Vector2 position, float speed, Goal goal) {
@@ -160,6 +168,7 @@ public class Agent {
         this.goal = goal;
         this.movePos = goal.getCenter();
         this.velocity = new Vector2(0, 0);
+        this.perceptionBeforeVelocity = velocity;
     }
 
     public Agent(File logFile, Environment env) {
@@ -177,14 +186,37 @@ public class Agent {
     public void action() {
         if (loadLogFile != null) {
             setLogToAgent(env.getStep());
-        }
-        else if (goal != null) {
+        } else if (goal != null) {
             perception();
             moveGoal();
         } else {
             perception();
             nonGoalRule();
         }
+        ifSetLog();
+    }
+
+    public void ifSetLog() {
+        if (Parameter.IS_WRITE_LOG) {
+            String log = String.format("%d %s %s %s",
+                    Environment.getStep(),
+                    stateTag,
+                    position,
+                    velocity);
+            logList.add(log);
+            if (Environment.getStep() == 1) {
+                log = String.format("%d %s %s %s",
+                        0,
+                        perceptionBeforeStateTag,
+                        perceptionBeforePos,
+                        perceptionBeforeVelocity);
+                logList.add(0, log);
+            }
+        }
+    }
+
+    public ArrayList<String> getLogList() {
+        return logList;
     }
 
     /**
@@ -228,7 +260,7 @@ public class Agent {
             String line;
             br.readLine(); //ヘッダーを抜かす処理
             while ((line = br.readLine()) != null) {
-                int step = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                int step = Integer.parseInt(line.substring(0, line.indexOf(" ")));
                 log.put(step, line);
             }
         } catch (IOException e) {
@@ -243,13 +275,11 @@ public class Agent {
             stateTag = StateTag.escaped;
             return;
         }
-        String[] valueList = log.get(step).split(",", 0);
+        String[] valueList = log.get(step).split(" ", 0);
         int logStep = Integer.parseInt(valueList[0]);
         this.stateTag = valueList[1]; // tag
         this.position = UtilVector.strToVector(valueList[2]); // position
         this.velocity = UtilVector.strToVector(valueList[3]); // velocity
-        this.perceptionBeforePos = this.position;
-        this.perceptionBeforeStateTag = this.stateTag;
     }
 
     /**
@@ -287,6 +317,7 @@ public class Agent {
         //次stepへの後処理
         perceptionBeforeStateTag = stateTag;
         perceptionBeforePos = new Vector2(position);
+        perceptionBeforeVelocity = new Vector2(velocity);
     }
 
     /**

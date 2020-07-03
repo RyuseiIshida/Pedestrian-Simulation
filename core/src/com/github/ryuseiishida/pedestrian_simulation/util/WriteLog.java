@@ -13,12 +13,9 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 
 public class WriteLog {
     private String path = Parameter.WRITE_LOG_PATH;
@@ -44,77 +41,54 @@ public class WriteLog {
         }
     }
 
+    public static void writeParameterLog(String saveFilePath) {
+        try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(saveFilePath + ".prm"))) {
+            String parameterLog = ""
+                    + "VERSION " + Parameter.VERSION + "\n"
+                    + "SCALE.x " + Parameter.SCALE.x + "\n"
+                    + "SCALE.y " + Parameter.SCALE.y + "\n"
+                    + "BACKGROUND_TEXTURE_SIZE.x " + Parameter.BACKGROUND_TEXTURE_SIZE.x + "\n"
+                    + "BACKGROUND_TEXTURE_SIZE.y " + Parameter.BACKGROUND_TEXTURE_SIZE.y + "\n"
+                    + "CELL_INTERVAL " + Parameter.CELL_INTERVAL + "\n"
+                    + "AGENT_SPEED " + Parameter.AGENT_SPEED + "\n"
+                    + "AGENT_RADIUS " + Parameter.AGENT_RADIUS + "\n"
+                    + "VIEW_DEGREE " + Parameter.VIEW_DEGREE + "\n"
+                    + "VIEW_RADIUS_LENGTH " + Parameter.VIEW_RADIUS_LENGTH + "\n"
+                    + "GOAL_POTENTIAL_WEIGHT " + Parameter.GOAL_POTENTIAL_WEIGHT + "\n"
+                    + "GOAL_POTENTIAL_RANGE " + Parameter.GOAL_POTENTIAL_RANGE + "\n"
+                    + "AGENT_POTENTIAL_WEIGHT " + Parameter.AGENT_POTENTIAL_WEIGHT + "\n"
+                    + "AGENT_POTENTIAL_RANGE " + Parameter.AGENT_POTENTIAL_RANGE + "\n"
+                    + "OBSTACLE_POTENTIAL_WEIGHT " + Parameter.OBSTACLE_POTENTIAL_WEIGHT + "\n"
+                    + "OBSTACLE_POTENTIAL_RANGE " + Parameter.OBSTACLE_POTENTIAL_RANGE + "\n"
+                    + "POTENTIAL_DELTA " + Parameter.POTENTIAL_DELTA;
+            bw.append(parameterLog);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void initialize() {
         path = Parameter.WRITE_LOG_PATH;
         new File(path).mkdir();
-//        writeSourceCodeToParameter();
+        writeParameterLog(path + "/parameter");
         writeObstacleLog(path + "/obstacle");
         writeGoalLog(path + "/goal");
-    }
-
-    public void writeSourceCodeToParameter() {
-        Path codePath = Paths.get("core/src/com/github/ryuseiishida/pedestrian_simulation/util/Parameter.java");
-        Path out = Paths.get(path + "/Parameter.txt");
-        List<String> readList = new ArrayList<>();
-        try (BufferedReader reader = Files.newBufferedReader(codePath, StandardCharsets.UTF_8)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                readList.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(out, StandardCharsets.UTF_8)) {
-            for (String s : readList) {
-                bufferedWriter.append(s);
-                bufferedWriter.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void writeAgentLog() {
         environment.getAgentList().stream().parallel().forEach(agent -> {
             String path = this.path + "/agent" + agent.getID() + ".txt";
-            if (!(new File(path).exists())) {
-                initWriteAgentLog(path);
-            }
-            try {
-                //パース
-                CSVParser csvParser = new CSVParser(Files.newBufferedReader(Paths.get(path)), CSVFormat.DEFAULT);
-                ArrayList<CSVRecord> csvRecords = new ArrayList<>();
-                for (CSVRecord record : csvParser) {
-                    csvRecords.add(record);
+            try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path))) {
+                bw.append("step tag position velocity");
+                bw.newLine();
+                for (String log : agent.getLogList()) {
+                    bw.append(log);
+                    bw.newLine();
                 }
-                csvParser.close();
-                //書き込み
-                CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
-                for (CSVRecord csvRecord : csvRecords) {
-                    printer.printRecord(csvRecord.get(0), csvRecord.get(1), csvRecord.get(2), csvRecord.get(3));
-                }
-                printer.printRecord(
-                        environment.getStep(), //0
-                        agent.getStateTag(), //1
-                        agent.getPosition().toString().replace(",", ":"),
-                        agent.getVelocity().toString().replace(",", ":")
-                ); //2
-                printer.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
-    }
-
-    private void initWriteAgentLog(String path) {
-        try {
-            CSVPrinter printer = new CSVPrinter(new FileWriter(path), CSVFormat.DEFAULT);
-            printer.printRecord("step", "tag", "position", "velocity");
-            printer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void writeMacroLog() {

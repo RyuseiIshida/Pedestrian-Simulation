@@ -46,6 +46,7 @@ public class FXMLController implements Initializable {
         File dir = fileChooser.showSaveDialog(null);
         if (dir != null) {
             dir.mkdir();
+            WriteLog.writeParameterLog(dir + "/parameter");
             WriteLog.writeAgentInitLog(dir + "/agent");
             WriteLog.writeGoalLog(dir + "/goal");
             WriteLog.writeObstacleLog(dir + "/obstacle");
