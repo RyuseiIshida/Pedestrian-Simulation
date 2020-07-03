@@ -15,7 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 public class Agent {
@@ -186,7 +185,6 @@ public class Agent {
             perception();
             nonGoalRule();
         }
-        setBefore();
     }
 
     /**
@@ -196,14 +194,6 @@ public class Agent {
         setPerceptionContinue(); //同じルールをどれくらい継続しているのか
         setPerceptionAgent(); //視界にいるエージェント
         setPerceptionGoal();
-    }
-
-    private void setBefore() {
-        if(beforeVelocity != null) {
-            Vector2 delta = new Vector2(beforeVelocity).add(velocity);
-            delta = new Vector2(Math.abs(delta.x), Math.abs(delta.y));
-        }
-        beforeVelocity = velocity;
     }
 
     private void nonGoalRule() {
@@ -383,7 +373,6 @@ public class Agent {
     private float calcPotential(float x, float y) {
         float Ug = calcGoalPotential(x, y);
         float Uo = calcAgentPotential(x, y) + calcObstaclePotential(x, y);
-        //float U = (((1 / cg) * Uo) + 1) * Ug;
         float U = Ug + Uo;
         return U;
     }
