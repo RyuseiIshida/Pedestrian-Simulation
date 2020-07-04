@@ -12,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -29,27 +30,17 @@ public class FXMLController implements Initializable {
     }
 
     @FXML
+    private Button saveSimulationButton;
+
+    @FXML
     private void menuEventOpenWorkSpace(ActionEvent event) {
         final DirectoryChooser directoryChooser = new DirectoryChooser();
         File selectedDirectory = directoryChooser.showDialog(null);
+        String dirPath = String.valueOf(selectedDirectory);
         if (selectedDirectory != null) {
-            LoadLog.setObstacle(selectedDirectory + "/obstacle.obs");
-            LoadLog.setGoal(selectedDirectory + "/goal.gl");
-            LoadLog.setInitAgent(selectedDirectory + "/agent.ag");
-        }
-    }
-
-    @FXML
-    private void menuEventSaveWorkSpace(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Work Space");
-        File dir = fileChooser.showSaveDialog(null);
-        if (dir != null) {
-            dir.mkdir();
-            WriteLog.writeParameterLog(dir + "/parameter");
-            WriteLog.writeAgentInitLog(dir + "/agent");
-            WriteLog.writeGoalLog(dir + "/goal");
-            WriteLog.writeObstacleLog(dir + "/obstacle");
+            LoadLog.setObstacle(dirPath);
+            LoadLog.setGoal(dirPath);
+            LoadLog.setInitAgent(dirPath);
         }
     }
 
@@ -60,18 +51,6 @@ public class FXMLController implements Initializable {
         if (selectedDirectory != null) {
             GdxController.setEnvironment(new Environment(String.valueOf(selectedDirectory)));
             simulationLogText.setText(selectedDirectory.getName());
-        }
-    }
-
-    @FXML
-    private void menuEventSaveSimulationLog(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Simulation Log");
-        File file = fileChooser.showSaveDialog(null);
-        if (file != null) {
-            Environment.setStep(0);
-            Parameter.WRITE_LOG_PATH = String.valueOf(file);
-            Parameter.IS_WRITE_LOG = true;
         }
     }
 
@@ -132,14 +111,40 @@ public class FXMLController implements Initializable {
     }
 
     @FXML
-    void eventSaveSimulationButton(ActionEvent event) {
+    private void menuEventSaveWorkSpace(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Simulation Log");
-        File file = fileChooser.showSaveDialog(null);
-        if (file != null) {
-            Environment.setStep(0);
-            Parameter.WRITE_LOG_PATH = String.valueOf(file);
+        fileChooser.setTitle("Save Work Space");
+        File selectedDirectory = fileChooser.showSaveDialog(null);
+        String dirPath = String.valueOf(selectedDirectory);
+        if (selectedDirectory != null) {
+            selectedDirectory.mkdir();
+            WriteLog.writeParameterLog(dirPath);
+            WriteLog.writeAgentInitLog(dirPath);
+            WriteLog.writeGoalLog(dirPath);
+            WriteLog.writeObstacleLog(dirPath);
+        }
+    }
+
+    @FXML
+    void eventSaveSimulationButton(ActionEvent event) {
+        if (saveSimulationButton.getTextFill() == Color.RED) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Simulation Log");
+            File directory = fileChooser.showSaveDialog(null);
+            String dirPath = String.valueOf(directory);
+            if (directory != null) {
+                saveSimulationButton.setTextFill(Color.BLACK);
+                directory.mkdir();
+                Parameter.WRITE_LOG_PATH = dirPath;
+                WriteLog.writeParameterLog(dirPath);
+                WriteLog.writeObstacleLog(dirPath);
+                WriteLog.writeGoalLog(dirPath);
+                WriteLog.writeAgentLog(dirPath);
+            }
+        } else {
+            saveSimulationButton.setTextFill(Color.RED);
             Parameter.IS_WRITE_LOG = true;
+            Environment.setStep(0);
         }
     }
 

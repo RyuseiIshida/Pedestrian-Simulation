@@ -22,13 +22,13 @@ public class Environment {
     private ArrayList<Obstacle> obstacles;
     private HashMap<Vector2, Float> obstaclePosition;
     private ArrayList<Agent> agentList;
+    private ArrayList<Agent> escapedAgentList;
     private int goalAgentNum;
 
     private LDA ldaStepSplit;
     private LDA ldaGroupSizeSplit;
 
     private LoadLog loadLog;
-    private WriteLog writeLog;
 
     //control flags
     private static boolean spawnRandomAgentsFlag = false;
@@ -44,8 +44,8 @@ public class Environment {
         initEnvironment();
         loadLog = new LoadLog(this, logDirPath);
         loadLog.setAgents(logDirPath);
-        loadLog.setObstacle(logDirPath + "/obstacle.obs");
-        loadLog.setGoal(logDirPath + "/goal.gl");
+        loadLog.setObstacle(logDirPath);
+        loadLog.setGoal(logDirPath);
     }
 
     public void initEnvironment() {
@@ -55,8 +55,9 @@ public class Environment {
         obstacles = new ArrayList<>();
         obstaclePosition = new HashMap<>();
         agentList = new ArrayList<>();
-        loadLog = new LoadLog(this);
-        writeLog = new WriteLog(this);
+        escapedAgentList = new ArrayList<>();
+        new LoadLog(this);
+        new WriteLog(this);
         setWallObstacles();
         spawnRandomAgentsFlag = false;
         removeAllAgentFlag = false;
@@ -70,8 +71,6 @@ public class Environment {
         ifRemoveAllObstacle();
         ifAgentInGoal();
         if (updateFlag) {
-            ifInitWriterLog();
-            writeLog.writeLog();
             step++;
             agentList.stream().parallel().forEach(Agent::action);
 //            ldaStepSplit.recordStepSplit(step);
@@ -102,7 +101,10 @@ public class Environment {
     private void ifAgentInGoal() {
         for (Goal goal : goals) {
             for (Agent agent : agentList) {
-                if (goal.isAgentInGoal(agent)) goalAgentNum++;
+                if (goal.isAgentInGoal(agent)) {
+                    goalAgentNum++;
+                    escapedAgentList.add(agent);
+                }
             }
             agentList.removeIf(goal::isAgentInGoal);
         }
@@ -128,17 +130,17 @@ public class Environment {
     }
 
     public void spawnAgent(Vector2 pos) {
-        agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos));
+        addAgent(new Agent(issueAgentID(), this, pos));
     }
 
     public void spawnAgent(Vector2 pos, float speed) {
-        agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos, speed));
+        addAgent(new Agent(issueAgentID(), this, pos, speed));
     }
 
     public void spawnAgent(Vector2 pos, String goalID) {
         for (Goal goal : goals) {
             if (goal.exists(goalID)) {
-                agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos, goal));
+                addAgent(new Agent(issueAgentID(), this, pos, goal));
             }
         }
     }
@@ -146,9 +148,13 @@ public class Environment {
     public void spawnAgent(Vector2 pos, String goalID, float speed) {
         for (Goal goal : goals) {
             if (goal.exists(goalID)) {
-                agentList.add(new Agent(String.valueOf(agentList.size() + 1), this, pos, speed, goal));
+                addAgent(new Agent(issueAgentID(), this, pos, speed, goal));
             }
         }
+    }
+
+    private String issueAgentID() {
+        return String.valueOf(agentList.size() + escapedAgentList.size() + 1);
     }
 
     public static void removeAllAgent() {
@@ -166,14 +172,8 @@ public class Environment {
         return agentList;
     }
 
-    public ArrayList<Agent> getAgentList(Agent targetAgent) {
-        ArrayList<Agent> aAgentList = new ArrayList<>();
-        for (Agent agent : agentList) {
-            if (!agent.equals(targetAgent)) {
-                aAgentList.add(agent);
-            }
-        }
-        return aAgentList;
+    public ArrayList<Agent> getEscapedAgentList() {
+        return escapedAgentList;
     }
 
     public Agent getAgent(String ID) {
@@ -186,14 +186,6 @@ public class Environment {
             }
         }
         return null;
-    }
-
-    public ArrayList<Vector2> getAgentsPosition(Agent targetAgent) {
-        ArrayList<Vector2> agentVectorList = new ArrayList<>();
-        for (Agent agent : getAgentList(targetAgent)) {
-            agentVectorList.add(agent.getPosition());
-        }
-        return agentVectorList;
     }
 
     public int getGoalAgentNum() {
@@ -292,13 +284,5 @@ public class Environment {
 
     public ArrayList<Goal> getGoals() {
         return goals;
-    }
-
-    public void ifInitWriterLog() {
-        if (writeLog == null) {
-            writeLog = new WriteLog(this);
-            ldaStepSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writeLog.getPath());
-            ldaGroupSizeSplit = new LDA(agentList, Parameter.LDA_OUT_PRINT_STEP, writeLog.getPath());
-        }
     }
 }

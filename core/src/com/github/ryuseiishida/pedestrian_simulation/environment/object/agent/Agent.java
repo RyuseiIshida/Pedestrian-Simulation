@@ -283,26 +283,6 @@ public class Agent {
     }
 
     /**
-     * StringのエージェントリストをAgent型リストに変換
-     *
-     * @param str String型のエージェントリスト
-     * @return Agent型リスト
-     */
-    private ArrayList<Agent> strToAgentList(String str) {
-        ArrayList<Agent> agentList = new ArrayList<>();
-        //例 [] or [agent4: agent7: agent8: agent20]
-        String tmpStr = str.replace("[", "").replace("]", "").replace(" ", "");
-        if (!tmpStr.isEmpty()) {
-            // agent4:agent:7:agent8:agent20
-            String[] splitStr = tmpStr.replace("agent", "").split(":", 0);
-            for (String strAgent : splitStr) {
-                agentList.add(env.getAgent(strAgent));
-            }
-        }
-        return agentList;
-    }
-
-    /**
      * Agentがどの程度同じ行動をしているかをセットする
      */
     private void setPerceptionContinue() {

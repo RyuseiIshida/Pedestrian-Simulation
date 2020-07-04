@@ -32,7 +32,6 @@ public class LoadLog {
     }
 
     public LoadLog(String loadPath) {
-        this.environment = environment;
         simulationLogPath = loadPath;
         setAgentFileList(loadPath);
     }
@@ -95,7 +94,8 @@ public class LoadLog {
         }
     }
 
-    public static void setInitAgent(String filePath) {
+    public static void setInitAgent(String dirPath) {
+        String filePath = dirPath + "/spawn_agents.txt";
         if (environment == null || !new File(filePath).exists()) return;
         try (BufferedReader br = Files.newBufferedReader(Paths.get(filePath))) {
             String line;
@@ -122,7 +122,8 @@ public class LoadLog {
         }
     }
 
-    public static void setObstacle(String filePath) {
+    public static void setObstacle(String dirPath) {
+        String filePath = dirPath + "/obstacle.txt";
         if (environment == null || !new File(filePath).exists()) return;
         try (BufferedReader br = Files.newBufferedReader(Paths.get(filePath))) {
             br.readLine();
@@ -141,7 +142,8 @@ public class LoadLog {
         }
     }
 
-    public static void setGoal(String filePath) {
+    public static void setGoal(String dirPath) {
+        String filePath = dirPath + "/goal.txt";
         if (environment == null || !new File(filePath).exists()) return;
         try (BufferedReader br = Files.newBufferedReader(Paths.get(filePath))) {
             String line;

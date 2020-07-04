@@ -37,7 +37,6 @@
               <MenuItem mnemonicParsing="false" onAction="#menuEventOpenSimulationLog" text="Open Simulation Log" />
                   <MenuItem mnemonicParsing="false" onAction="#menuEventOpenBackground" text="Open Background Picture" />
                   <MenuItem mnemonicParsing="false" onAction="#menuEventSaveWorkSpace" text="Save  Work Space" />
-                  <MenuItem mnemonicParsing="false" onAction="#menuEventSaveSimulationLog" text="Save  Simulation Log" />
                   <MenuItem mnemonicParsing="false" onAction="#menuEventClose" text="Close" />
             </items>
           </Menu>
@@ -56,15 +55,15 @@
                   <Font size="12.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" onAction="#eventSaveSimulationButton" prefHeight="30.0" prefWidth="50.0" text="●" textAlignment="CENTER">
+            <Button fx:id="saveSimulationButton" mnemonicParsing="false" onAction="#eventSaveSimulationButton" prefHeight="30.0" prefWidth="60.0" text="●" textAlignment="CENTER">
                <font>
                   <Font size="12.0" />
                </font>
             </Button>
-            <AnchorPane prefHeight="50.0" prefWidth="219.0">
+            <AnchorPane prefHeight="50.0" prefWidth="207.0">
                <children>
                   <Slider layoutX="8.0" layoutY="17.0" prefHeight="16.0" prefWidth="141.0" visible="false" />
-                  <Button layoutX="155.0" layoutY="10.0" mnemonicParsing="false" onAction="#eventNewButton" prefHeight="30.0" prefWidth="50.0" text="New" textAlignment="CENTER">
+                  <Button layoutX="157.0" layoutY="10.0" mnemonicParsing="false" onAction="#eventNewButton" prefHeight="30.0" prefWidth="50.0" text="New" textAlignment="CENTER">
                      <font>
                         <Font size="12.0" />
                      </font>
