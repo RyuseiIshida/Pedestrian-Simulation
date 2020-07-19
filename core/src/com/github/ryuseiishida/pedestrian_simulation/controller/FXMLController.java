@@ -23,27 +23,16 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class FXMLController implements Initializable {
-    private void reset() {
-        GdxController.startFlag = true;
-        GdxController.setBackgroundTexture(null);
-        GdxController.resetEnvironment();
-        startButton.setText("▶");
-    }
+    // TabPane
+    // Parameter Tab
+    // Environment Title Pane
+    @FXML
+    Label simulationLogText;
 
     @FXML
     private Button saveSimulationButton;
-
     @FXML
-    private void menuEventOpenWorkSpace(ActionEvent event) {
-        final DirectoryChooser directoryChooser = new DirectoryChooser();
-        File selectedDirectory = directoryChooser.showDialog(null);
-        String dirPath = String.valueOf(selectedDirectory);
-        if (selectedDirectory != null) {
-            LoadLog.setObstacle(dirPath);
-            LoadLog.setGoal(dirPath);
-            LoadLog.setInitAgent(dirPath);
-        }
-    }
+    Label backgroundPathText;
 
     @FXML
     private void menuEventOpenSimulationLog(ActionEvent event) {
@@ -159,11 +148,14 @@ public class FXMLController implements Initializable {
         reset();
     }
 
-    // TabPane
-    // Parameter Tab
-    // Environment Title Pane
-    @FXML
-    Text simulationLogText;
+    private void reset() {
+        GdxController.startFlag = true;
+        GdxController.setBackgroundTexture(null);
+        GdxController.resetEnvironment();
+        startButton.setText("▶");
+        backgroundPathText.setText("not selected");
+        simulationLogText.setText("not selected");
+    }
 
     @FXML
     void onSimulationLogButton(ActionEvent event) {
@@ -177,7 +169,17 @@ public class FXMLController implements Initializable {
     }
 
     @FXML
-    Text backgroundPathText;
+    private void menuEventOpenWorkSpace(ActionEvent event) {
+        final DirectoryChooser directoryChooser = new DirectoryChooser();
+        File selectedDirectory = directoryChooser.showDialog(null);
+        String dirPath = String.valueOf(selectedDirectory);
+        if (selectedDirectory != null) {
+            reset();
+            LoadLog.setObstacle(dirPath);
+            LoadLog.setGoal(dirPath);
+            LoadLog.setInitAgent(dirPath);
+        }
+    }
 
     @FXML
     void onBackgroundButton(ActionEvent event) {
