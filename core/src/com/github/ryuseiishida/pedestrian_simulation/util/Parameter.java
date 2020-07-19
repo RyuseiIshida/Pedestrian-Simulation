@@ -11,7 +11,7 @@ public class Parameter {
     /**
      * Application version
      */
-    public static String VERSION = "1.11";
+    public static String VERSION = "1.12";
 
     /**
      * Application about message
@@ -37,6 +37,8 @@ public class Parameter {
             + "1.10\t消しゴム機能の追加\n"
             + "1.11\t\trandom spawn agent 機能を更新\n"
             + "\t\t場所・範囲が指定できるようになった\n"
+            + "1.12\tパラメータの書き出し&読み込み機能を追加\n"
+            + "\t\t背景の書き出し&読み込み機能を追加\n"
             + "\n"
             + "次回アップデート\n"
             + "1.1x\t軽微な修正";
@@ -75,6 +77,11 @@ public class Parameter {
      * Simulation Scale Size
      */
     public static Vector2 SCALE = new Vector2(100 * 100f, 100 * 100f);
+
+    /**
+     * Simulation Background Texture path
+     */
+    public static String BACKGROUND_TEXTURE_Path;
 
     /**
      * Simulation Background Texture size

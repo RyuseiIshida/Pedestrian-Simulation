@@ -1,5 +1,6 @@
 package com.github.ryuseiishida.pedestrian_simulation.util;
 
+import com.github.ryuseiishida.pedestrian_simulation.controller.GdxController;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Agent;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.Goal;
@@ -18,7 +19,7 @@ public class WriteLog {
     }
 
     public static void writeParameterLog(String dirPath) {
-        String filePath = dirPath + "parameter.txt";
+        String filePath = dirPath + "/parameter.txt";
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(filePath))) {
             String parameterLog = ""
                     + "VERSION " + Parameter.VERSION + "\n"
@@ -39,6 +40,16 @@ public class WriteLog {
                     + "OBSTACLE_POTENTIAL_RANGE " + Parameter.OBSTACLE_POTENTIAL_RANGE + "\n"
                     + "POTENTIAL_DELTA " + Parameter.POTENTIAL_DELTA;
             bw.append(parameterLog);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void copyBackgroundFile(String dirPath) {
+        if(Parameter.BACKGROUND_TEXTURE_Path == null || !new File(Parameter.BACKGROUND_TEXTURE_Path).exists()) return;
+        String saveFilePath = dirPath + "/background.png";
+        try {
+            Files.copy(Paths.get(Parameter.BACKGROUND_TEXTURE_Path), Paths.get(saveFilePath));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,7 +79,7 @@ public class WriteLog {
     }
 
     public static void writeAgentInitLog(String dirPath) {
-        String saveFilePath = dirPath + "/spawn_agents.txt";
+        String saveFilePath = dirPath + "/spawn_ag.txt";
         if (environment == null || environment.getAgentList().size() == 0) return;
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(saveFilePath))) {
             for (Agent agent : environment.getAgentList()) {

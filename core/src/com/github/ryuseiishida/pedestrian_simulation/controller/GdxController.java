@@ -97,6 +97,7 @@ public class GdxController extends ApplicationAdapter {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
+                Parameter.BACKGROUND_TEXTURE_Path = path;
                 backgroundTexture = new Texture(path);
             }
         });

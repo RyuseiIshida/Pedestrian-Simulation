@@ -39,6 +39,7 @@ public class FXMLController implements Initializable {
         final DirectoryChooser directoryChooser = new DirectoryChooser();
         File selectedDirectory = directoryChooser.showDialog(null);
         if (selectedDirectory != null) {
+            LoadLog.setBackgroundTexture(String.valueOf(selectedDirectory));
             GdxController.setEnvironment(new Environment(String.valueOf(selectedDirectory)));
             simulationLogText.setText(selectedDirectory.getName());
         }
@@ -109,6 +110,7 @@ public class FXMLController implements Initializable {
         if (selectedDirectory != null) {
             selectedDirectory.mkdir();
             WriteLog.writeParameterLog(dirPath);
+            WriteLog.copyBackgroundFile(dirPath);
             WriteLog.writeAgentInitLog(dirPath);
             WriteLog.writeGoalLog(dirPath);
             WriteLog.writeObstacleLog(dirPath);
@@ -152,9 +154,28 @@ public class FXMLController implements Initializable {
         GdxController.startFlag = true;
         GdxController.setBackgroundTexture(null);
         GdxController.resetEnvironment();
+        setParameterPromptText();
         startButton.setText("▶");
         backgroundPathText.setText("not selected");
         simulationLogText.setText("not selected");
+    }
+
+    private void setParameterPromptText() {
+        backgroundSizeXTextField.setPromptText(String.valueOf(Parameter.BACKGROUND_TEXTURE_SIZE.x));
+        backgroundSizeYTextField.setPromptText(String.valueOf(Parameter.BACKGROUND_TEXTURE_SIZE.y));
+        scaleXText.setPromptText(String.valueOf(Parameter.SCALE.x));
+        scaleYText.setPromptText(String.valueOf(Parameter.SCALE.y));
+        cellIntervalText.setPromptText(String.valueOf(Parameter.CELL_INTERVAL));
+        radiusTextBox.setPromptText(String.valueOf(Parameter.AGENT_RADIUS));
+        speedTextBox.setPromptText(String.valueOf(Parameter.AGENT_SPEED));
+        viewLengthTextBox.setPromptText(String.valueOf(Parameter.VIEW_RADIUS_LENGTH));
+        viewAngleTextBox.setPromptText(String.valueOf(Parameter.VIEW_DEGREE));
+        goalPotentialWeightTextBox.setPromptText(String.valueOf(Parameter.GOAL_POTENTIAL_WEIGHT));
+        goalPotentialRangeTextBox.setPromptText(String.valueOf(Parameter.GOAL_POTENTIAL_RANGE));
+        agentPotentialWeightTextBox.setPromptText(String.valueOf(Parameter.AGENT_POTENTIAL_WEIGHT));
+        agentPotentialRangeTextBox.setPromptText(String.valueOf(Parameter.AGENT_POTENTIAL_RANGE));
+        obstaclePotentialWeightTextBox.setPromptText(String.valueOf(Parameter.OBSTACLE_POTENTIAL_WEIGHT));
+        obstaclePotentialRangeTextBox.setPromptText(String.valueOf(Parameter.OBSTACLE_POTENTIAL_RANGE));
     }
 
     @FXML
@@ -174,7 +195,9 @@ public class FXMLController implements Initializable {
         File selectedDirectory = directoryChooser.showDialog(null);
         String dirPath = String.valueOf(selectedDirectory);
         if (selectedDirectory != null) {
+            LoadLog.setParameter(dirPath);
             reset();
+            LoadLog.setBackgroundTexture(dirPath);
             LoadLog.setObstacle(dirPath);
             LoadLog.setGoal(dirPath);
             LoadLog.setInitAgent(dirPath);
@@ -182,7 +205,7 @@ public class FXMLController implements Initializable {
     }
 
     @FXML
-    void onBackgroundButton(ActionEvent event) {
+    private void onBackgroundButton(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG", "*.png"));
         File file = fileChooser.showOpenDialog(null);
