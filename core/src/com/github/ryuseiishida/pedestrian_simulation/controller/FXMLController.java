@@ -1,6 +1,5 @@
 package com.github.ryuseiishida.pedestrian_simulation.controller;
 
-import com.badlogic.gdx.Gdx;
 import com.github.ryuseiishida.pedestrian_simulation.util.LoadLog;
 import com.github.ryuseiishida.pedestrian_simulation.util.WriteLog;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
@@ -14,7 +13,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
@@ -129,6 +127,7 @@ public class FXMLController implements Initializable {
                 directory.mkdir();
                 Parameter.WRITE_LOG_PATH = dirPath;
                 WriteLog.writeParameterLog(dirPath);
+                WriteLog.copyBackgroundFile(dirPath);
                 WriteLog.writeObstacleLog(dirPath);
                 WriteLog.writeGoalLog(dirPath);
                 WriteLog.writeAgentLog(dirPath);
@@ -183,8 +182,8 @@ public class FXMLController implements Initializable {
         final DirectoryChooser directoryChooser = new DirectoryChooser();
         File selectedDirectory = directoryChooser.showDialog(null);
         if (selectedDirectory != null) {
-            String path = String.valueOf(selectedDirectory);
-            GdxController.setEnvironment(new Environment(path));
+            LoadLog.setBackgroundTexture(String.valueOf(selectedDirectory));
+            GdxController.setEnvironment(new Environment(String.valueOf(selectedDirectory)));
             simulationLogText.setText(selectedDirectory.getName());
         }
     }

@@ -46,7 +46,11 @@ public class WriteLog {
     }
 
     public static void copyBackgroundFile(String dirPath) {
-        if(Parameter.BACKGROUND_TEXTURE_Path == null || !new File(Parameter.BACKGROUND_TEXTURE_Path).exists()) return;
+        if(Parameter.BACKGROUND_TEXTURE_Path == null || !new File(Parameter.BACKGROUND_TEXTURE_Path).exists()) {
+            System.out.println("null");
+            return;
+        }
+        System.out.println("kitao");
         String saveFilePath = dirPath + "/background.png";
         try {
             Files.copy(Paths.get(Parameter.BACKGROUND_TEXTURE_Path), Paths.get(saveFilePath));
