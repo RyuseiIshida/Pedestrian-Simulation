@@ -31,7 +31,6 @@ public class Environment {
     private LoadLog loadLog;
 
     //control flags
-    private static boolean spawnRandomAgentsFlag = false;
     private static boolean removeAllAgentFlag = false;
     private static boolean removeAllGoalFlag = false;
     private static boolean removeAllObstacleFlag = false;
@@ -59,7 +58,6 @@ public class Environment {
         new LoadLog(this);
         new WriteLog(this);
         setWallObstacles();
-        spawnRandomAgentsFlag = false;
         removeAllAgentFlag = false;
         removeAllGoalFlag = false;
         removeAllObstacleFlag = false;

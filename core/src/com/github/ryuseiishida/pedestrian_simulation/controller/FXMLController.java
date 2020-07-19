@@ -1,5 +1,6 @@
 package com.github.ryuseiishida.pedestrian_simulation.controller;
 
+import com.badlogic.gdx.Gdx;
 import com.github.ryuseiishida.pedestrian_simulation.util.LoadLog;
 import com.github.ryuseiishida.pedestrian_simulation.util.WriteLog;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;

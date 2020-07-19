@@ -68,26 +68,15 @@ public class AnalyzeLogLDA {
         Vector2 velocity = UtilVector.strToVector(dir);
         float radian = (float) Math.atan2(velocity.y, velocity.x);
         int degree = (int) Math.toDegrees(radian);
-        if (degree < 0) {
-            degree += 360;
-        }
-        if (degree >= 0 && degree <= 45) {
-            return 1;
-        } else if (degree > 45 && degree <= 90) {
-            return 2;
-        } else if (degree > 90 && degree <= 135) {
-            return 3;
-        } else if (degree > 135 && degree <= 180) {
-            return 4;
-        } else if (degree > 180 && degree <= 225) {
-            return 5;
-        } else if (degree > 225 && degree <= 270) {
-            return 6;
-        } else if (degree > 270 && degree <= 315) {
-            return 7;
-        } else if (degree > 315 && degree < 360) {
-            return 8;
-        }
+        if (degree < 0) degree += 360;
+        if (degree >= 0 && degree <= 45) return 1;
+        else if (degree > 45 && degree <= 90) return 2;
+        else if (degree > 90 && degree <= 135) return 3;
+        else if (degree > 135 && degree <= 180) return 4;
+        else if (degree > 180 && degree <= 225) return 5;
+        else if (degree > 225 && degree <= 270) return 6;
+        else if (degree > 270 && degree <= 315) return 7;
+        else if (degree > 315 && degree < 360) return 8;
         throw new IllegalArgumentException("Direction is out of range. [ direction = " + degree + " ]");
     }
 
