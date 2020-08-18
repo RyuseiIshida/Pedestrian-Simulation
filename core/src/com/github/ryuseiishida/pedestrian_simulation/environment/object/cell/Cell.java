@@ -113,7 +113,7 @@ public class Cell {
         Cell other = (Cell) obj;
         if ((int) centerPoint.x == (int) other.getCenterPoint().x) return false;
         if ((int) centerPoint.y == (int) other.getCenterPoint().y) return false;
-        return true;
+        return false;
     }
 
 }
