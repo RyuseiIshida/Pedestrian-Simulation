@@ -8,15 +8,20 @@ import com.github.ryuseiishida.pedestrian_simulation.util.Inputs;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
+import javafx.stage.*;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -24,13 +29,9 @@ public class FXMLController implements Initializable {
     // TabPane
     // Parameter Tab
     // Environment Title Pane
-    @FXML
-    Label simulationLogText;
 
     @FXML
     private Button saveSimulationButton;
-    @FXML
-    Label backgroundPathText;
 
     @FXML
     private void menuEventOpenSimulationLog(ActionEvent event) {
@@ -39,7 +40,6 @@ public class FXMLController implements Initializable {
         if (selectedDirectory != null) {
             LoadLog.setBackgroundTexture(String.valueOf(selectedDirectory));
             GdxController.setEnvironment(new Environment(String.valueOf(selectedDirectory)));
-            simulationLogText.setText(selectedDirectory.getName());
         }
     }
 
@@ -51,13 +51,42 @@ public class FXMLController implements Initializable {
         if (file != null) {
             String path = String.valueOf(file);
             GdxController.setBackgroundTexture(path);
-            backgroundPathText.setText(file.getName());
         }
     }
 
     @FXML
     private void menuEventClose(ActionEvent event) {
         System.exit(0);
+    }
+
+    @FXML
+    private void menuEventCreateCorpusData(ActionEvent event) throws IOException {
+        showCreateCorpusWindow();
+    }
+
+    @FXML
+    private void menuEventViewTopic(ActionEvent event) throws IOException {
+        final DirectoryChooser directoryChooser = new DirectoryChooser();
+        File selectedDirectory = directoryChooser.showDialog(null);
+        if (selectedDirectory != null && ifNotTopicDir(selectedDirectory)) {
+            RenderTopic.setRenderTopicRegionFlag(true);
+            RenderTopic.setLdaFilePath(selectedDirectory.getPath());
+            showTopicControlWindow();
+        }
+    }
+
+    private boolean ifNotTopicDir(File dir) {
+        String topicFileName = dir.getPath().split("/")[dir.getPath().split("/").length - 1];
+        if (topicFileName.contains("topic_k")) {
+            return true;
+        } else{
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Information");
+            alert.setHeaderText("It is not the correct folder");
+            alert.setContentText("Select path : " + dir.getPath() + "\nMust be a file name containing \"topic_k\"");
+            alert.showAndWait();
+            return false;
+        }
     }
 
     @FXML
@@ -155,8 +184,8 @@ public class FXMLController implements Initializable {
         GdxController.resetEnvironment();
         setParameterPromptText();
         startButton.setText("▶");
-        backgroundPathText.setText("not selected");
-        simulationLogText.setText("not selected");
+        saveSimulationButton.setTextFill(Color.BLACK);
+        RenderTopic.setRenderTopicRegionFlag(false);
     }
 
     private void setParameterPromptText() {
@@ -178,17 +207,6 @@ public class FXMLController implements Initializable {
     }
 
     @FXML
-    void onSimulationLogButton(ActionEvent event) {
-        final DirectoryChooser directoryChooser = new DirectoryChooser();
-        File selectedDirectory = directoryChooser.showDialog(null);
-        if (selectedDirectory != null) {
-            LoadLog.setBackgroundTexture(String.valueOf(selectedDirectory));
-            GdxController.setEnvironment(new Environment(String.valueOf(selectedDirectory)));
-            simulationLogText.setText(selectedDirectory.getName());
-        }
-    }
-
-    @FXML
     private void menuEventOpenWorkSpace(ActionEvent event) {
         final DirectoryChooser directoryChooser = new DirectoryChooser();
         File selectedDirectory = directoryChooser.showDialog(null);
@@ -200,18 +218,6 @@ public class FXMLController implements Initializable {
             LoadLog.setObstacle(dirPath);
             LoadLog.setGoal(dirPath);
             LoadLog.setInitAgent(dirPath);
-        }
-    }
-
-    @FXML
-    private void onBackgroundButton(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG", "*.png"));
-        File file = fileChooser.showOpenDialog(null);
-        if (file != null) {
-            String path = String.valueOf(file);
-            GdxController.setBackgroundTexture(path);
-            backgroundPathText.setText(file.getName());
         }
     }
 
@@ -596,5 +602,37 @@ public class FXMLController implements Initializable {
         return message;
     }
 
+    private void showCreateCorpusWindow() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/create_corpus_window.fxml"));
+        Stage stage = new Stage();
+        CreateCorpusWindow controller = new CreateCorpusWindow();
+        loader.setController(controller);
+        Parent root = loader.load();
+        stage.setTitle("Create Corpus Settings");
+        stage.setX(1);
+        stage.setY(1);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double desktopWidth = screenSize.getWidth();
+        double desktopHeight = screenSize.getHeight();
+        stage.setScene(new Scene(root));
+        stage.show();
+        RenderTopic.setRenderCellFlag(true);
+    }
 
+    private void showTopicControlWindow() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/topic_control_window.fxml"));
+        Stage stage = new Stage();
+        TopicControlWindow controller = new TopicControlWindow();
+        loader.setController(controller);
+        Parent root = loader.load();
+        stage.setTitle("Topic Control Panel");
+        stage.setOnCloseRequest((WindowEvent event) -> { RenderTopic.setRenderTopicRegionFlag(false); } );
+        stage.setX(1);
+        stage.setY(1);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double desktopWidth = screenSize.getWidth();
+        double desktopHeight = screenSize.getHeight();
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
 }

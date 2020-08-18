@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.github.ryuseiishida.pedestrian_simulation.analysis.AnalyzeLogLDA;
+import com.github.ryuseiishida.pedestrian_simulation.controller.GdxController;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.StateTag;
-import com.github.ryuseiishida.pedestrian_simulation.analysis.LDA;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.Cell;
-import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,42 +18,41 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-public class RenderLDA {
-    private static boolean renderFlag = false;
-    private static int numTopics = 17;
-    private static int topicK = 18;
+public class RenderTopic {
+    private static int topicK;
+    private static int selectTopicNumber = 1;
     private static String ldaFilePath;
 
-    //TODO refactor
-    public RenderLDA(Batch batch, BitmapFont bitmapFont, ShapeRenderer shapeRenderer, Camera camera, String filePath) {
-        if (renderFlag) {
-            ldaFilePath = filePath;
-            topicRegion(shapeRenderer, camera);
-            //cellIndex(shapeRenderer, camera, batch, bitmapFont);
-            numTopics(shapeRenderer, camera, batch, bitmapFont);
-        }
+    private static boolean renderTopicRegionFlag = false;
+    private static boolean renderCellFlag = false;
+    private static Camera camera = GdxController.getCamera();
+    private static ShapeRenderer shapeRenderer = GdxController.getShapeRenderer();
+
+    public RenderTopic() {
+        if (renderTopicRegionFlag) topicRegion();
+        if (renderCellFlag) cell();
     }
 
-    public static void setRenderFlag(boolean flag) {
-        renderFlag = flag;
+    public static void setRenderTopicRegionFlag(boolean renderTopicRegionFlag) {
+        RenderTopic.renderTopicRegionFlag = renderTopicRegionFlag;
     }
 
-    public static void switchRenderFlag() {
-        renderFlag = !renderFlag;
+    public static void setRenderCellFlag(boolean renderCellFlag) {
+        RenderTopic.renderCellFlag = renderCellFlag;
     }
 
-    public static void cell(ShapeRenderer shapeRenderer, Camera camera) {
+    public static void setLdaFilePath(String ldaFilePath) {
+        System.out.println(ldaFilePath);
+        String topicFileName = ldaFilePath.split("/")[ldaFilePath.split("/").length-1];
+        topicK = Integer.parseInt(topicFileName.split("k")[1]);
+        RenderTopic.ldaFilePath = ldaFilePath;
+    }
+
+    public static void cell() {
         shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.GREEN);
-        for (Cell cell : LDA.getPositionMap().getCells()) {
-            shapeRenderer.rect(cell.getLeftBottomPoint().x, cell.getLeftBottomPoint().y, cell.getCellInterval(), cell.getCellInterval());
-        }
-        shapeRenderer.end();
-
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.BLACK);
-        for (Cell cell : LDA.getPositionMap().getCells()) {
+        shapeRenderer.setColor(Color.GREEN);
+        for (Cell cell : AnalyzeLogLDA.getPositionMap().getCells()) {
             shapeRenderer.line(cell.getLeftBottomPoint(), cell.getLeftTopPoint());
             shapeRenderer.line(cell.getLeftBottomPoint(), cell.getRightBottomPoint());
             shapeRenderer.line(cell.getRightBottomPoint(), cell.getRightTopPoint());
@@ -62,27 +61,9 @@ public class RenderLDA {
         shapeRenderer.end();
     }
 
-    public static void cellIndex(ShapeRenderer shapeRenderer, Camera camera, Batch batch, BitmapFont bitmapFont) {
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        batch.begin();
-        //batch.draw(texture, 0, 0);
-        for (Cell cell : LDA.getPositionMap().getCells()) {
-            bitmapFont.draw(batch, String.valueOf(LDA.getPositionMap().getCells().indexOf(cell)), cell.getCenterPoint().x, cell.getCenterPoint().y);
-        }
-        batch.end();
-    }
-
-    public static void numTopics(ShapeRenderer shapeRenderer, Camera camera, Batch batch, BitmapFont bitmapFont) {
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        batch.begin();
-        bitmapFont.draw(batch, "Topic = " + RenderLDA.getNumTopics(), Parameter.SCALE.x - 1000, Parameter.SCALE.y - 100);
-        batch.end();
-    }
-
     private static ArrayList<String> readFileTopic() {
         ArrayList<String> topic = new ArrayList<>();
-        String path = ldaFilePath + "￿/topic_k" + topicK + "/group_topic" + numTopics + ".txt";
-        path = path.replace("\uFFFF", "");
+        String path = ldaFilePath + "/group_topic" + selectTopicNumber + ".txt";
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(path))) {
             String line = null;
             while ((line = reader.readLine()) != null) {
@@ -94,7 +75,7 @@ public class RenderLDA {
         return topic;
     }
 
-    public static void topicRegion(ShapeRenderer shapeRenderer, Camera camera) {
+    public static void topicRegion() {
         for (String s : readFileTopic()) {
             shapeRenderer.setProjectionMatrix(camera.combined);
             Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -104,16 +85,16 @@ public class RenderLDA {
             //shapeRenderer.setColor(new Color(0, 1, 0, 0.1f));
             int pos = Integer.parseInt(s.split("d")[0].replace("p", ""));
             int dir = Integer.parseInt(s.split("d")[1].substring(0, 1));
-            float x = LDA.getPositionMap().getCells().get(pos).getCenterPoint().x;
-            float y = LDA.getPositionMap().getCells().get(pos).getCenterPoint().y;
+            float x = AnalyzeLogLDA.getPositionMap().getCells().get(pos).getCenterPoint().x;
+            float y = AnalyzeLogLDA.getPositionMap().getCells().get(pos).getCenterPoint().y;
             String tag = s.split(",")[0].split("d")[1].substring(1);
             shapeRenderer.circle(x, y, 500);
             shapeRenderer.end();
-            topicLine(shapeRenderer, camera, x, y, dir, tag);
+            topicLine(x, y, dir, tag);
         }
     }
 
-    public static void topicLine(ShapeRenderer shapeRenderer, Camera camera, float x, float y, int direction, String tag) {
+    public static void topicLine(float x, float y, int direction, String tag) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.BLACK);
@@ -152,13 +133,17 @@ public class RenderLDA {
         shapeRenderer.end();
     }
 
-    public static void setNumTopics(int topicNum) {
+    public static int getSelectTopicNumber() {
+        return selectTopicNumber;
+    }
+
+    public static void setSelectTopicNumber(int topicNum) {
         if (topicNum >= 1 && topicNum <= topicK) {
-            numTopics = topicNum;
+            selectTopicNumber = topicNum;
         }
     }
 
-    public static int getNumTopics() {
-        return numTopics;
+    public static int getTopicK() {
+        return topicK;
     }
 }

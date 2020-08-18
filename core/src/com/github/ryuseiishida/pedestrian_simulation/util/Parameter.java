@@ -39,9 +39,10 @@ public class Parameter {
             + "\t\t場所・範囲が指定できるようになった\n"
             + "1.12\tパラメータの書き出し&読み込み機能を追加\n"
             + "\t\t背景の書き出し&読み込み機能を追加\n"
+            + "1.13\tトピックデータの描画およびコーパスデータの作成機能を追加\n"
             + "\n"
-            + "次回アップデート\n"
-            + "1.1x\t軽微な修正";
+            + "次回アップデート予定\n"
+            + "1.1x\tトピックデータの作成機能";
 
     /**
      * Simulation termination conditions
@@ -91,7 +92,7 @@ public class Parameter {
     /**
      * Size of the cell that calculates obstacles and potential intervals
      */
-    public static int CELL_INTERVAL = 10;
+    public static int CELL_INTERVAL = 5;
 
     /**
      * Environment Cells Map

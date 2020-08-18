@@ -3,7 +3,6 @@ package com.github.ryuseiishida.pedestrian_simulation.environment;
 import com.badlogic.gdx.math.Vector2;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Agent;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.StateTag;
-import com.github.ryuseiishida.pedestrian_simulation.analysis.LDA;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.Cell;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.Goal;
 import com.github.ryuseiishida.pedestrian_simulation.util.LoadLog;
@@ -25,9 +24,6 @@ public class Environment {
     private ArrayList<Agent> escapedAgentList;
     private int goalAgentNum;
 
-    private LDA ldaStepSplit;
-    private LDA ldaGroupSizeSplit;
-
     private LoadLog loadLog;
 
     //control flags
@@ -42,6 +38,7 @@ public class Environment {
     public Environment(String logDirPath) {
         initEnvironment();
         loadLog = new LoadLog(this, logDirPath);
+        loadLog.setParameter(logDirPath);
         loadLog.setAgents(logDirPath);
         loadLog.setObstacle(logDirPath);
         loadLog.setGoal(logDirPath);
@@ -71,8 +68,6 @@ public class Environment {
         if (updateFlag) {
             step++;
             agentList.stream().parallel().forEach(Agent::action);
-//            ldaStepSplit.recordStepSplit(step);
-//            ldaGroupSizeSplit.recordGroupSizeSplit(step);
         }
     }
 

@@ -6,16 +6,13 @@ import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Agent;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.Goal;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Line;
-import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class LoadLog {
     private static Environment environment;
@@ -26,15 +23,17 @@ public class LoadLog {
         this.environment = environment;
     }
 
+    ArrayList<ArrayList<String>> logAgentListLines = new ArrayList<>();
+
     public LoadLog(Environment environment, String loadPath) {
         this.environment = environment;
         simulationLogPath = loadPath;
-        setAgentFileList(loadPath);
+        agentFileList = searchAgentFileList(loadPath);
     }
 
     public LoadLog(String loadPath) {
         simulationLogPath = loadPath;
-        setAgentFileList(loadPath);
+        agentFileList = searchAgentFileList(loadPath);
     }
 
     public static void setParameter(String dirPath) {
@@ -73,8 +72,7 @@ public class LoadLog {
         GdxController.setBackgroundTexture(filePath);
     }
 
-    private void setAgentFileList(String dirPath) {
-        agentFileList = new ArrayList<>();
+    public static ArrayList<File> searchAgentFileList(String dirPath) {
         FilenameFilter filter = new FilenameFilter() {
             public boolean accept(File file, String str) {
                 if (str.indexOf("agent") != -1) return true;
@@ -82,22 +80,11 @@ public class LoadLog {
             }
         };
         File[] files = new File(dirPath).listFiles(filter);
-        this.agentFileList.addAll(Arrays.asList(files));
+        return new ArrayList<File>(Arrays.asList(files));
     }
 
-    public int endStep() {
-        int endStep = 0;
-        String path = simulationLogPath + "/macro.txt";
-        try (BufferedReader br = Files.newBufferedReader(Paths.get(path))) {
-            String line;
-            br.readLine(); //ヘッダーを抜かす処理
-            while ((line = br.readLine()) != null) {
-                endStep++;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return endStep;
+    public String getLogPath() {
+        return simulationLogPath;
     }
 
     public ArrayList<String> getStepLines(int step) {
@@ -111,11 +98,30 @@ public class LoadLog {
         return out;
     }
 
+    public int getEndStep() {
+        int endStep = 0;
+        for (File file : agentFileList) {
+            try (BufferedReader br = Files.newBufferedReader(file.toPath())) {
+                String line = null;
+                int step = -1; //header
+                while((line = br.readLine()) != null) {
+                    step += 1;
+                }
+                if(endStep < step) {
+                    endStep = step;
+                }
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return endStep;
+    }
+
     private String getStepLine(File file, int step) {
         try (BufferedReader br = Files.newBufferedReader(file.toPath())) {
-            String line = null;
+            String line ;
             while ((line = br.readLine()) != null) {
-                if (line.split(",")[0].equals(String.valueOf(step))) {
+                if (line.split(" ")[0].equals(String.valueOf(step))) {
                     return line;
                 }
             }
@@ -123,6 +129,35 @@ public class LoadLog {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void setLogAgentListLines() {
+        for (File file : agentFileList) {
+            ArrayList<String> lines = new ArrayList<>();
+            try(BufferedReader br = Files.newBufferedReader(file.toPath())) {
+                String line = null;
+                if(br.readLine() == br.readLine()) return; //header
+                while ((line = br.readLine()) != null) {
+                    lines.add(line);
+                }
+                logAgentListLines.add(lines);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public ArrayList<Vector2> getLogAgentPositions(int step) {
+        if(logAgentListLines.size() == 0) {
+            setLogAgentListLines();
+        }
+        ArrayList<Vector2> positions = new ArrayList<>();
+        for (ArrayList<String> logLines : logAgentListLines) {
+            if (logLines.size()-1 >= step) {
+                positions.add(UtilVector.strToVector(logLines.get(step).split(" ")[2]));
+            }
+        }
+        return positions;
     }
 
     public static void setInitAgent(String dirPath) {

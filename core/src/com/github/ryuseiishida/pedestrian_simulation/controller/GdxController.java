@@ -44,7 +44,7 @@ public class GdxController extends ApplicationAdapter {
             new RenderAgent();
             new RenderGoal();
             new RenderObstacle();
-//             new RenderLDA(batch, bitmapFont, shapeRenderer, camera, environment.getLoadLog().getSimulationLogPath());
+            new RenderTopic();
             new Inputs(camera, shapeRenderer, environment);
         } else new RenderBackground(titleBackgroundTexture);
     }

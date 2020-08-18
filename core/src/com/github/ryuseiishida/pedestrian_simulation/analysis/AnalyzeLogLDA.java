@@ -1,8 +1,11 @@
 package com.github.ryuseiishida.pedestrian_simulation.analysis;
 
 import com.badlogic.gdx.math.Vector2;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Group;
+import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.Cell;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.CellsMap;
 import com.github.ryuseiishida.pedestrian_simulation.util.LoadLog;
+import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import com.github.ryuseiishida.pedestrian_simulation.util.UtilVector;
 
 import java.io.BufferedWriter;
@@ -12,56 +15,28 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class AnalyzeLogLDA {
-    private String loadFilesDir = "core/assets/";
-    private String outPrintPath = loadFilesDir;
-    private LoadLog loadLog = new LoadLog(loadFilesDir);
+    //split parameter
+    private static CellsMap positionMap = new CellsMap(Parameter.SCALE, 1000);
+    private LoadLog loadLog;
 
-    private int splitStep = 30;
-
-    //Parameterのから
-    private static float METER = 100f;
-    private static CellsMap positionMap = new CellsMap(new Vector2(100 * METER, 80 * METER), 1000);
-
-    // group sizeで文書を区切る
-    private int perceptionGroupSize = 0;
     private ArrayList<ArrayList<String>> dataList = new ArrayList<>();
 
-    // stepで文書を区切る
-    // TODO LDAクラスとの要素数の違い
-    private void recordStepSplit() {
-        for (int step = 0; step <= loadLog.endStep(); step++) {
-            if (step % splitStep == 0) {
-                setDataList(loadLog.getStepLines(step));
-            }
-        }
-        outPrint("step_split_corpus" + splitStep);
+    public AnalyzeLogLDA(String dataDirPath) {
+        loadLog = new LoadLog(dataDirPath);
     }
 
-    // グループサイズが変わったタイミングで文書を区切る
-//    public void recordGroupSizeSplit(int step) {
-//        if (AgentGroups.size() != perceptionGroupSize) {
-//            setDataList(agentList);
-//        }
-//        perceptionGroupSize = AgentGroups.size();
-//
-//        ArrayList<Agent> goalAgent = new ArrayList<>();
-//        agentList.stream().forEach(agent -> {
-//            if (agent.getStateTag().equals(StateTag.moveGoal)) goalAgent.add(agent);
-//        });
-//        outPrint("stepGroupSizeSplit_Corpus");
-//    }
+    public static CellsMap getPositionMap() {
+        return positionMap;
+    }
 
-    private void setDataList(ArrayList<String> agentStepLog) {
-        ArrayList<String> data = new ArrayList<>();
-        agentStepLog.forEach(line -> {
-            String[] splitLine = line.split(",");
-            String state = splitLine[1];
-            String pos = String.valueOf(positionMap.getCells().
-                    indexOf(positionMap.getCell(UtilVector.strToVector(splitLine[2]))));
-            String dir = String.valueOf(getAgentDirection(splitLine[3]));
-            data.add("p" + pos + "d" + dir + state);
-        });
-        dataList.add(data);
+    public static void setMapSplitSize(int size_int) {
+        positionMap = new CellsMap(Parameter.SCALE, size_int);
+    }
+
+    public static void main(String[] args) {
+        AnalyzeLogLDA analyzeLogLDA = new AnalyzeLogLDA("core/assets/test_log");
+        analyzeLogLDA.recordGroupSizeSplit();
+        analyzeLogLDA.recordStepSplit(60);
     }
 
     private int getAgentDirection(String dir) {
@@ -80,8 +55,47 @@ public class AnalyzeLogLDA {
         throw new IllegalArgumentException("Direction is out of range. [ direction = " + degree + " ]");
     }
 
+    // stepで文書を区切る
+    public void recordStepSplit(int splitStep) {
+        int endStep = loadLog.getEndStep();
+        for (int step = 0; step <= endStep; step++) {
+            if (step % splitStep == 0) {
+                setDataList(loadLog.getStepLines(step));
+            }
+        }
+        outPrint("step_split_corpus" + splitStep);
+    }
+
+    // グループサイズが変わったタイミングで文書を区切る
+    public void recordGroupSizeSplit() {
+        int endStep = loadLog.getEndStep();
+        int perceptionGroupSize = 0;
+        for (int step = 0; step <= endStep; step++) {
+            ArrayList<Vector2> positions = loadLog.getLogAgentPositions(step);
+            ArrayList<ArrayList<Vector2>> agentGroups = Group.getGroup(positions);
+            if (agentGroups.size() != perceptionGroupSize) {
+                setDataList(loadLog.getStepLines(step));
+            }
+            perceptionGroupSize = agentGroups.size();
+        }
+        outPrint("group_size_split_corpus");
+    }
+
+    private void setDataList(ArrayList<String> agentStepLog) {
+        ArrayList<String> data = new ArrayList<>();
+        agentStepLog.forEach(line -> {
+            String[] splitLine = line.split(" ");
+            String state = splitLine[1];
+            String pos = String.valueOf(positionMap.getCells().
+                    indexOf(positionMap.getCell(UtilVector.strToVector(splitLine[2]))));
+            String dir = String.valueOf(getAgentDirection(splitLine[3]));
+            data.add("p" + pos + "d" + dir + state);
+        });
+        dataList.add(data);
+    }
+
     private void outPrint(String fileName) {
-        String path = outPrintPath + "/" + fileName + ".txt";
+        String path = loadLog.getLogPath() + "/" + fileName + ".txt";
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path))) {
             for (ArrayList<String> data : dataList) {
                 for (String s : data) {
@@ -96,10 +110,5 @@ public class AnalyzeLogLDA {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        AnalyzeLogLDA analyzeLogLDA = new AnalyzeLogLDA();
-        analyzeLogLDA.recordStepSplit();
     }
 }
