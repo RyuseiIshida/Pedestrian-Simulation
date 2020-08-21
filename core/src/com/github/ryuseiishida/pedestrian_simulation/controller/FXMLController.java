@@ -20,8 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.*;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -95,11 +94,26 @@ public class FXMLController implements Initializable {
         alert.setTitle("help");
         alert.setHeaderText("how to use Pedestrian Simulation");
         alert.setContentText("使い方\n詳細を表示してください。");
-        TextArea area = new TextArea(help());
+        TextArea area = new TextArea(getHelpMessage());
         area.setWrapText(true);
         area.setEditable(false);
         alert.getDialogPane().setExpandableContent(area);
         alert.showAndWait();
+    }
+
+    private String getHelpMessage() {
+        String helpMessage = "";
+        try {
+            InputStream pyStream = getClass().getClassLoader().getResourceAsStream("help.txt");
+            BufferedReader br = new BufferedReader(new InputStreamReader(pyStream));
+            String line;
+            while ((line = br.readLine()) != null) {
+                helpMessage = helpMessage + line + "\n";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return helpMessage;
     }
 
     @FXML
@@ -548,58 +562,6 @@ public class FXMLController implements Initializable {
         agentPotentialWeightTextBox.setPromptText(String.valueOf(Parameter.AGENT_POTENTIAL_WEIGHT));
         obstaclePotentialRangeTextBox.setPromptText(String.valueOf(Parameter.OBSTACLE_POTENTIAL_RANGE));
         obstaclePotentialWeightTextBox.setPromptText(String.valueOf(Parameter.OBSTACLE_POTENTIAL_WEIGHT));
-    }
-
-    public String help() {
-        String message = "Pedestrian Simulation(ver 1.0x)の使い方\n" +
-                "\n" +
-                "ver 1.0xの説明\n" +
-                "マウス操作による簡単なシミュレーションを行うことができる。\n" +
-                "\n" +
-                "はじめかた\n" +
-                "Newボタンでスタート画面からシミュレーション画面へ移行する\n" +
-                "またこのボタンはリセット機能も持っている\n" +
-                "\n" +
-                "- ▶/||ボタン シミュレーションの開始・一時停止\n" +
-                "- ●ボタン シミュレーションの記録\n" +
-                "\n" +
-                "\n" +
-                "↓↓Editの説明\n" +
-                "\n" +
-                "Editはマウス操作によってシミュレーション空間にオブジェクトの設置できる機能\n" +
-                "\n" +
-                "non_goal_agent\n" +
-                "- speed 歩行速度(空の場合はパラメータ設定が適用される)\n" +
-                "\n" +
-                "goal_agent\n" +
-                "- speed 歩行速度(空の場合はパラメータ設定が適用される)\n" +
-                "- goal id 設置済みのGoalのIDと同じ値を入力する(idが正しくないとmouse setがアクティブにできない)\n" +
-                "\n" +
-                "random_spawn_agent\n" +
-                "- agent_num 設置するエージェント数\n" +
-                "- agent type 現在は全てnon_goal_agentが設置される\n" +
-                "- spawn このボタンで空間にエージェントがランダムに設置される\n" +
-                "\n" +
-                "goal\n" +
-                "- goal_id 出口に紐付ける任意のID\n" +
-                "- width 横幅サイズ\n" +
-                "- height 縦幅サイズ\n" +
-                "\n" +
-                "line\n" +
-                "1回のクリックで始点を設定し、2回目のクリックで終点を設定する\n" +
-                "\n" +
-                "\n" +
-                "↓↓避難エージェントモデルの説明\n" +
-                "\n" +
-                "出口を知らないエージェント(non_goal_agent)\n" +
-                "行動ルール\n" +
-                "- ランダム行動(ランダムな方向に移動し、壁が視野に入ると方向を変更)\n" +
-                "- 追従行動(視野内にgoal_agentがいれば、追従する)\n" +
-                "\n" +
-                "出口を知っているエージェント(goal_agent)\n" +
-                "- 出口移動(自分の知っている出口へ移動するエージェント)\n" +
-                "\n";
-        return message;
     }
 
     private void showCreateCorpusWindow() throws IOException {

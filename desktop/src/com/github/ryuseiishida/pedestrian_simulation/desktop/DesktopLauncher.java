@@ -22,7 +22,6 @@ public class DesktopLauncher {
         config.y = 0;
         GdxController gdxController = new GdxController();
         new LwjglApplication(gdxController, config);
-        new AnalyzeLogLDA();
         Application.launch(FXApplication.class);
     }
 }

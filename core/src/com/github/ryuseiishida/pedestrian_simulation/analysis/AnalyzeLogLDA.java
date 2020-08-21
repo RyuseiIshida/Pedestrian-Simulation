@@ -13,18 +13,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class AnalyzeLogLDA {
-    //Python program path
-    private static InputStream pyStream;
     //split parameter
     private static CellsMap positionMap = new CellsMap(Parameter.SCALE, 1000);
     private LoadLog loadLog;
 
     private ArrayList<ArrayList<String>> dataList = new ArrayList<>();
-
-    public AnalyzeLogLDA() {
-        //load topic_analysis.py
-        pyStream = getClass().getClassLoader().getResourceAsStream("topic_analysis.py");
-    }
 
     public AnalyzeLogLDA(String dataDirPath) {
         loadLog = new LoadLog(dataDirPath);
@@ -131,6 +124,7 @@ public class AnalyzeLogLDA {
     public void createPythonFile() {
         ArrayList<String> codeLine = new ArrayList<>();
         try {
+            InputStream pyStream = getClass().getClassLoader().getResourceAsStream("topic_analysis.py");
             BufferedReader br = new BufferedReader(new InputStreamReader(pyStream));
             String line;
             while ((line = br.readLine()) != null) {
