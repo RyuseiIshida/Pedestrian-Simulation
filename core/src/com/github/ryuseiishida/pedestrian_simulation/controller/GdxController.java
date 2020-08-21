@@ -32,7 +32,7 @@ public class GdxController extends ApplicationAdapter {
         bitmapFont.setColor(Color.BLACK);
         bitmapFont.getData().setScale(10);
         environment = new Environment();
-        titleBackgroundTexture = new Texture("PedSimAsset.png");
+        titleBackgroundTexture = new Texture("start_background.png");
     }
 
     @Override
