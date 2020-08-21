@@ -45,7 +45,7 @@ public class CreateCorpusWindow implements Initializable {
     }
 
     @FXML
-    private void onCreateButton(ActionEvent event) throws InterruptedException {
+    private void onCreateButton(ActionEvent event) {
         final DirectoryChooser directoryChooser = new DirectoryChooser();
         File selectedDirectory = directoryChooser.showDialog(null);
         if (selectedDirectory != null && ifNotCorrectFolder(selectedDirectory)) {
@@ -54,12 +54,13 @@ public class CreateCorpusWindow implements Initializable {
                 analyzeLogLDA.recordStepSplit(60);
             else analyzeLogLDA.recordStepSplit(Integer.parseInt(stepSplitSizeTextField.getText()));
             analyzeLogLDA.recordGroupSizeSplit();
+            analyzeLogLDA.createTopicData();
             closeWindow();
         }
     }
 
     private boolean ifNotCorrectFolder(File file) {
-        if(LoadLog.searchAgentFileList(file.getPath()).size() == 0) {
+        if (LoadLog.searchAgentFileList(file.getPath()).size() == 0) {
             folderAlert(file);
             return false;
         } else {

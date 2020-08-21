@@ -2,24 +2,29 @@ package com.github.ryuseiishida.pedestrian_simulation.analysis;
 
 import com.badlogic.gdx.math.Vector2;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Group;
-import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.Cell;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.CellsMap;
 import com.github.ryuseiishida.pedestrian_simulation.util.LoadLog;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import com.github.ryuseiishida.pedestrian_simulation.util.UtilVector;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class AnalyzeLogLDA {
+    //Python program path
+    private static InputStream pyStream;
     //split parameter
     private static CellsMap positionMap = new CellsMap(Parameter.SCALE, 1000);
     private LoadLog loadLog;
 
     private ArrayList<ArrayList<String>> dataList = new ArrayList<>();
+
+    public AnalyzeLogLDA() {
+        //load topic_analysis.py
+        pyStream = getClass().getClassLoader().getResourceAsStream("topic_analysis.py");
+    }
 
     public AnalyzeLogLDA(String dataDirPath) {
         loadLog = new LoadLog(dataDirPath);
@@ -31,12 +36,6 @@ public class AnalyzeLogLDA {
 
     public static void setMapSplitSize(int size_int) {
         positionMap = new CellsMap(Parameter.SCALE, size_int);
-    }
-
-    public static void main(String[] args) {
-        AnalyzeLogLDA analyzeLogLDA = new AnalyzeLogLDA("core/assets/test_log");
-        analyzeLogLDA.recordGroupSizeSplit();
-        analyzeLogLDA.recordStepSplit(60);
     }
 
     private int getAgentDirection(String dir) {
@@ -107,6 +106,58 @@ public class AnalyzeLogLDA {
                 bw.newLine();
             }
             System.out.println("save corpus data [" + fileName + "]");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createTopicData() {
+        createPythonFile();
+        try {
+            String currentDir = System.getProperty("user.dir");
+            String[] commands = {"python3",loadLog.getLogPath() + "/topic_analysis.py", loadLog.getLogPath()};
+            ProcessBuilder pb = new ProcessBuilder(commands);
+            pb.directory(new File(currentDir));
+            Process p = pb.start();
+            BufferedReader output = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            System.out.println("Result : " + output.readLine());
+            deletePythonFile();
+        } catch (IOException e) {
+            deletePythonFile();
+            e.printStackTrace();
+        }
+    }
+
+    public void createPythonFile() {
+        ArrayList<String> codeLine = new ArrayList<>();
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(pyStream));
+            String line;
+            while ((line = br.readLine()) != null) {
+                codeLine.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String createPath = loadLog.getLogPath() + "/topic_analysis.py";
+        try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(createPath))) {
+            for (String line : codeLine) {
+                bw.append(line);
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deletePythonFile() {
+        try {
+            String currentDir = System.getProperty("user.dir");
+            String[] commands = {"rm", loadLog.getLogPath() + "/topic_analysis.py"};
+            ProcessBuilder pb = new ProcessBuilder(commands);
+            pb.directory(new File(currentDir));
+            Process p = pb.start();
         } catch (IOException e) {
             e.printStackTrace();
         }

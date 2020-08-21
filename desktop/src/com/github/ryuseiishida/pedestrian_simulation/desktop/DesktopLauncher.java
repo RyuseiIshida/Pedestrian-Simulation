@@ -2,6 +2,7 @@ package com.github.ryuseiishida.pedestrian_simulation.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.github.ryuseiishida.pedestrian_simulation.analysis.AnalyzeLogLDA;
 import com.github.ryuseiishida.pedestrian_simulation.controller.GdxController;
 import com.github.ryuseiishida.pedestrian_simulation.controller.FXApplication;
 import javafx.application.Application;
@@ -21,6 +22,7 @@ public class DesktopLauncher {
         config.y = 0;
         GdxController gdxController = new GdxController();
         new LwjglApplication(gdxController, config);
+        new AnalyzeLogLDA();
         Application.launch(FXApplication.class);
     }
 }

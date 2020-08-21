@@ -11,7 +11,7 @@ public class Parameter {
     /**
      * Application version
      */
-    public static String VERSION = "1.12";
+    public static String VERSION = "1.14";
 
     /**
      * Application about message
@@ -40,9 +40,10 @@ public class Parameter {
             + "1.12\tパラメータの書き出し&読み込み機能を追加\n"
             + "\t\t背景の書き出し&読み込み機能を追加\n"
             + "1.13\tトピックデータの描画およびコーパスデータの作成機能を追加\n"
+            + "1.14\tトピックデータの作成機能を追加(要Python環境)\n"
             + "\n"
             + "次回アップデート予定\n"
-            + "1.1x\tトピックデータの作成機能";
+            + "1.1x\t軽微な修正";
 
     /**
      * Simulation termination conditions
