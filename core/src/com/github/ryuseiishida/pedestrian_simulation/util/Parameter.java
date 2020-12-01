@@ -58,6 +58,9 @@ public class Parameter {
      */
     public static boolean IS_WRITE_LOG = false;
 
+    /** analysis mode boolean */
+    public static boolean IS_ANALYSIS_MODE = false;
+
     /**
      * Output path of log file
      */

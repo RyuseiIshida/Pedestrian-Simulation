@@ -183,6 +183,38 @@ public class FXMLController implements Initializable {
     }
 
     @FXML
+    private Button analysisModeButton;
+
+    @FXML
+    void eventAnalysisModeButton(ActionEvent event) throws IOException {
+        if (analysisModeButton.getTextFill() != Color.RED) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Simulation Log");
+            File directory = fileChooser.showSaveDialog(null);
+            String dirPath = String.valueOf(directory);
+            if (directory != null) {
+                analysisModeButton.setTextFill(Color.RED);
+                directory.mkdir();
+                Parameter.WRITE_LOG_PATH = dirPath;
+                WriteLog.writeParameterLog(dirPath);
+                WriteLog.copyBackgroundFile(dirPath);
+                WriteLog.writeObstacleLog(dirPath);
+                WriteLog.writeGoalLog(dirPath);
+                Parameter.IS_WRITE_LOG = true;
+                Parameter.IS_ANALYSIS_MODE = true;
+                Environment.setStep(0);
+                showTopicControlWindow();
+            }
+        } else {
+            analysisModeButton.setTextFill(Color.BLACK);
+            Parameter.IS_WRITE_LOG = false;
+            Parameter.IS_ANALYSIS_MODE = false;
+            Environment.setUpdateFlag(false);
+            RenderTopic.setRenderTopicRegionFlag(false);
+        }
+    }
+
+    @FXML
     void eventEraserButton(ActionEvent event) {
         Inputs.setFxCreateProperty("eraser");
     }

@@ -74,6 +74,11 @@
                         <Font size="12.0" />
                      </font>
                   </Button>
+                  <Button fx:id="analysisModeButton" layoutY="10.0" mnemonicParsing="false" onAction="#eventAnalysisModeButton" prefHeight="30.0" prefWidth="102.0" text="Analysis Mode" textAlignment="CENTER">
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Button>
                </children>
             </AnchorPane>
          </items>

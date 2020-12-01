@@ -1,16 +1,19 @@
 package com.github.ryuseiishida.pedestrian_simulation.environment;
 
 import com.badlogic.gdx.math.Vector2;
+import com.github.ryuseiishida.pedestrian_simulation.analysis.AnalyzeLogLDA;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Agent;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.StateTag;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.Cell;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.Goal;
+import com.github.ryuseiishida.pedestrian_simulation.render.RenderTopic;
 import com.github.ryuseiishida.pedestrian_simulation.util.LoadLog;
 import com.github.ryuseiishida.pedestrian_simulation.util.UtilVector;
 import com.github.ryuseiishida.pedestrian_simulation.util.WriteLog;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.*;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -68,6 +71,18 @@ public class Environment {
         if (updateFlag) {
             step++;
             agentList.stream().parallel().forEach(Agent::action);
+            if (Parameter.IS_ANALYSIS_MODE) {
+                String dirLogPath = Parameter.WRITE_LOG_PATH + "/step" + step;
+                new File(dirLogPath).mkdir();
+                WriteLog.writeAgentLog(dirLogPath);
+                if(step >= 30) {
+                    AnalyzeLogLDA analyzeLogLDA = new AnalyzeLogLDA(dirLogPath);
+                    analyzeLogLDA.recordGroupSizeSplit();
+                    analyzeLogLDA.createTopicData();
+                    RenderTopic.setRenderTopicRegionFlag(true);
+                    RenderTopic.setLdaFilePath(dirLogPath+"/topic_k15");
+                }
+            }
         }
     }
 
