@@ -3,20 +3,25 @@ package com.github.ryuseiishida.pedestrian_simulation.analysis;
 import com.badlogic.gdx.math.Vector2;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Group;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.CellsMap;
+import com.github.ryuseiishida.pedestrian_simulation.render.RenderTopic;
 import com.github.ryuseiishida.pedestrian_simulation.util.LoadLog;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 import com.github.ryuseiishida.pedestrian_simulation.util.UtilVector;
+import com.github.ryuseiishida.pedestrian_simulation.util.WriteLog;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AnalyzeLogLDA {
-    //split parameter
+    private int selectTopicK = 15;
+    private int splitStep = 10;
     private static CellsMap positionMap = new CellsMap(Parameter.SCALE, 1000);
     private LoadLog loadLog;
-
     private ArrayList<ArrayList<String>> dataList = new ArrayList<>();
 
     public AnalyzeLogLDA(String dataDirPath) {
@@ -87,28 +92,30 @@ public class AnalyzeLogLDA {
     }
 
     private void outPrint(String fileName) {
+        boolean startFlag = true;
         String path = loadLog.getLogPath() + "/" + fileName + ".txt";
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path))) {
             for (ArrayList<String> data : dataList) {
+                if (!startFlag) bw.newLine();
+                boolean startSFlag = true;
                 for (String s : data) {
+                    if (!startSFlag) bw.append(",");
                     bw.append(s);
-                    if (!s.equals(data.get(data.size() - 1))) {
-                        bw.append(",");
-                    }
+                    startSFlag = false;
                 }
-                bw.newLine();
+                startFlag = false;
             }
-            System.out.println("save corpus data [" + fileName + "]");
         } catch (IOException e) {
             e.printStackTrace();
         }
+//        System.out.println("save corpus data [" + fileName + "]");
     }
 
     public void createTopicData() {
         createPythonFile();
         try {
             String currentDir = System.getProperty("user.dir");
-            String[] commands = {"python3",loadLog.getLogPath() + "/topic_analysis.py", loadLog.getLogPath()};
+            String[] commands = {"python3", loadLog.getLogPath() + "/topic_analysis.py", loadLog.getLogPath()};
             ProcessBuilder pb = new ProcessBuilder(commands);
             pb.directory(new File(currentDir));
             Process p = pb.start();
@@ -146,6 +153,7 @@ public class AnalyzeLogLDA {
     }
 
     public void deletePythonFile() {
+        System.out.println("loadLog.getLogPath() = " + loadLog.getLogPath());
         try {
             String currentDir = System.getProperty("user.dir");
             String[] commands = {"rm", loadLog.getLogPath() + "/topic_analysis.py"};
@@ -155,5 +163,54 @@ public class AnalyzeLogLDA {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void analysisMode(int step) {
+        String dirLogPath = Parameter.WRITE_LOG_PATH + "/step" + step;
+        new File(dirLogPath).mkdir();
+        WriteLog.writeAgentLog(dirLogPath);
+        loadLog = new LoadLog(dirLogPath);
+        if (step >= 60) {
+            recordGroupSizeSplit();
+            recordStepSplit(splitStep);
+            createTopicData();
+            RenderTopic.setRenderTopicRegionFlag(true);
+            RenderTopic.setSelectTopicNumber(getMaxFitTopicNumber(dirLogPath));
+        }
+        RenderTopic.setLdaFilePath(dirLogPath + "/topic_k" + selectTopicK);
+    }
+
+    private int getMaxFitTopicNumber(String path) {
+        int maxFitTopicNumber = 0;
+        double maxFitTopicValue = 0.0;
+        int topicNumber = 1;
+        for (Double fitTopicValue : getFitTopicValuesInLastRowOfCSV(path)) {
+            if (maxFitTopicValue <= fitTopicValue) {
+                maxFitTopicValue = fitTopicValue;
+                maxFitTopicNumber = topicNumber;
+            }
+            topicNumber++;
+        }
+        return maxFitTopicNumber;
+    }
+
+    private List<Double> getFitTopicValuesInLastRowOfCSV(String path) {
+        List<Double> endLineValues = null;
+        final String fit_topic = String.format("%s/topic_k%s/fit_topic%s.csv", path, selectTopicK, splitStep);
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(fit_topic))) {
+            String line;
+            String endLine = "";
+            while ((line = br.readLine()) != null) {
+                endLine = line;
+            }
+            endLineValues = Stream.of(endLine.split(","))
+                    .map(Double::parseDouble)
+                    .collect(Collectors.toList());
+            // stepの削除
+            endLineValues.remove(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return endLineValues;
     }
 }

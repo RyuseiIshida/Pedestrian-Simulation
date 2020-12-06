@@ -13,9 +13,16 @@ import com.github.ryuseiishida.pedestrian_simulation.util.WriteLog;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.*;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Environment {
     private static int step;
@@ -71,19 +78,9 @@ public class Environment {
         if (updateFlag) {
             step++;
             agentList.stream().parallel().forEach(Agent::action);
-            if (Parameter.IS_ANALYSIS_MODE) {
-                String dirLogPath = Parameter.WRITE_LOG_PATH + "/step" + step;
-                new File(dirLogPath).mkdir();
-                WriteLog.writeAgentLog(dirLogPath);
-                if(step >= 30) {
-                    AnalyzeLogLDA analyzeLogLDA = new AnalyzeLogLDA(dirLogPath);
-                    analyzeLogLDA.recordGroupSizeSplit();
-                    analyzeLogLDA.createTopicData();
-                    RenderTopic.setRenderTopicRegionFlag(true);
-                    RenderTopic.setLdaFilePath(dirLogPath+"/topic_k15");
-                }
-            }
+            if (Parameter.IS_ANALYSIS_MODE) new AnalyzeLogLDA(Parameter.WRITE_LOG_PATH).analysisMode(step);
         }
+
     }
 
     public static int getStep() {

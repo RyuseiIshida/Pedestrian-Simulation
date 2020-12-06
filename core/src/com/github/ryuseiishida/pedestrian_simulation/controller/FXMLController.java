@@ -203,7 +203,6 @@ public class FXMLController implements Initializable {
                 Parameter.IS_WRITE_LOG = true;
                 Parameter.IS_ANALYSIS_MODE = true;
                 Environment.setStep(0);
-                showTopicControlWindow();
             }
         } else {
             analysisModeButton.setTextFill(Color.BLACK);

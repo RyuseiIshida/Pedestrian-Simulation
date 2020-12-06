@@ -229,7 +229,7 @@
                                                 <Font size="12.0" />
                                              </font>
                                           </Button>
-                                          <TextField fx:id="randomSpawnAgentNumTextField" alignment="CENTER_RIGHT" text="100" GridPane.columnIndex="1" GridPane.rowIndex="12">
+                                          <TextField fx:id="randomSpawnAgentNumTextField" alignment="CENTER_RIGHT" text="10" GridPane.columnIndex="1" GridPane.rowIndex="12">
                                              <font>
                                                 <Font size="12.0" />
                                              </font>
@@ -301,7 +301,7 @@
                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                              <children>
-                                                <RadioButton fx:id="randomSpawnNonGoalRadioButton" mnemonicParsing="false" onAction="#randomSpawnNonGoalRadioButton" text="goal ×" textFill="BLUE">
+                                                <RadioButton fx:id="randomSpawnNonGoalRadioButton" mnemonicParsing="false" onAction="#randomSpawnNonGoalRadioButton" selected="true" text="goal ×" textFill="BLUE">
                                                    <font>
                                                       <Font size="12.0" />
                                                    </font>
