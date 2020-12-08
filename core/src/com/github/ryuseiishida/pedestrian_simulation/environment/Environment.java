@@ -6,23 +6,14 @@ import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Ag
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.StateTag;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.Cell;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.Goal;
-import com.github.ryuseiishida.pedestrian_simulation.render.RenderTopic;
 import com.github.ryuseiishida.pedestrian_simulation.util.LoadLog;
 import com.github.ryuseiishida.pedestrian_simulation.util.UtilVector;
 import com.github.ryuseiishida.pedestrian_simulation.util.WriteLog;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.*;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Environment {
     private static int step;
@@ -38,6 +29,7 @@ public class Environment {
 
     //control flags
     private static boolean removeAllAgentFlag = false;
+    private static boolean resetAgentLogFlag = false;
     private static boolean removeAllGoalFlag = false;
     private static boolean removeAllObstacleFlag = false;
 
@@ -70,17 +62,8 @@ public class Environment {
         removeAllObstacleFlag = false;
     }
 
-    public void update() {
-        ifRemoveAllAgent();
-        ifRemoveAllGoal();
-        ifRemoveAllObstacle();
-        ifAgentInGoal();
-        if (updateFlag) {
-            step++;
-            agentList.stream().parallel().forEach(Agent::action);
-            if (Parameter.IS_ANALYSIS_MODE) new AnalyzeLogLDA(Parameter.WRITE_LOG_PATH).analysisMode(step);
-        }
-
+    public static void resetAgentLog() {
+        resetAgentLogFlag = true;
     }
 
     public static int getStep() {
@@ -170,6 +153,29 @@ public class Environment {
         if (removeAllAgentFlag) {
             agentList.clear();
             removeAllAgentFlag = false;
+        }
+    }
+
+    public void update() {
+        ifRemoveAllAgent();
+        ifResetAgentLogFlag();
+        ifRemoveAllGoal();
+        ifRemoveAllObstacle();
+        ifAgentInGoal();
+        if (updateFlag) {
+            step++;
+            agentList.stream().parallel().forEach(Agent::action);
+            if (Parameter.IS_ANALYSIS_MODE) new AnalyzeLogLDA(Parameter.WRITE_LOG_PATH).analysisMode(step);
+        }
+
+    }
+
+    public void ifResetAgentLogFlag() {
+        if (resetAgentLogFlag) {
+            for (Agent agent : agentList) {
+                agent.resetLogList();
+            }
+            resetAgentLogFlag = false;
         }
     }
 

@@ -219,6 +219,10 @@ public class Agent {
         return logList;
     }
 
+    public void resetLogList() {
+        logList = new ArrayList<>();
+    }
+
     /**
      * 環境認識
      */

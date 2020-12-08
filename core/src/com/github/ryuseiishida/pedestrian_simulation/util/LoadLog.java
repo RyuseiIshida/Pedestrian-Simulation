@@ -12,7 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class LoadLog {
     private static Environment environment;

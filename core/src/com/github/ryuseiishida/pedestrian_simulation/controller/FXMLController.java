@@ -22,6 +22,7 @@ import javafx.stage.*;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class FXMLController implements Initializable {
@@ -78,7 +79,7 @@ public class FXMLController implements Initializable {
         String topicFileName = dir.getPath().split("/")[dir.getPath().split("/").length - 1];
         if (topicFileName.contains("topic_k")) {
             return true;
-        } else{
+        } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information");
             alert.setHeaderText("It is not the correct folder");
@@ -193,6 +194,17 @@ public class FXMLController implements Initializable {
             File directory = fileChooser.showSaveDialog(null);
             String dirPath = String.valueOf(directory);
             if (directory != null) {
+                if (Environment.getStep() != 0) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Information");
+                    alert.setHeaderText("Step is not \"0\"");
+                    alert.setContentText("Do you want to step=0");
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.OK) {
+                        Environment.setStep(0);
+                        Environment.resetAgentLog();
+                    }
+                }
                 analysisModeButton.setTextFill(Color.RED);
                 directory.mkdir();
                 Parameter.WRITE_LOG_PATH = dirPath;
@@ -202,13 +214,13 @@ public class FXMLController implements Initializable {
                 WriteLog.writeGoalLog(dirPath);
                 Parameter.IS_WRITE_LOG = true;
                 Parameter.IS_ANALYSIS_MODE = true;
-                Environment.setStep(0);
             }
         } else {
             analysisModeButton.setTextFill(Color.BLACK);
             Parameter.IS_WRITE_LOG = false;
             Parameter.IS_ANALYSIS_MODE = false;
             Environment.setUpdateFlag(false);
+            startButton.setText("▶");
             RenderTopic.setRenderTopicRegionFlag(false);
         }
     }
@@ -619,7 +631,7 @@ public class FXMLController implements Initializable {
         loader.setController(controller);
         Parent root = loader.load();
         stage.setTitle("Topic Control Panel");
-        stage.setOnCloseRequest((WindowEvent event) -> { RenderTopic.setRenderTopicRegionFlag(false); } );
+        stage.setOnCloseRequest((WindowEvent event) -> RenderTopic.setRenderTopicRegionFlag(false));
         stage.setX(1);
         stage.setY(1);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

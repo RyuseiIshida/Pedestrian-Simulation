@@ -41,9 +41,10 @@ public class Parameter {
             + "\t\t背景の書き出し&読み込み機能を追加\n"
             + "1.13\tトピックデータの描画およびコーパスデータの作成機能を追加\n"
             + "1.14\tトピックデータの作成機能を追加(要Python環境)\n"
+            + "1.15(beta)\tAnalysisModeの追加\n"
             + "\n"
             + "次回アップデート予定\n"
-            + "1.1x\t軽微な修正";
+            + "1.15\tAnalysisModeの正式リリース";
 
     /**
      * Simulation termination conditions
