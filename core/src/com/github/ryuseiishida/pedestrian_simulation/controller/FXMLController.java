@@ -39,7 +39,7 @@ public class FXMLController implements Initializable {
         File selectedDirectory = directoryChooser.showDialog(null);
         if (selectedDirectory != null) {
             LoadLog.setBackgroundTexture(String.valueOf(selectedDirectory));
-            GdxController.setEnvironment(new Environment(String.valueOf(selectedDirectory)));
+            GdxController.setEnvironment(Environment.newInstance(String.valueOf(selectedDirectory)));
         }
     }
 
@@ -133,12 +133,12 @@ public class FXMLController implements Initializable {
     @FXML
     void onStartButton(ActionEvent event) {
         if (GdxController.startFlag) {
-            if (Environment.getUpdateFlag()) {
+            if (Environment.getInstance().getUpdateFlag()) {
                 startButton.setText("▶");
-                Environment.setUpdateFlag(false);
+                Environment.getInstance().setUpdateFlag(false);
             } else {
                 startButton.setText("||");
-                Environment.setUpdateFlag(true);
+                Environment.getInstance().setUpdateFlag(true);
             }
         }
     }
@@ -179,7 +179,7 @@ public class FXMLController implements Initializable {
         } else {
             saveSimulationButton.setTextFill(Color.RED);
             Parameter.IS_WRITE_LOG = true;
-            Environment.setStep(0);
+            Environment.getInstance().setStep(0);
         }
     }
 
@@ -194,15 +194,15 @@ public class FXMLController implements Initializable {
             File directory = fileChooser.showSaveDialog(null);
             String dirPath = String.valueOf(directory);
             if (directory != null) {
-                if (Environment.getStep() != 0) {
+                if (Environment.getInstance().getStep() != 0) {
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.setTitle("Information");
                     alert.setHeaderText("Step is not \"0\"");
                     alert.setContentText("Do you want to step=0");
                     Optional<ButtonType> result = alert.showAndWait();
                     if (result.get() == ButtonType.OK) {
-                        Environment.setStep(0);
-                        Environment.resetAgentLog();
+                        Environment.getInstance().setStep(0);
+                        Environment.getInstance().resetAgentLog();
                     }
                 }
                 analysisModeButton.setTextFill(Color.RED);
@@ -219,7 +219,7 @@ public class FXMLController implements Initializable {
             analysisModeButton.setTextFill(Color.BLACK);
             Parameter.IS_WRITE_LOG = false;
             Parameter.IS_ANALYSIS_MODE = false;
-            Environment.setUpdateFlag(false);
+            Environment.getInstance().setUpdateFlag(false);
             startButton.setText("▶");
             RenderTopic.setRenderTopicRegionFlag(false);
         }
@@ -550,7 +550,7 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void eventDeleteAgentButton(ActionEvent event) {
-        Environment.removeAllAgent();
+        Environment.getInstance().removeAllAgent();
     }
 
     // Obstacle Title Pane
@@ -561,7 +561,7 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void eventDeleteLineButton(ActionEvent event) {
-        Environment.removeAllObstacle();
+        Environment.getInstance().removeAllObstacle();
     }
 
     // Goal Title Pane
@@ -584,7 +584,7 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void eventDeleteGoalButton(ActionEvent event) {
-        Environment.removeAllGoal();
+        Environment.getInstance().removeAllGoal();
     }
 
 

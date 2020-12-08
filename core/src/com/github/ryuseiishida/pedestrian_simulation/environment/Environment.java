@@ -16,8 +16,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Environment {
-    private static int step;
-    private static boolean updateFlag;
+    private static Environment environment = new Environment();
+    private int step;
+    private boolean updateFlag;
     private ArrayList<Goal> goals;
     private ArrayList<Obstacle> obstacles;
     private HashMap<Vector2, Float> obstaclePosition;
@@ -28,22 +29,27 @@ public class Environment {
     private LoadLog loadLog;
 
     //control flags
-    private static boolean removeAllAgentFlag = false;
-    private static boolean resetAgentLogFlag = false;
-    private static boolean removeAllGoalFlag = false;
-    private static boolean removeAllObstacleFlag = false;
+//    private static boolean resetAgentLogFlag = false;
 
-    public Environment() {
+    private Environment() {
         initEnvironment();
     }
 
-    public Environment(String logDirPath) {
+    private Environment(String logDirPath) {
         initEnvironment();
-        loadLog = new LoadLog(this, logDirPath);
-        loadLog.setParameter(logDirPath);
-        loadLog.setAgents(logDirPath);
-        loadLog.setObstacle(logDirPath);
-        loadLog.setGoal(logDirPath);
+        setLog(logDirPath);
+    }
+
+    public static Environment getInstance() {
+        return environment;
+    }
+
+    public static Environment newInstance() {
+        return environment = new Environment();
+    }
+
+    public static Environment newInstance(String logDirPath) {
+        return environment = new Environment(logDirPath);
     }
 
     public void initEnvironment() {
@@ -57,28 +63,30 @@ public class Environment {
         new LoadLog(this);
         new WriteLog(this);
         setWallObstacles();
-        removeAllAgentFlag = false;
-        removeAllGoalFlag = false;
-        removeAllObstacleFlag = false;
     }
 
-    public static void resetAgentLog() {
-        resetAgentLogFlag = true;
+    public void setLog(String logDirPath) {
+        initEnvironment();
+        loadLog = new LoadLog(this, logDirPath);
+        loadLog.setParameter(logDirPath);
+        loadLog.setAgents(logDirPath);
+        loadLog.setObstacle(logDirPath);
+        loadLog.setGoal(logDirPath);
     }
 
-    public static int getStep() {
+    public int getStep() {
         return step;
     }
 
-    public static void setStep(int stepNum) {
+    public void setStep(int stepNum) {
         step = stepNum;
     }
 
-    public static boolean getUpdateFlag() {
+    public boolean getUpdateFlag() {
         return updateFlag;
     }
 
-    public static void setUpdateFlag(boolean flag) {
+    public void setUpdateFlag(boolean flag) {
         updateFlag = flag;
     }
 
@@ -145,22 +153,11 @@ public class Environment {
         return String.valueOf(agentList.size() + escapedAgentList.size() + 1);
     }
 
-    public static void removeAllAgent() {
-        removeAllAgentFlag = true;
-    }
-
-    private void ifRemoveAllAgent() {
-        if (removeAllAgentFlag) {
-            agentList.clear();
-            removeAllAgentFlag = false;
-        }
+    public void removeAllAgent() {
+        agentList.clear();
     }
 
     public void update() {
-        ifRemoveAllAgent();
-        ifResetAgentLogFlag();
-        ifRemoveAllGoal();
-        ifRemoveAllObstacle();
         ifAgentInGoal();
         if (updateFlag) {
             step++;
@@ -170,12 +167,9 @@ public class Environment {
 
     }
 
-    public void ifResetAgentLogFlag() {
-        if (resetAgentLogFlag) {
-            for (Agent agent : agentList) {
-                agent.resetLogList();
-            }
-            resetAgentLogFlag = false;
+    public void resetAgentLog() {
+        for (Agent agent : agentList) {
+            agent.resetLogList();
         }
     }
 
@@ -208,16 +202,9 @@ public class Environment {
         addObstaclePosition(obstacle);
     }
 
-    public static void removeAllObstacle() {
-        removeAllObstacleFlag = true;
-    }
-
-    private void ifRemoveAllObstacle() {
-        if (removeAllObstacleFlag) {
-            obstacles.clear();
-            obstaclePosition.clear();
-            removeAllObstacleFlag = false;
-        }
+    public void removeAllObstacle() {
+        obstacles.clear();
+        obstaclePosition.clear();
     }
 
     private void addObstaclePosition(Obstacle targetObstacle) {
@@ -272,16 +259,9 @@ public class Environment {
         agentList.removeAll(removeGoalAgentList);
     }
 
-    public static void removeAllGoal() {
-        removeAllGoalFlag = true;
-    }
-
-    private void ifRemoveAllGoal() {
-        if (removeAllGoalFlag) {
-            goals.clear();
-            agentList.removeIf(agent -> agent.getStateTag().equals(StateTag.moveGoal));
-            removeAllGoalFlag = false;
-        }
+    public void removeAllGoal() {
+        goals.clear();
+        agentList.removeIf(agent -> agent.getStateTag().equals(StateTag.moveGoal));
     }
 
     public Goal getGoal(String id) {

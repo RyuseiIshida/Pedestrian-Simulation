@@ -22,17 +22,14 @@ public class GdxController extends ApplicationAdapter {
 
     public static boolean startFlag = false;
 
-    @Override
-    public void create() {
-        batch = new SpriteBatch();
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, Parameter.SCALE.x, Parameter.SCALE.y);
-        shapeRenderer = new ShapeRenderer();
-        bitmapFont = new BitmapFont();
-        bitmapFont.setColor(Color.BLACK);
-        bitmapFont.getData().setScale(10);
-        environment = new Environment();
-        titleBackgroundTexture = new Texture("start_background.png");
+    public static void resetEnvironment() {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                environment = Environment.newInstance();
+                Parameter.IS_WRITE_LOG = false;
+            }
+        });
     }
 
     @Override
@@ -70,14 +67,17 @@ public class GdxController extends ApplicationAdapter {
         return bitmapFont;
     }
 
-    public static void resetEnvironment() {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                environment = new Environment();
-                Parameter.IS_WRITE_LOG = false;
-            }
-        });
+    @Override
+    public void create() {
+        batch = new SpriteBatch();
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, Parameter.SCALE.x, Parameter.SCALE.y);
+        shapeRenderer = new ShapeRenderer();
+        bitmapFont = new BitmapFont();
+        bitmapFont.setColor(Color.BLACK);
+        bitmapFont.getData().setScale(10);
+        environment = Environment.getInstance();
+        titleBackgroundTexture = new Texture("start_background.png");
     }
 
     public static Environment getEnvironment() {

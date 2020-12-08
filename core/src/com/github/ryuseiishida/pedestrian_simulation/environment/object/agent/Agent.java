@@ -199,12 +199,12 @@ public class Agent {
     public void ifSetLog() {
         if (Parameter.IS_WRITE_LOG) {
             String log = String.format("%d %s %s %s",
-                    Environment.getStep(),
+                    Environment.getInstance().getStep(),
                     stateTag,
                     position,
                     velocity);
             logList.add(log);
-            if (Environment.getStep() == 1) {
+            if (Environment.getInstance().getStep() == 1) {
                 log = String.format("%d %s %s %s",
                         0,
                         perceptionBeforeStateTag,
