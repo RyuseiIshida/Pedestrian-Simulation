@@ -39,7 +39,7 @@ public class FXMLController implements Initializable {
         File selectedDirectory = directoryChooser.showDialog(null);
         if (selectedDirectory != null) {
             LoadLog.setBackgroundTexture(String.valueOf(selectedDirectory));
-            GdxController.start();
+            GdxController.startSimulation();
             Environment.newInstance(String.valueOf(selectedDirectory));
         }
     }
@@ -131,10 +131,9 @@ public class FXMLController implements Initializable {
     @FXML
     private Button startButton;
 
-    //TODO
     @FXML
     void onStartButton(ActionEvent event) {
-        if (GdxController.startFlag) {
+        if (GdxController.isStartFlag()) {
             if (Environment.getInstance().getUpdateFlag()) {
                 startButton.setText("▶");
                 Environment.getInstance().setUpdateFlag(false);
@@ -238,7 +237,7 @@ public class FXMLController implements Initializable {
     }
 
     private void reset() {
-        GdxController.startFlag = true;
+        GdxController.startSimulation();
         GdxController.setBackgroundTexture(null);
         GdxController.resetEnvironment();
         setParameterPromptText();

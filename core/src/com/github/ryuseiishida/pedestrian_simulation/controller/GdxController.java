@@ -19,7 +19,7 @@ public class GdxController extends ApplicationAdapter {
     private static Texture backgroundTexture;
     private static Texture titleBackgroundTexture;
 
-    public static boolean startFlag = false;
+    private static boolean startFlag = false;
 
     public static void resetEnvironment() {
         Gdx.app.postRunnable(new Runnable() {
@@ -31,7 +31,11 @@ public class GdxController extends ApplicationAdapter {
         });
     }
 
-    public static void start() {
+    public static boolean isStartFlag() {
+        return startFlag;
+    }
+
+    public static void startSimulation() {
         GdxController.startFlag = true;
     }
 
