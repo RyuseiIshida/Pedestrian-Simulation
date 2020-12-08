@@ -118,9 +118,9 @@ public class Agent {
      **/
     private File loadLogFile;
 
-    public Agent(String id, Environment env, Vector2 position) {
+    public Agent(String id, Vector2 position) {
         this.ID = id;
-        this.env = env;
+        this.env = Environment.getInstance();
         this.stateTag = StateTag.none;
         this.perceptionBeforeStateTag = StateTag.none;
         this.position = position;
@@ -130,9 +130,9 @@ public class Agent {
         this.perceptionBeforeVelocity = velocity;
     }
 
-    public Agent(String id, Environment env, Vector2 position, float speed) {
+    public Agent(String id, Vector2 position, float speed) {
         this.ID = id;
-        this.env = env;
+        this.env = Environment.getInstance();
         this.speed = speed;
         this.stateTag = StateTag.none;
         this.perceptionBeforeStateTag = StateTag.none;
@@ -144,9 +144,9 @@ public class Agent {
         this.speed = speed;
     }
 
-    public Agent(String id, Environment env, Vector2 position, Goal goal) {
+    public Agent(String id, Vector2 position, Goal goal) {
         this.ID = id;
-        this.env = env;
+        this.env = Environment.getInstance();
         this.stateTag = StateTag.moveGoal;
         this.perceptionBeforeStateTag = StateTag.moveGoal;
         this.position = position;
@@ -157,9 +157,9 @@ public class Agent {
         this.perceptionBeforeVelocity = velocity;
     }
 
-    public Agent(String id, Environment env, Vector2 position, float speed, Goal goal) {
+    public Agent(String id, Vector2 position, float speed, Goal goal) {
         this.ID = id;
-        this.env = env;
+        this.env = Environment.getInstance();
         this.speed = speed;
         this.stateTag = StateTag.moveGoal;
         this.perceptionBeforeStateTag = StateTag.moveGoal;
@@ -171,11 +171,11 @@ public class Agent {
         this.perceptionBeforeVelocity = velocity;
     }
 
-    public Agent(File logFile, Environment env) {
+    public Agent(File logFile) {
         int startIndexID = logFile.getPath().indexOf("agent") + "agent".length();
         int endIndexID = logFile.getPath().indexOf(".txt");
         this.ID = logFile.getPath().substring(startIndexID, endIndexID);
-        this.env = env;
+        this.env = Environment.getInstance();
         loadLogFile = logFile;
         initLogToAgent();
     }
@@ -199,7 +199,7 @@ public class Agent {
     public void ifSetLog() {
         if (Parameter.IS_WRITE_LOG) {
             String log = String.format("%d %s %s %s",
-                    Environment.getInstance().getStep(),
+                    env.getStep(),
                     stateTag,
                     position,
                     velocity);

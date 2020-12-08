@@ -16,7 +16,6 @@ public class GdxController extends ApplicationAdapter {
     private static SpriteBatch batch;
     private static ShapeRenderer shapeRenderer;
     private static BitmapFont bitmapFont;
-    private static Environment environment;
     private static Texture backgroundTexture;
     private static Texture titleBackgroundTexture;
 
@@ -26,24 +25,14 @@ public class GdxController extends ApplicationAdapter {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                environment = Environment.newInstance();
+                Environment.newInstance();
                 Parameter.IS_WRITE_LOG = false;
             }
         });
     }
 
-    @Override
-    public void render() {
-        if (startFlag) {
-            environment.update();
-            new RenderBackground(backgroundTexture);
-            new RenderFont();
-            new RenderAgent();
-            new RenderGoal();
-            new RenderObstacle();
-            new RenderTopic();
-            new Inputs(camera, shapeRenderer, environment);
-        } else new RenderBackground(titleBackgroundTexture);
+    public static void start() {
+        GdxController.startFlag = true;
     }
 
     @Override
@@ -76,17 +65,21 @@ public class GdxController extends ApplicationAdapter {
         bitmapFont = new BitmapFont();
         bitmapFont.setColor(Color.BLACK);
         bitmapFont.getData().setScale(10);
-        environment = Environment.getInstance();
         titleBackgroundTexture = new Texture("start_background.png");
     }
 
-    public static Environment getEnvironment() {
-        return environment;
-    }
-
-    public static void setEnvironment(Environment env) {
-        GdxController.startFlag = true;
-        environment = env;
+    @Override
+    public void render() {
+        if (startFlag) {
+            Environment.getInstance().update();
+            new RenderBackground(backgroundTexture);
+            new RenderFont();
+            new RenderAgent();
+            new RenderGoal();
+            new RenderObstacle();
+            new RenderTopic();
+            new Inputs(camera, shapeRenderer);
+        } else new RenderBackground(titleBackgroundTexture);
     }
 
     public static void setBackgroundTexture(String path) {

@@ -14,21 +14,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class LoadLog {
-    private static Environment environment;
     private String simulationLogPath;
     private ArrayList<File> agentFileList;
 
-    public LoadLog(Environment environment) {
-        this.environment = environment;
-    }
-
     ArrayList<ArrayList<String>> logAgentListLines = new ArrayList<>();
-
-    public LoadLog(Environment environment, String loadPath) {
-        this.environment = environment;
-        simulationLogPath = loadPath;
-        agentFileList = searchAgentFileList(loadPath);
-    }
 
     public LoadLog(String loadPath) {
         simulationLogPath = loadPath;
@@ -161,24 +150,22 @@ public class LoadLog {
 
     public static void setInitAgent(String dirPath) {
         String filePath = dirPath + "/spawn_ag.txt";
-        if (environment == null || !new File(filePath).exists()) return;
+        if (Environment.getInstance() == null || !new File(filePath).exists()) return;
         try (BufferedReader br = Files.newBufferedReader(Paths.get(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] element = line.split(",");
                 if (element.length == 4) {
-                    environment.addAgent(new Agent(element[0],
-                            environment,
+                    Environment.getInstance().addAgent(new Agent(element[0],
                             new Vector2(Float.parseFloat(element[1]), Float.parseFloat(element[2])),
                             Float.parseFloat(element[3])
                     ));
                 } else if (element.length == 5) {
-                    environment.addAgent(new Agent(
+                    Environment.getInstance().addAgent(new Agent(
                             element[0],
-                            environment,
                             new Vector2(Float.parseFloat(element[1]), Float.parseFloat(element[2])),
                             Float.parseFloat(element[3]),
-                            environment.getGoal(element[4])
+                            Environment.getInstance().getGoal(element[4])
                     ));
                 }
             }
@@ -187,22 +174,15 @@ public class LoadLog {
         }
     }
 
-    public void setAgents(String filePath) {
-        if (agentFileList.size() == 0) return;
-        for (File AgentLogFile : agentFileList) {
-            environment.addAgent(new Agent(AgentLogFile, environment));
-        }
-    }
-
     public static void setObstacle(String dirPath) {
         String filePath = dirPath + "/obstacle.txt";
-        if (environment == null || !new File(filePath).exists()) return;
+        if (Environment.getInstance() == null || !new File(filePath).exists()) return;
         try (BufferedReader br = Files.newBufferedReader(Paths.get(filePath))) {
             br.readLine();
             String line;
             while ((line = br.readLine()) != null) {
                 String[] element = line.split(",");
-                environment.addObstacle(new Line(
+                Environment.getInstance().addObstacle(new Line(
                         Float.parseFloat(element[0]),
                         Float.parseFloat(element[1]),
                         Float.parseFloat(element[2]),
@@ -216,12 +196,12 @@ public class LoadLog {
 
     public static void setGoal(String dirPath) {
         String filePath = dirPath + "/goal.txt";
-        if (environment == null || !new File(filePath).exists()) return;
+        if (Environment.getInstance() == null || !new File(filePath).exists()) return;
         try (BufferedReader br = Files.newBufferedReader(Paths.get(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] element = line.split(",");
-                environment.addGoal(new Goal(
+                Environment.getInstance().addGoal(new Goal(
                         element[0],
                         Float.parseFloat(element[1]),
                         Float.parseFloat(element[2]),
@@ -230,6 +210,13 @@ public class LoadLog {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void setAgents(String filePath) {
+        if (agentFileList.size() == 0) return;
+        for (File AgentLogFile : agentFileList) {
+            Environment.getInstance().addAgent(new Agent(AgentLogFile));
         }
     }
 }

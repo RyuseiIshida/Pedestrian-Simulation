@@ -1,6 +1,5 @@
 package com.github.ryuseiishida.pedestrian_simulation.util;
 
-import com.github.ryuseiishida.pedestrian_simulation.controller.GdxController;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.agent.Agent;
 import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.Goal;
@@ -12,10 +11,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class WriteLog {
-    private static Environment environment;
 
-    public WriteLog(Environment env) {
-        environment = env;
+    private WriteLog(Environment env) {
     }
 
     public static void writeParameterLog(String dirPath) {
@@ -46,7 +43,7 @@ public class WriteLog {
     }
 
     public static void copyBackgroundFile(String dirPath) {
-        if(Parameter.BACKGROUND_TEXTURE_Path == null || !new File(Parameter.BACKGROUND_TEXTURE_Path).exists()) {
+        if (Parameter.BACKGROUND_TEXTURE_Path == null || !new File(Parameter.BACKGROUND_TEXTURE_Path).exists()) {
             return;
         }
         String saveFilePath = dirPath + "/background.png";
@@ -58,13 +55,14 @@ public class WriteLog {
     }
 
     public static void writeAgentLog(String saveFilePath) {
-        if (environment.getAgentList() == null
-                || (environment.getAgentList().size() == 0 && environment.getEscapedAgentList().size() == 0)) {
+        if (Environment.getInstance().getAgentList() == null
+                || (Environment.getInstance().getAgentList().size() == 0
+                && Environment.getInstance().getEscapedAgentList().size() == 0)) {
             return;
         }
         ArrayList<Agent> logAgentList = new ArrayList<>();
-        logAgentList.addAll(environment.getEscapedAgentList());
-        logAgentList.addAll(environment.getAgentList());
+        logAgentList.addAll(Environment.getInstance().getEscapedAgentList());
+        logAgentList.addAll(Environment.getInstance().getAgentList());
         logAgentList.parallelStream().forEach(agent -> {
             String path = saveFilePath + "/agent" + agent.getID() + ".txt";
             try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path))) {
@@ -82,9 +80,9 @@ public class WriteLog {
 
     public static void writeAgentInitLog(String dirPath) {
         String saveFilePath = dirPath + "/spawn_ag.txt";
-        if (environment == null || environment.getAgentList().size() == 0) return;
+        if (Environment.getInstance() == null || Environment.getInstance().getAgentList().size() == 0) return;
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(saveFilePath))) {
-            for (Agent agent : environment.getAgentList()) {
+            for (Agent agent : Environment.getInstance().getAgentList()) {
                 bw.append(agent.getID()).append(",");
                 bw.append(String.valueOf(agent.getPosition().x)).append(",");
                 bw.append(String.valueOf(agent.getPosition().y)).append(",");
@@ -99,12 +97,12 @@ public class WriteLog {
 
     public static void writeObstacleLog(String dirPath) {
         String filePath = dirPath + "/obstacle.txt";
-        if (environment == null || environment.getObstacles().size() == 0) return;
+        if (Environment.getInstance() == null || Environment.getInstance().getObstacles().size() == 0) return;
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(filePath))) {
             bw.append(String.valueOf(Parameter.SCALE.x)).append(",");
             bw.append(String.valueOf(Parameter.SCALE.y));
             bw.newLine();
-            for (Obstacle obstacle : environment.getObstacles()) {
+            for (Obstacle obstacle : Environment.getInstance().getObstacles()) {
                 bw.append(String.valueOf(obstacle.getStartPoint().x)).append(",");
                 bw.append(String.valueOf(obstacle.getStartPoint().y)).append(",");
                 bw.append(String.valueOf(obstacle.getEndPoint().x)).append(",");
@@ -118,9 +116,9 @@ public class WriteLog {
 
     public static void writeGoalLog(String dirPath) {
         String filePath = dirPath + "/goal.txt";
-        if (environment == null || environment.getGoals().size() == 0) return;
+        if (Environment.getInstance() == null || Environment.getInstance().getGoals().size() == 0) return;
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(filePath))) {
-            for (Goal goal : environment.getGoals()) {
+            for (Goal goal : Environment.getInstance().getGoals()) {
                 bw.append(goal.getID()).append(",");
                 bw.append(String.valueOf(goal.getPositionX())).append(",");
                 bw.append(String.valueOf(goal.getPositionY())).append(",");
@@ -134,7 +132,7 @@ public class WriteLog {
     }
 
     public void writeMacroLog() {
-        if (environment.getAgentList().size() == 0) return;
+        if (Environment.getInstance().getAgentList().size() == 0) return;
         String label = "step,goal_agent_num,group,group_size,follow";
     }
 

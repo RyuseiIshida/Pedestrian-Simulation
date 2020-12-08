@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.github.ryuseiishida.pedestrian_simulation.controller.GdxController;
+import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.Obstacle;
 
 public class RenderObstacle {
@@ -21,7 +22,7 @@ public class RenderObstacle {
             shapeRenderer.setProjectionMatrix(camera.combined);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(Color.BLACK);
-            for (Obstacle obstacle : GdxController.getEnvironment().getObstacles()) {
+            for (Obstacle obstacle : Environment.getInstance().getObstacles()) {
                 shapeRenderer.line(obstacle.getStartPoint(), obstacle.getEndPoint());
             }
 

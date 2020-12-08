@@ -1,6 +1,7 @@
 package com.github.ryuseiishida.pedestrian_simulation.render;
 
 import com.github.ryuseiishida.pedestrian_simulation.controller.GdxController;
+import com.github.ryuseiishida.pedestrian_simulation.environment.Environment;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
 public class RenderFont {
@@ -12,8 +13,8 @@ public class RenderFont {
             GdxController.getBatch().setProjectionMatrix(GdxController.getCamera().combined);
             GdxController.getBatch().begin();
             GdxController.getBitmapFont().draw(GdxController.getBatch(),
-                    "step " + GdxController.getEnvironment().getStep()
-                            + "  " + "agent = " + String.format(String.valueOf(GdxController.getEnvironment().getAgentList().size())),
+                    "step " + Environment.getInstance().getStep()
+                            + "  " + "agent = " + String.format(String.valueOf(Environment.getInstance().getAgentList().size())),
                     30, Parameter.SCALE.y - 10);
             GdxController.getBatch().end();
         }

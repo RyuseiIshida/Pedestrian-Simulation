@@ -24,10 +24,10 @@ public class Inputs {
     // javafx flag
     private static String fxCreateProperty = "";
 
-    public Inputs(Camera camera, ShapeRenderer shapeRenderer, Environment environment) {
+    public Inputs(Camera camera, ShapeRenderer shapeRenderer) {
         this.camera = camera;
         this.shapeRenderer = shapeRenderer;
-        this.environment = environment;
+        this.environment = Environment.getInstance();
         keyInput();
         mouseInput();
     }

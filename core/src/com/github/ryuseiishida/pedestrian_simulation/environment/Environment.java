@@ -8,7 +8,6 @@ import com.github.ryuseiishida.pedestrian_simulation.environment.object.cell.Cel
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.Goal;
 import com.github.ryuseiishida.pedestrian_simulation.util.LoadLog;
 import com.github.ryuseiishida.pedestrian_simulation.util.UtilVector;
-import com.github.ryuseiishida.pedestrian_simulation.util.WriteLog;
 import com.github.ryuseiishida.pedestrian_simulation.environment.object.obstacle.*;
 import com.github.ryuseiishida.pedestrian_simulation.util.Parameter;
 
@@ -25,11 +24,7 @@ public class Environment {
     private ArrayList<Agent> agentList;
     private ArrayList<Agent> escapedAgentList;
     private int goalAgentNum;
-
     private LoadLog loadLog;
-
-    //control flags
-//    private static boolean resetAgentLogFlag = false;
 
     private Environment() {
         initEnvironment();
@@ -60,14 +55,12 @@ public class Environment {
         obstaclePosition = new HashMap<>();
         agentList = new ArrayList<>();
         escapedAgentList = new ArrayList<>();
-        new LoadLog(this);
-        new WriteLog(this);
         setWallObstacles();
     }
 
     public void setLog(String logDirPath) {
         initEnvironment();
-        loadLog = new LoadLog(this, logDirPath);
+        loadLog = new LoadLog(logDirPath);
         loadLog.setParameter(logDirPath);
         loadLog.setAgents(logDirPath);
         loadLog.setObstacle(logDirPath);
@@ -126,17 +119,17 @@ public class Environment {
     }
 
     public void spawnAgent(Vector2 pos) {
-        addAgent(new Agent(issueAgentID(), this, pos));
+        addAgent(new Agent(issueAgentID(), pos));
     }
 
     public void spawnAgent(Vector2 pos, float speed) {
-        addAgent(new Agent(issueAgentID(), this, pos, speed));
+        addAgent(new Agent(issueAgentID(), pos, speed));
     }
 
     public void spawnAgent(Vector2 pos, String goalID) {
         for (Goal goal : goals) {
             if (goal.exists(goalID)) {
-                addAgent(new Agent(issueAgentID(), this, pos, goal));
+                addAgent(new Agent(issueAgentID(), pos, goal));
             }
         }
     }
@@ -144,7 +137,7 @@ public class Environment {
     public void spawnAgent(Vector2 pos, String goalID, float speed) {
         for (Goal goal : goals) {
             if (goal.exists(goalID)) {
-                addAgent(new Agent(issueAgentID(), this, pos, speed, goal));
+                addAgent(new Agent(issueAgentID(), pos, speed, goal));
             }
         }
     }
