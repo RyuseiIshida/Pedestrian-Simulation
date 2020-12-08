@@ -195,17 +195,6 @@ public class FXMLController implements Initializable {
             File directory = fileChooser.showSaveDialog(null);
             String dirPath = String.valueOf(directory);
             if (directory != null) {
-                if (Environment.getInstance().getStep() != 0) {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Information");
-                    alert.setHeaderText("Step is not \"0\"");
-                    alert.setContentText("Do you want to step=0");
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == ButtonType.OK) {
-                        Environment.getInstance().setStep(0);
-                        Environment.getInstance().resetAgentLog();
-                    }
-                }
                 analysisModeButton.setTextFill(Color.RED);
                 directory.mkdir();
                 Parameter.WRITE_LOG_PATH = dirPath;
@@ -215,6 +204,8 @@ public class FXMLController implements Initializable {
                 WriteLog.writeGoalLog(dirPath);
                 Parameter.IS_WRITE_LOG = true;
                 Parameter.IS_ANALYSIS_MODE = true;
+                Environment.getInstance().setStep(0);
+                Environment.getInstance().resetAgentLog();
             }
         } else {
             analysisModeButton.setTextFill(Color.BLACK);
