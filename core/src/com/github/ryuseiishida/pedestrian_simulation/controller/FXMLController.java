@@ -22,7 +22,6 @@ import javafx.stage.*;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class FXMLController implements Initializable {
@@ -40,7 +39,7 @@ public class FXMLController implements Initializable {
         if (selectedDirectory != null) {
             LoadLog.setBackgroundTexture(String.valueOf(selectedDirectory));
             GdxController.startSimulation();
-            Environment.newInstance(String.valueOf(selectedDirectory));
+            Environment.resetEnvironment(String.valueOf(selectedDirectory));
         }
     }
 

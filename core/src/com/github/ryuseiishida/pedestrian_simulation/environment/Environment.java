@@ -31,7 +31,6 @@ public class Environment {
     }
 
     private Environment(String logDirPath) {
-        initEnvironment();
         setLog(logDirPath);
     }
 
@@ -39,12 +38,12 @@ public class Environment {
         return environment;
     }
 
-    public static Environment newInstance() {
-        return environment = new Environment();
+    public static void resetEnvironment() {
+        new Environment();
     }
 
-    public static Environment newInstance(String logDirPath) {
-        return environment = new Environment(logDirPath);
+    public static void resetEnvironment(String logDirPath) {
+        new Environment(logDirPath);
     }
 
     public void initEnvironment() {

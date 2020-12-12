@@ -25,7 +25,7 @@ public class GdxController extends ApplicationAdapter {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Environment.newInstance();
+                Environment.resetEnvironment();
                 Parameter.IS_WRITE_LOG = false;
             }
         });
