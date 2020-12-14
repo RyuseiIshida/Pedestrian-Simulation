@@ -92,9 +92,10 @@ class AnalysisTopic:
 
 if __name__ == '__main__':
     file_dir = sys.argv[1]
+    split_split_num = sys.argv[2]
     for i in range(3, 15+1):
         analysis_topic = AnalysisTopic(file_dir, num_topics=i, analysis_data_name="group_size_split_corpus",
-        verification_data_name="step_split_corpus", verification_split="10")
+        verification_data_name="step_split_corpus", verification_split=split_split_num)
         analysis_topic.create_topic()
         analysis_topic.write_topic()
         analysis_topic.write_fit_topic()

@@ -39,7 +39,7 @@ public class FXMLController implements Initializable {
         if (selectedDirectory != null) {
             LoadLog.setBackgroundTexture(String.valueOf(selectedDirectory));
             GdxController.startSimulation();
-            Environment.resetEnvironment(String.valueOf(selectedDirectory));
+            Environment.getInstance().resetEnvironment(String.valueOf(selectedDirectory));
         }
     }
 

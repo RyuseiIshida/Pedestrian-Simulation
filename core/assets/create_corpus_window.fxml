@@ -16,7 +16,7 @@
       <HBox alignment="CENTER" prefHeight="21.0" prefWidth="300.0" spacing="10.0">
          <children>
             <Text fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="map split size" />
-            <TextField fx:id="mapSplitSizeTextField" alignment="CENTER_RIGHT" onAction="#eventMapSplitSizeTextField" prefWidth="136.0" promptText="pixel size (default = 1000)">
+            <TextField fx:id="mapSplitSizeTextField" alignment="CENTER_RIGHT" disable="true" onAction="#eventMapSplitSizeTextField" prefWidth="136.0" promptText="pixel size (default = 1000)">
                <font>
                   <Font size="11.0" />
                </font>

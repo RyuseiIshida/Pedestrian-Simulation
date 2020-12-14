@@ -24,26 +24,21 @@ public class Environment {
     private ArrayList<Agent> agentList;
     private ArrayList<Agent> escapedAgentList;
     private int goalAgentNum;
-    private LoadLog loadLog;
 
     private Environment() {
-        initEnvironment();
-    }
-
-    private Environment(String logDirPath) {
-        setLog(logDirPath);
     }
 
     public static Environment getInstance() {
         return environment;
     }
 
-    public static void resetEnvironment() {
-        new Environment();
+    public void resetEnvironment() {
+        initEnvironment();
     }
 
-    public static void resetEnvironment(String logDirPath) {
-        new Environment(logDirPath);
+    public void resetEnvironment(String logDirPath) {
+        initEnvironment();
+        setLog(logDirPath);
     }
 
     public void initEnvironment() {
@@ -58,8 +53,7 @@ public class Environment {
     }
 
     public void setLog(String logDirPath) {
-        initEnvironment();
-        loadLog = new LoadLog(logDirPath);
+        LoadLog loadLog = new LoadLog(logDirPath);
         loadLog.setParameter(logDirPath);
         loadLog.setAgents(logDirPath);
         loadLog.setObstacle(logDirPath);

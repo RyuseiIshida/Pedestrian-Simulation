@@ -54,7 +54,7 @@ public class CreateCorpusWindow implements Initializable {
                 analyzeLogLDA.recordStepSplit(60);
             else analyzeLogLDA.recordStepSplit(Integer.parseInt(stepSplitSizeTextField.getText()));
             analyzeLogLDA.recordGroupSizeSplit();
-            analyzeLogLDA.createTopicData();
+            analyzeLogLDA.createTopicData(Integer.parseInt(stepSplitSizeTextField.getText()));
             closeWindow();
         }
     }

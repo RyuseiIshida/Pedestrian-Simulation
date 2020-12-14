@@ -111,11 +111,11 @@ public class AnalyzeLogLDA {
 //        System.out.println("save corpus data [" + fileName + "]");
     }
 
-    public void createTopicData() {
+    public void createTopicData(int splitStep) {
         createPythonFile();
         try {
             String currentDir = System.getProperty("user.dir");
-            String[] commands = {"python3", loadLog.getLogPath() + "/topic_analysis.py", loadLog.getLogPath()};
+            String[] commands = {"python3", loadLog.getLogPath() + "/topic_analysis.py", loadLog.getLogPath(), String.valueOf(this.splitStep= splitStep)};
             ProcessBuilder pb = new ProcessBuilder(commands);
             pb.directory(new File(currentDir));
             Process p = pb.start();
@@ -173,7 +173,7 @@ public class AnalyzeLogLDA {
         if (step >= 60) {
             recordGroupSizeSplit();
             recordStepSplit(splitStep);
-            createTopicData();
+            createTopicData(splitStep);
             RenderTopic.setRenderTopicRegionFlag(true);
             RenderTopic.setSelectTopicNumber(getMaxFitTopicNumber(dirLogPath));
         }
