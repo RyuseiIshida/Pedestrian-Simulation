@@ -38,8 +38,10 @@ public class FXMLController implements Initializable {
         File selectedDirectory = directoryChooser.showDialog(null);
         if (selectedDirectory != null) {
             LoadLog.setBackgroundTexture(String.valueOf(selectedDirectory));
-            GdxController.startSimulation();
+            RenderAgent.renderFlag = false;
             Environment.getInstance().resetEnvironment(String.valueOf(selectedDirectory));
+            GdxController.startSimulation();
+            RenderAgent.renderFlag = true;
         }
     }
 

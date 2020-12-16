@@ -17,14 +17,17 @@ public class RenderAgent {
 
     public static Color nonGoalAgentColor = Color.BLACK;
     public static Color goalAgentColor = Color.RED;
+    public static boolean renderFlag = true;
     private static boolean renderViewFlag = false;
     private static boolean renderMoveGoalLineFlag = false;
     private static boolean renderFollowLineFlag = false;
 
     public RenderAgent() {
-        body();
-        isView();
-        isMoveGoalLine();
+        if (renderFlag) {
+            body();
+            isView();
+            isMoveGoalLine();
+        }
     }
 
     public RenderAgent(Agent agent) {
